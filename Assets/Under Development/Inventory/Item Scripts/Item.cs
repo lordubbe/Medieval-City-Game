@@ -9,8 +9,8 @@ public class Item : ScriptableObject{
 	public GameObject runtimeRepresentation;
 	public string flavorText;
 
-	public int width;
-	public int height;
+	public int width = 1;
+	public int height = 1;
 
 	public Texture2D icon;
 
@@ -32,6 +32,15 @@ public class Item : ScriptableObject{
 		height = int.Parse(dim [1]);
 		flavorText = text;
 		runtimeRepresentation = prefab;
+	}
+
+	void OnValidate(){
+		if (width < 1) {
+			width = 1;
+		}
+		if (height < 1) {
+			height = 1;
+		}
 	}
 
 }

@@ -21,7 +21,7 @@ public class ItemCreatorWindow : EditorWindow {
 	private GameObject iconCamEnvInstance;
 
 
-	private float gridSquareSize = 250f;
+	private float gridSquareSize = 100f;
 	private float previewScale = 1f;
 
 	public Item currentItem;
@@ -29,7 +29,12 @@ public class ItemCreatorWindow : EditorWindow {
 
 
 	void OnGUI(){
+		//limit the size of the window
+		minSize = new Vector2(315f, 315f);
+
 		Rect space = new Rect (0, 0, position.width, position.height);
+//		gridSquareSize = space.width / 6.5f;
+		
 
 		Rect headerSpace = space;
 		headerSpace.y += 5;
@@ -82,9 +87,27 @@ public class ItemCreatorWindow : EditorWindow {
 		GUI.Box (editSpace, "");
 
 		if (currentItem != null) {
+			//Adjust grid size
+			switch (currentItem.width) {
+			case 1:
+				gridSquareSize = 150f;
+				break;
+			case 2:
+				gridSquareSize = (editSpace.width/2)/2;
+				break;
+			case 3: 
+				gridSquareSize = (editSpace.width/2)/3;
+				break;
+			default:
+				gridSquareSize = (editSpace.width / 2) / currentItem.width;
+				break;
+			}
 			//Item preview
-			Rect itemPreviewSpace = new Rect (editSpace.x + 10f, editSpace.y + 10f, editSpace.width/2 - 15f, editSpace.width/2 - 15f);
-			gridSquareSize = itemPreviewSpace.width / currentItem.width;
+			Rect itemPreviewSpace = new Rect(editSpace.x + 10f, editSpace.y + 25f, currentItem.width * gridSquareSize, currentItem.height*gridSquareSize);
+
+			//Name header
+			Rect itemNameSpace = editSpace;
+			Util.DropShadowHeaderLabel (itemNameSpace, "Now editing '"+currentItem.name+"'", GUIStyles.ItemNameStyle, Color.white);
 
 			if (currentItem.runtimeRepresentation != null) {
 				if (currentItem.icon != null) {
@@ -100,14 +123,15 @@ public class ItemCreatorWindow : EditorWindow {
 				for (int x = 0; x < currentItem.width; x++) {
 					for (int y = 0; y < currentItem.height; y++) {
 						Rect square = new Rect (itemPreviewSpace.x + x * gridSquareSize, itemPreviewSpace.y + y * gridSquareSize, gridSquareSize, gridSquareSize);
-						EditorGUI.DrawRect (square.WithInsidePadding (1f), Color.white.WithAlpha (0.2f));
+						//EditorGUI.DrawRect (square.WithInsidePadding (1f), Color.white.WithAlpha (0.2f));
+						Util.DrawOutlineRect(square.WithInsidePadding(2f), Color.black.WithAlpha(0f), Color.white.WithAlpha(0.45f), 1f);
 					}
 				}
 
 				//ICON SETTINGS
 				Rect itemPreviewSettingsSpace = itemPreviewSpace;
 				itemPreviewSettingsSpace.x = itemPreviewSpace.xMax + 5;
-				itemPreviewSettingsSpace.xMax -= 5;
+				itemPreviewSettingsSpace.xMax = space.xMax - 15;
 				itemPreviewSettingsSpace.height = showIconSettings ? 120 : 20f;
 				GUI.Box (itemPreviewSettingsSpace, ""); 
 
@@ -198,6 +222,14 @@ public class ItemCreatorWindow : EditorWindow {
 							envScript.itemParent.position = currentItem.iconSettings.itemOffset;
 							envScript.itemParent.eulerAngles = currentItem.iconSettings.itemRotation;
 
+							//Update camera viewport rect
+							float x, y;
+							x = currentItem.width;
+							y = currentItem.height;
+							float max = x > y ? x : y;
+							x /= max;
+							y /= max;
+							envScript.camera.rect = new Rect (0, 0, x, y);
 
 							//Update the render texture
 							if (Event.current.type == EventType.repaint) {
@@ -212,12 +244,6 @@ public class ItemCreatorWindow : EditorWindow {
 							}
 						}
 					}
-
-					//Name header
-					Rect itemNameSpace = itemPreviewSpace;
-					itemNameSpace.yMin = itemPreviewSpace.yMax - 20f;
-					Util.DropShadowHeaderLabel (itemNameSpace, "'"+currentItem.name+"'", GUIStyles.WindowHeaderStyle, Color.white);
-
 				} else {
 					if (iconCamEnvInstance != null) {
 						DestroyImmediate (iconCamEnvInstance);
@@ -290,12 +316,23 @@ public class GUIStyles{
 	
 	public static GUIStyle WindowHeaderStyle = NewGUIStyle(TextAnchor.MiddleCenter, 16, FontStyle.Bold);
 	public static GUIStyle SecondHeaderStyle = NewGUIStyle(TextAnchor.UpperLeft, 14, FontStyle.Normal);
+	public static GUIStyle ItemNameStyle = NewGUIStyle(TextAnchor.UpperCenter, 14, FontStyle.Normal);
 
 	static GUIStyle NewGUIStyle(TextAnchor alignment, int fontSize, FontStyle fontStyle){
 		GUIStyle newStyle = new GUIStyle ();
 		newStyle.alignment = alignment;
 		newStyle.fontSize = fontSize;
 		newStyle.fontStyle = fontStyle;
+
+		return newStyle;
+	}
+
+	static GUIStyle NewGUIStyle(TextAnchor alignment, int fontSize, FontStyle fontStyle, bool wordWrap){
+		GUIStyle newStyle = new GUIStyle ();
+		newStyle.alignment = alignment;
+		newStyle.fontSize = fontSize;
+		newStyle.fontStyle = fontStyle;
+		newStyle.wordWrap = wordWrap;
 
 		return newStyle;
 	}
@@ -321,6 +358,17 @@ public class Util{
 		style.normal.textColor = color;
 		EditorGUI.LabelField (space, label, style);
 
+	}
+
+	public static void DrawOutlineRect(Rect r, Color fillColor, Color strokeColor, float strokewidth)
+	{
+		for (int i = 0; i < strokewidth; i++) {
+			r.x -= 1;
+			r.y -= 1;
+			r.xMax += 2;
+			r.yMax += 2;
+			Handles.DrawSolidRectangleWithOutline (r, fillColor, strokeColor);
+		}
 	}
 
 }
