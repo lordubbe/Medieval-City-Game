@@ -12,7 +12,8 @@ public class Item : ScriptableObject{
 	public int width = 1;
 	public int height = 1;
 
-	public Texture2D icon;
+	public Texture2D iconTexture;
+	public Sprite icon;
 
 	[HideInInspector]
 	public IconSettings iconSettings;

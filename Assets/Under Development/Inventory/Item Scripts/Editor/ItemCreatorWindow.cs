@@ -70,8 +70,8 @@ public class ItemCreatorWindow : EditorWindow {
 		//save item
 		Rect saveItemRect = newItemRect;
 		saveItemRect.x = newItemRect.xMax;
-		if (GUI.Button (saveItemRect.WithHorizontalPadding(2f), "Save Item")) {
-			SaveCurrentItem ();
+		if (GUI.Button (saveItemRect.WithHorizontalPadding(2f), "Save Item (autosaves)")) {
+			SaveItem ();
 		}
 
 		//load item
@@ -110,13 +110,13 @@ public class ItemCreatorWindow : EditorWindow {
 			Util.DropShadowHeaderLabel (itemNameSpace, "Now editing '"+currentItem.name+"'", GUIStyles.ItemNameStyle, Color.white);
 
 			if (currentItem.runtimeRepresentation != null) {
-				if (currentItem.icon != null) {
+				if (currentItem.iconTexture != null) {
 //					GUI.DrawTexture (itemPreviewSpace, (Texture)currentItem.icon);
-					EditorGUI.DrawTextureTransparent(itemPreviewSpace, (Texture)currentItem.icon);
+					EditorGUI.DrawTextureTransparent(itemPreviewSpace, (Texture)currentItem.iconTexture);
 				} else {
-					currentItem.icon = AssetPreview.GetAssetPreview (currentItem.runtimeRepresentation);
-					currentItem.icon.filterMode = FilterMode.Bilinear;
-					currentItem.icon.alphaIsTransparency = true;
+					currentItem.iconTexture = AssetPreview.GetAssetPreview (currentItem.runtimeRepresentation);
+					currentItem.iconTexture.filterMode = FilterMode.Bilinear;
+					currentItem.iconTexture.alphaIsTransparency = true;
 				}
 
 				//draw grid
@@ -133,23 +133,10 @@ public class ItemCreatorWindow : EditorWindow {
 				itemPreviewSettingsSpace.x = itemPreviewSpace.xMax + 5;
 				itemPreviewSettingsSpace.xMax = space.xMax - 15;
 				itemPreviewSettingsSpace.height = showIconSettings ? 120 : 20f;
-				GUI.Box (itemPreviewSettingsSpace, ""); 
 
-				//Header
-				Rect iconSettingsLabel = itemPreviewSettingsSpace.WithInsidePadding (2f);
-				iconSettingsLabel.height = 18f;
-				Util.DropShadowHeaderLabel (iconSettingsLabel, "Icon Settings", GUIStyles.SecondHeaderStyle, Color.white*0.9f);
-
-				//Icon Settings expand button
-				Rect iconSettingsExpand = iconSettingsLabel;
-				iconSettingsExpand.height = 15f;
-				iconSettingsExpand.xMin = iconSettingsLabel.xMax - 18f;
-				if (GUI.Button (iconSettingsExpand, showIconSettings ? "-" : "+")) {
-					showIconSettings = !showIconSettings;
-				}
-
-				if (showIconSettings) {
+				if (SectionUI ("Icon Settings", itemPreviewSettingsSpace, ref showIconSettings)) {
 					totalOffset += 120f;
+
 					//First make sure that the current item has IconSettings
 					if (currentItem.iconSettings == null) {
 						currentItem.iconSettings = new IconSettings (Vector3.zero, Vector3.zero, true, 5f);
@@ -159,7 +146,6 @@ public class ItemCreatorWindow : EditorWindow {
 					Rect scaleSliderRect = itemPreviewSettingsSpace.WithInsidePadding (2f);
 					scaleSliderRect.y += 18f;
 					scaleSliderRect.height = 15f;
-//					previewScale = EditorGUI.Slider (scaleSliderRect, "Image Scale", previewScale, 1f, 10f);
 
 					//Offset editing
 					Rect offsetRect = scaleSliderRect;
@@ -170,7 +156,6 @@ public class ItemCreatorWindow : EditorWindow {
 					Rect rotationRect = offsetRect;
 					rotationRect.y = offsetRect.yMax + 15f;
 					currentItem.iconSettings.itemRotation = EditorGUI.Vector3Field (rotationRect, "Item Rotation", currentItem.iconSettings.itemRotation);
-					
 
 
 					//Load the snapshot environment if it's not already loaded
@@ -234,17 +219,21 @@ public class ItemCreatorWindow : EditorWindow {
 							//Update the render texture
 							if (Event.current.type == EventType.repaint) {
 								RenderTexture renderTex = RenderTexture.active;
+//								if (envScript.camera.targetTexture != null) {
+//									envScript.camera.targetTexture.Release ();
+//								}
+//								envScript.camera.targetTexture = new RenderTexture (512 * currentItem.width, 512 * currentItem.height, );
 								RenderTexture.active = envScript.camera.targetTexture;
 								Texture2D tex = new Texture2D (envScript.camera.targetTexture.width, envScript.camera.targetTexture.height);
 								tex.ReadPixels (new Rect (0, 0, tex.width, tex.height), 0, 0);
 								tex.Apply ();
-								currentItem.icon = tex;
-								currentItem.icon.name = "HOV!";
+								currentItem.iconTexture = tex;
+								currentItem.iconTexture.name = "HOV!";
 								RenderTexture.active = renderTex;
 							}
 						}
 					}
-				} else {
+				}else {
 					if (iconCamEnvInstance != null) {
 						DestroyImmediate (iconCamEnvInstance);
 					}
@@ -256,19 +245,60 @@ public class ItemCreatorWindow : EditorWindow {
 				Rect itemSettingsSpace = itemPreviewSettingsSpace;
 				itemSettingsSpace.y = itemPreviewSettingsSpace.yMax + 5f;
 				itemSettingsSpace.height = showItemSettings ? 320 : 20f;
-				GUI.Box (itemSettingsSpace, "");
 
-				//header
-				Rect itemSettingsLabel = itemSettingsSpace.WithInsidePadding(2f);
-				itemSettingsLabel.height = 18f;
-				Util.DropShadowHeaderLabel (itemSettingsLabel, "Item Settings", GUIStyles.SecondHeaderStyle, Color.white*0.9f);
+				if (SectionUI ("Item Settings", itemSettingsSpace, ref showItemSettings)) {
+					//Name field
+					Rect nameField = itemSettingsSpace;
+					nameField.height = 15f;
+					nameField.y = itemSettingsSpace.y + 22f;
+					nameField = nameField.WithHorizontalPadding (2f);
 
-				//Item Settings expand button
-				Rect itemSettingsExpand = itemSettingsLabel;
-				itemSettingsExpand.height = 15f;
-				itemSettingsExpand.xMin = itemSettingsLabel.xMax - 18f;
-				if (GUI.Button (itemSettingsExpand, showItemSettings ? "-" : "+")) {
-					showItemSettings = !showItemSettings;
+					float prevLabelWidth = EditorGUIUtility.labelWidth;
+					EditorGUIUtility.labelWidth = 50f;
+					currentItem.name = EditorGUI.TextField (nameField, "Name", currentItem.name);
+					EditorGUIUtility.labelWidth = prevLabelWidth;
+
+					//Flavor Text
+					Rect flavTextLabel = nameField;
+					flavTextLabel.y = nameField.yMax + 5;
+					EditorGUI.LabelField (flavTextLabel, "Flavor Text");
+
+					Rect flavTextField = flavTextLabel;
+					flavTextField.height = 50f;
+					flavTextField.y = flavTextLabel.yMax;
+					currentItem.flavorText = EditorGUI.TextArea (flavTextField, currentItem.flavorText);
+
+					//Dimensions
+					Rect itemDimFields = flavTextField;
+					itemDimFields.y = flavTextField.yMax + 5;
+					itemDimFields.height = 20f;
+
+					Rect itemDimPart = itemDimFields;
+					itemDimPart.width /= 2;
+
+					EditorGUIUtility.labelWidth = 50f;
+					currentItem.width = EditorGUI.IntField (itemDimPart, "Width", currentItem.width);
+					itemDimPart.x += itemDimPart.width;
+					currentItem.height = EditorGUI.IntField (itemDimPart, "Height", currentItem.height);
+					EditorGUIUtility.labelWidth = prevLabelWidth;
+
+					//Generate Sprite button
+					Rect spriteButton = itemDimFields;
+					spriteButton.y = itemDimFields.yMax + 5;
+					if (GUI.Button (spriteButton, "Generate Sprite")) {
+						Sprite icon = Sprite.Create (currentItem.iconTexture, new Rect (0, 0, currentItem.iconTexture.width, currentItem.iconTexture.height), new Vector2 (0.5f, 0.5f));
+						icon.name = currentItem.name + "_icon";
+						currentItem.icon = icon;
+
+						string currentItemPath = AssetDatabase.GetAssetPath (currentItem);
+						string[] pathFolders = currentItemPath.Split (new char[]{ '/' }, System.StringSplitOptions.None);
+
+						string currentItemPathNoAsset = currentItemPath.Substring (0, currentItemPath.Length - pathFolders [pathFolders.Length - 1].Length-1); 
+						currentItemPathNoAsset += "/" + icon.name + ".asset";
+						
+						AssetDatabase.CreateAsset (icon, currentItemPathNoAsset);
+					}
+
 				}
 
 			} else {
@@ -281,9 +311,28 @@ public class ItemCreatorWindow : EditorWindow {
 
 	}
 
-	void ItemAddUI(Rect space){
+	bool SectionUI(string sectionName, Rect space, ref bool showBool){
+		GUI.Box (space, ""); 
 
+		//Header
+		Rect iconSettingsLabel = space.WithInsidePadding (2f);
+		iconSettingsLabel.height = 18f;
+		Util.DropShadowHeaderLabel (iconSettingsLabel, sectionName, GUIStyles.SecondHeaderStyle, Color.white*0.9f);
+
+		//Icon Settings expand button
+		Rect iconSettingsExpand = iconSettingsLabel;
+		iconSettingsExpand.height = 15f;
+		iconSettingsExpand.xMin = iconSettingsLabel.xMax - 18f;
+
+		showBool.GetType ();
+
+		if (GUI.Button (iconSettingsExpand, showBool ? "-" : "+")) {
+			showBool = !showBool;
+		}
+			
+		return showBool;
 	}
+
 
 	void CreateNewItem(){
 
@@ -292,6 +341,19 @@ public class ItemCreatorWindow : EditorWindow {
 		//Make sure a path was selected
 		if (path != "") {
 			Item newItem = Item.CreateInstance<Item> ();
+
+			//make new folder if it doesn't exist
+			string[] folderNames = path.Split(new char[]{'/'}, System.StringSplitOptions.None);
+//			foreach (string s in folderNames) {
+//				Debug.Log (s);
+//			}
+			string itemName = folderNames[folderNames.Length-1].Substring(0, folderNames[folderNames.Length-1].Length-6);
+			if (!AssetDatabase.IsValidFolder (path.Substring (0, path.Length - 6))) {
+				string folderPath = path.Substring (0, path.Length - folderNames [folderNames.Length - 1].Length-1); Debug.Log (folderPath);
+				string newFolderGUID = AssetDatabase.CreateFolder (folderPath, itemName);
+				path = AssetDatabase.GUIDToAssetPath (newFolderGUID) + "/" + folderNames[folderNames.Length-1];
+			}
+			Debug.Log ("new path: "+path);
 			AssetDatabase.CreateAsset (newItem, path);
 			newItem.name = AssetDatabase.LoadAssetAtPath (path,typeof(Item)).name;
 
@@ -300,8 +362,7 @@ public class ItemCreatorWindow : EditorWindow {
 		}
 	}
 
-	void SaveCurrentItem(){
-		//save the current item
+	void SaveItem(){
 		Debug.LogWarning("OH SHIT! THIS FEATURE IS NOT IMPLEMENTED YET! ARRRGGGHHHH!!!!!");
 	}
 
