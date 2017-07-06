@@ -15,7 +15,7 @@ public class Item : ScriptableObject{
 	public Texture2D iconTexture;
 	public Sprite icon;
 
-	[HideInInspector]
+	//[HideInInspector]
 	public IconSettings iconSettings;
 
 	//Settings
@@ -50,6 +50,7 @@ public class Item : ScriptableObject{
 public class IconSettings{
 	public Vector3 itemOffset = Vector3.zero;
 	public Vector3 itemRotation = Vector3.zero;
+	public float itemDistance = 1f;
 	public bool orthographicCamera = true;
 	public float orthographicScale = 5f;
 

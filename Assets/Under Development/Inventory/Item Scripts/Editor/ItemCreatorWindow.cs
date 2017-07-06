@@ -20,7 +20,6 @@ public class ItemCreatorWindow : EditorWindow {
 	public GameObject iconCamEnvironment;
 	private GameObject iconCamEnvInstance;
 
-
 	private float gridSquareSize = 100f;
 	private float previewScale = 1f;
 
@@ -183,47 +182,57 @@ public class ItemCreatorWindow : EditorWindow {
 							envScript.hasSpawnedModel = true;
 						}
 						if (envScript != null) {
+
 							//Camera options (saved in IconSettings in currentItem)
 							Rect orthoBool = scaleSliderRect;
-							orthoBool.width = scaleSliderRect.width / 2;
+							orthoBool.width = scaleSliderRect.width / 2 - 20f;
 							orthoBool.y = scaleSliderRect.y;
-							currentItem.iconSettings.orthographicCamera = EditorGUI.ToggleLeft (orthoBool, "Orthographic Camera", currentItem.iconSettings.orthographicCamera);
+							EditorGUIUtility.labelWidth = 50f;
 
 							if (currentItem.iconSettings.orthographicCamera) {
+								currentItem.iconSettings.orthographicCamera = EditorGUI.ToggleLeft (orthoBool, "Orthographic Camera", currentItem.iconSettings.orthographicCamera);
 								Rect orthoSize = orthoBool;
 								orthoSize.x = orthoBool.xMax;
-								currentItem.iconSettings.orthographicScale = EditorGUI.Slider (orthoSize, currentItem.iconSettings.orthographicScale, 0.1f, 50f);
+								orthoSize.xMax = offsetRect.xMax;
+								currentItem.iconSettings.orthographicScale = EditorGUI.Slider (orthoSize, "Scale", currentItem.iconSettings.orthographicScale, 0.1f, 50f);
 							} else {
+
 								Rect persp = orthoBool;
 								persp.x = orthoBool.xMax;
-								if (!EditorGUI.ToggleLeft (persp, "Perspective Camera", true)) {
+								persp.xMax = offsetRect.xMax;
+								currentItem.iconSettings.itemDistance = EditorGUI.Slider (persp, "Distance", currentItem.iconSettings.itemDistance, 0.1f, 20f);
+								if (!EditorGUI.ToggleLeft (orthoBool, "Perspective Camera", true)) {
 									currentItem.iconSettings.orthographicCamera = true;
 								}
 							}
 
 							//Update the camera in the Icon Design Environment
+							if (!currentItem.iconSettings.orthographicCamera) {
+								Vector3 camToItem = envScript.itemParent.transform.position - envScript.camera.transform.position;
+								Vector3 newPos = envScript.camera.transform.position + (camToItem.normalized * currentItem.iconSettings.itemDistance);
+								Debug.Log (newPos + "(" + currentItem.iconSettings.itemDistance + ")");
+								envScript.itemParent.transform.position = newPos;
+							}
 							envScript.camera.orthographic = currentItem.iconSettings.orthographicCamera;
 							envScript.camera.orthographicSize = currentItem.iconSettings.orthographicScale;
-							envScript.itemParent.position = currentItem.iconSettings.itemOffset;
+							envScript.itemParent.position += currentItem.iconSettings.itemOffset;
 							envScript.itemParent.eulerAngles = currentItem.iconSettings.itemRotation;
 
-							//Update camera viewport rect
-							float x, y;
-							x = currentItem.width;
-							y = currentItem.height;
-							float max = x > y ? x : y;
-							x /= max;
-							y /= max;
-							envScript.camera.rect = new Rect (0, 0, x, y);
 
 							//Update the render texture
 							if (Event.current.type == EventType.repaint) {
 								RenderTexture renderTex = RenderTexture.active;
-//								if (envScript.camera.targetTexture != null) {
-//									envScript.camera.targetTexture.Release ();
-//								}
-//								envScript.camera.targetTexture = new RenderTexture (512 * currentItem.width, 512 * currentItem.height, );
-								RenderTexture.active = envScript.camera.targetTexture;
+
+								if (envScript.camera.targetTexture.name != (currentItem.name + " (" + currentItem.width + "x" + currentItem.height + ")")) {
+									RenderTexture r = new RenderTexture (256 * currentItem.width, 256 * currentItem.height, 32, RenderTextureFormat.ARGB32);
+									r.Create ();
+									r.name = currentItem.name + " (" + currentItem.width + "x" + currentItem.height + ")";
+									envScript.camera.targetTexture = r;
+									RenderTexture.active = r;
+								} else {
+									RenderTexture.active = envScript.camera.targetTexture;
+								}
+
 								Texture2D tex = new Texture2D (envScript.camera.targetTexture.width, envScript.camera.targetTexture.height);
 								tex.ReadPixels (new Rect (0, 0, tex.width, tex.height), 0, 0);
 								tex.Apply ();
