@@ -58,11 +58,11 @@ public class AlchemyTool : MonoBehaviour {
         }
 
         
-        a.IngredientElements[Element.Sin] += toolElements[Element.Sin];
-        a.IngredientElements[Element.Beauty] += toolElements[Element.Beauty];
-        a.IngredientElements[Element.Secrets] += toolElements[Element.Secrets];
-        a.IngredientElements[Element.Force] += toolElements[Element.Force];
-        a.IngredientElements[Element.Change] += toolElements[Element.Change];
+        a.ingredientElements[Element.Sin] += toolElements[Element.Sin];
+        a.ingredientElements[Element.Beauty] += toolElements[Element.Beauty];
+        a.ingredientElements[Element.Secrets] += toolElements[Element.Secrets];
+        a.ingredientElements[Element.Force] += toolElements[Element.Force];
+        a.ingredientElements[Element.Change] += toolElements[Element.Change];
 
         foreach(IngredientStates s in setStates)
         {
@@ -71,7 +71,7 @@ public class AlchemyTool : MonoBehaviour {
 
         Instantiate(particles, transform.position, Quaternion.identity);
 
-        print("INGREDIENT IS " + a.IngredientElements[Element.Sin]+" "+ a.IngredientElements[Element.Change]+" "+ a.IngredientElements[Element.Force] + " " + a.IngredientElements[Element.Secrets] + " " + a.IngredientElements[Element.Beauty]);
+        print("INGREDIENT IS " + a.ingredientElements[Element.Sin]+" "+ a.ingredientElements[Element.Change]+" "+ a.ingredientElements[Element.Force] + " " + a.ingredientElements[Element.Secrets] + " " + a.ingredientElements[Element.Beauty]);
 
         return a; //DO WHATEVS
     }

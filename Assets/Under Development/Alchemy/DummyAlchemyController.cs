@@ -49,6 +49,22 @@ public class DummyAlchemyController : MonoBehaviour {
 
 
 
+                if(objectHit.gameObject.CompareTag("AlchemyMixSurface"))
+                {
+                    if(ingredient != null)
+                    {
+                        ingredient.transform.position = hit.point;
+                        objectHit.gameObject.GetComponent<AlchemyMixer>().AddIngredient(ingredient);
+                        ingredient = null;
+                    }
+                    else
+                    {
+                        objectHit.gameObject.GetComponent<AlchemyMixer>().Mix();
+                    }
+                }
+
+
+
                 // Do something with the object that was hit by the raycast.
             }
         }

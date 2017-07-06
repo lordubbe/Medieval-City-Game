@@ -11,7 +11,7 @@ public class AlchemyIngredient : MonoBehaviour {
     [SerializeField, Header("SIN, CHANGE, FORCE, SECRETS, BEAUTY")]
     List<int> elementValues = new List<int>() { 0, 0, 0, 0, 0 };
 
-    public Dictionary<Element, int> IngredientElements = new Dictionary<Element, int>
+    public Dictionary<Element, int> ingredientElements = new Dictionary<Element, int>
         {
             { Element.Beauty, 0 },
             { Element.Sin, 0 },
@@ -34,11 +34,11 @@ public class AlchemyIngredient : MonoBehaviour {
 
     void SetElements()
     {
-        IngredientElements[Element.Sin] = elementValues[0];
-        IngredientElements[Element.Change] = elementValues[1];
-        IngredientElements[Element.Force] = elementValues[2];
-        IngredientElements[Element.Secrets] = elementValues[3];
-        IngredientElements[Element.Beauty] = elementValues[4];
+        ingredientElements[Element.Sin] = elementValues[0];
+        ingredientElements[Element.Change] = elementValues[1];
+        ingredientElements[Element.Force] = elementValues[2];
+        ingredientElements[Element.Secrets] = elementValues[3];
+        ingredientElements[Element.Beauty] = elementValues[4];
 
     }
 }
