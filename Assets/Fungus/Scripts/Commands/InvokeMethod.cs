@@ -96,6 +96,7 @@ namespace Fungus
                 objMethod = UnityEvent.GetValidMethodInfo(objComponent, targetMethod, parameterTypes);
             }
         }
+        
 
         protected virtual IEnumerator ExecuteCoroutine()
         {
