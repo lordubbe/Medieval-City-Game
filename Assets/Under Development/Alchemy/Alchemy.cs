@@ -2,8 +2,12 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-
 public enum Element { Force, Secrets, Beauty, Sin, Change }
+
+public enum IngredientProperties { Distillable, Boilable, Burnable, Pulverizable, Will_Rot, Will_Dry }
+
+public enum IngredientStates { Distilled, Boiled, Burned, Pulverized, Rotten, Dried }
+
 
 public class Alchemy : MonoBehaviour {
 

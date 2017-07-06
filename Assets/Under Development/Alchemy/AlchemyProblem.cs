@@ -6,9 +6,10 @@ public abstract class AlchemyProblem : MonoBehaviour {
 
 
     //ORDER: SIN, CHANGE, FORCE, SECRETS, BEAUTY
-    [SerializeField]
-    List<int> elementValues = new List<int>();
-    
+
+    [SerializeField, Header("SIN, CHANGE, FORCE, SECRETS, BEAUTY")]
+    List<int> elementValues = new List<int> { 0, 0, 0, 0, 0 };
+
     public Dictionary<Element, int> unbalancedElements = new Dictionary<Element, int>
         {
             { Element.Beauty, 0 },
@@ -21,9 +22,7 @@ public abstract class AlchemyProblem : MonoBehaviour {
     // Use this for initialization
     virtual public void Start () {
         SetElementTargets();
-
     }
-
 
     void SetElementTargets()
     {
