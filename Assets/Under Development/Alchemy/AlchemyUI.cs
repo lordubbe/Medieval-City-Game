@@ -2,9 +2,11 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using System;
 
 public class AlchemyUI : MonoBehaviour {
 
+    [SerializeField]
     List<Image> alcImages = new List<Image>();
 
 	// Use this for initialization
