@@ -6,6 +6,9 @@ using UnityEngine;
 public class Item : ScriptableObject{
 
 	public string name;
+//	public List<ItemProperties> properties;
+//	public List<ItemStatus> propertyStatuses;
+
 	public GameObject runtimeRepresentation;
 	public string flavorText;
 
@@ -33,6 +36,11 @@ public class Item : ScriptableObject{
 		height = int.Parse(dim [1]);
 		flavorText = text;
 		runtimeRepresentation = prefab;
+	}
+
+	public Item(){
+		width = 1;
+		height = 1;
 	}
 
 	void OnValidate(){

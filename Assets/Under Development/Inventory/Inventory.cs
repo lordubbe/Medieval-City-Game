@@ -2,13 +2,15 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Inventory : MonoBehaviour {
+public class Inventory : Item {
 
+	public InventorySpace[,] spaces;
 	public int availableSpace;
 
-	public InventorySpace[][] space;
-	
-
-//	public void AddItemToInventory(
-
+	public Inventory(int width, int height){
+		this.width = width;
+		this.height = height;
+		spaces = new InventorySpace[width, height];
+		availableSpace = width * height;
+	}
 }

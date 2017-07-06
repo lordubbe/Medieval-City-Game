@@ -131,7 +131,7 @@ public class ItemCreatorWindow : EditorWindow {
 				Rect itemPreviewSettingsSpace = itemPreviewSpace;
 				itemPreviewSettingsSpace.x = itemPreviewSpace.xMax + 5;
 				itemPreviewSettingsSpace.xMax = space.xMax - 15;
-				itemPreviewSettingsSpace.height = showIconSettings ? 120 : 20f;
+				itemPreviewSettingsSpace.height = showIconSettings ? 145 : 20f;
 
 				if (SectionUI ("Icon Settings", itemPreviewSettingsSpace, ref showIconSettings)) {
 					totalOffset += 120f;
@@ -155,6 +155,23 @@ public class ItemCreatorWindow : EditorWindow {
 					Rect rotationRect = offsetRect;
 					rotationRect.y = offsetRect.yMax + 15f;
 					currentItem.iconSettings.itemRotation = EditorGUI.Vector3Field (rotationRect, "Item Rotation", currentItem.iconSettings.itemRotation);
+
+					//Generate Sprite button
+					Rect spriteButton = rotationRect;
+					spriteButton.y = rotationRect.yMax + 45;
+					if (GUI.Button (spriteButton, "Generate Sprite")) {
+						Sprite icon = Sprite.Create (currentItem.iconTexture, new Rect (0, 0, currentItem.iconTexture.width, currentItem.iconTexture.height), new Vector2 (0.5f, 0.5f));
+						icon.name = currentItem.name + "_icon";
+						currentItem.icon = icon;
+
+						string currentItemPath = AssetDatabase.GetAssetPath (currentItem);
+						string[] pathFolders = currentItemPath.Split (new char[]{ '/' }, System.StringSplitOptions.None);
+
+						string currentItemPathNoAsset = currentItemPath.Substring (0, currentItemPath.Length - pathFolders [pathFolders.Length - 1].Length-1); 
+						currentItemPathNoAsset += "/" + icon.name + ".asset";
+
+						AssetDatabase.CreateAsset (icon, currentItemPathNoAsset);
+					}
 
 
 					//Load the snapshot environment if it's not already loaded
@@ -240,6 +257,9 @@ public class ItemCreatorWindow : EditorWindow {
 								RenderTexture.active = renderTex;
 							}
 						}
+
+
+
 					}
 				}else {
 					if (iconCamEnvInstance != null) {
@@ -279,7 +299,7 @@ public class ItemCreatorWindow : EditorWindow {
 					//Dimensions
 					Rect itemDimFields = flavTextField;
 					itemDimFields.y = flavTextField.yMax + 5;
-					itemDimFields.height = 20f;
+					itemDimFields.height = 15f;
 
 					Rect itemDimPart = itemDimFields;
 					itemDimPart.width /= 2;
@@ -290,23 +310,18 @@ public class ItemCreatorWindow : EditorWindow {
 					currentItem.height = EditorGUI.IntField (itemDimPart, "Height", currentItem.height);
 					EditorGUIUtility.labelWidth = prevLabelWidth;
 
-					//Generate Sprite button
-					Rect spriteButton = itemDimFields;
-					spriteButton.y = itemDimFields.yMax + 5;
-					if (GUI.Button (spriteButton, "Generate Sprite")) {
-						Sprite icon = Sprite.Create (currentItem.iconTexture, new Rect (0, 0, currentItem.iconTexture.width, currentItem.iconTexture.height), new Vector2 (0.5f, 0.5f));
-						icon.name = currentItem.name + "_icon";
-						currentItem.icon = icon;
+					Rect isContainerBox = itemDimFields;
+					isContainerBox.y = itemDimFields.yMax + 5;
 
-						string currentItemPath = AssetDatabase.GetAssetPath (currentItem);
-						string[] pathFolders = currentItemPath.Split (new char[]{ '/' }, System.StringSplitOptions.None);
-
-						string currentItemPathNoAsset = currentItemPath.Substring (0, currentItemPath.Length - pathFolders [pathFolders.Length - 1].Length-1); 
-						currentItemPathNoAsset += "/" + icon.name + ".asset";
-						
-						AssetDatabase.CreateAsset (icon, currentItemPathNoAsset);
+					//Inventory
+					if (currentItem is Inventory) {
+						isContainerBox.yMax = itemSettingsSpace.yMax - 2;
+						GUI.Box (isContainerBox, "Inventory Settings");
+					} else {
+						if (GUI.Button (isContainerBox, "Add Inventory")) {
+							UpgradeToInventory (currentItem);
+						}
 					}
-
 				}
 
 			} else {
@@ -341,6 +356,22 @@ public class ItemCreatorWindow : EditorWindow {
 		return showBool;
 	}
 
+	void UpgradeToInventory (Item item){
+		//Create inventory and copy all settings
+		Inventory newItem = Inventory.CreateInstance<Inventory> ();
+		newItem.width = item.width;
+		newItem.height = item.height;
+		newItem.iconSettings = item.iconSettings;
+		newItem.iconTexture = item.iconTexture;
+		newItem.icon = item.icon;
+		newItem.flavorText = item.flavorText;
+		newItem.name = item.name;
+		newItem.runtimeRepresentation = item.runtimeRepresentation;
+
+		string path = AssetDatabase.GetAssetPath (item);
+		AssetDatabase.CreateAsset (newItem, path);
+		currentItem = newItem;
+	}
 
 	void CreateNewItem(){
 
@@ -361,7 +392,6 @@ public class ItemCreatorWindow : EditorWindow {
 				string newFolderGUID = AssetDatabase.CreateFolder (folderPath, itemName);
 				path = AssetDatabase.GUIDToAssetPath (newFolderGUID) + "/" + folderNames[folderNames.Length-1];
 			}
-			Debug.Log ("new path: "+path);
 			AssetDatabase.CreateAsset (newItem, path);
 			newItem.name = AssetDatabase.LoadAssetAtPath (path,typeof(Item)).name;
 
