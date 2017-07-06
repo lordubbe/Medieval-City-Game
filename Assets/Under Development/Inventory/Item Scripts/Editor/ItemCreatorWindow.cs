@@ -210,7 +210,6 @@ public class ItemCreatorWindow : EditorWindow {
 							if (!currentItem.iconSettings.orthographicCamera) {
 								Vector3 camToItem = envScript.itemParent.transform.position - envScript.camera.transform.position;
 								Vector3 newPos = envScript.camera.transform.position + (camToItem.normalized * currentItem.iconSettings.itemDistance);
-								Debug.Log (newPos + "(" + currentItem.iconSettings.itemDistance + ")");
 								envScript.itemParent.transform.position = newPos;
 							}
 							envScript.camera.orthographic = currentItem.iconSettings.orthographicCamera;
