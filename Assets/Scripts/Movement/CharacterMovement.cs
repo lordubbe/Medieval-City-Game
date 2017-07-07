@@ -29,6 +29,7 @@ public class CharacterMovement : MonoBehaviour {
     public float acceleration = 8.5f;
     public float friction = 6f;
     public float airAcceleration = 0.85f;
+    public float oppositeAccelerationScale = 0.5f;
     public float jumpForce = 7.3f;
     public float gravity = 22f;
     public float slopeAngleLimit = 45f;
@@ -105,8 +106,12 @@ public class CharacterMovement : MonoBehaviour {
     Vector3 Accelerate(Vector3 currVel, Vector3 flatDir, float scale, float deltaTime)
     {
         //Limiting velocity
+        Vector3 flatVel = new Vector3(currVel.x, 0f, currVel.z).normalized;
+        float oppositeScaling = 1f + Mathf.Abs(Vector3.Dot((flatDir - flatVel), flatVel)) * oppositeAccelerationScale;
+        Debug.Log(oppositeScaling);
         float projVel = Vector3.Dot(currVel, flatDir);
-        float accelVel = isGrounded ? acceleration * scale * deltaTime : airAcceleration * deltaTime;
+        float accelVel = isGrounded ? acceleration * oppositeScaling * scale * deltaTime : airAcceleration * deltaTime;
+        
         if (projVel + accelVel > maxVeclocity * scale)
         {
             accelVel = maxVeclocity * scale - projVel;
