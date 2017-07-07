@@ -51,7 +51,8 @@ public class CharacterMovement : MonoBehaviour {
 
         //Check if we're grounded
         RaycastHit groundHitInfo;
-        float castDistance = playerCollider.height / 2f + safetyWidth * 1.01f;
+        float castDistance = playerCollider.height / 2f - playerCollider.radius + safetyWidth * 1.01f;
+
         if (Physics.SphereCast(transform.position + playerCollider.center, playerCollider.radius, -transform.up, out groundHitInfo, castDistance))
         {
             float groundAngle = Vector3.Angle(Vector3.up, groundHitInfo.normal);
@@ -105,13 +106,13 @@ public class CharacterMovement : MonoBehaviour {
 
     Vector3 Accelerate(Vector3 currVel, Vector3 flatDir, float scale, float deltaTime)
     {
-        //Limiting velocity
         Vector3 flatVel = new Vector3(currVel.x, 0f, currVel.z).normalized;
-        float oppositeScaling = 1f + Mathf.Abs(Vector3.Dot((flatDir - flatVel), flatVel)) * oppositeAccelerationScale;
-        Debug.Log(oppositeScaling);
+        float oppositeAngleScale = Mathf.Max(1f - Vector3.Angle(-flatDir, flatVel) / 140f, 0f);
+        float oppositeScaling = 1f + Mathf.Abs(Vector3.Dot((flatDir - flatVel), flatVel)) * oppositeAccelerationScale * oppositeAngleScale;
         float projVel = Vector3.Dot(currVel, flatDir);
         float accelVel = isGrounded ? acceleration * oppositeScaling * scale * deltaTime : airAcceleration * deltaTime;
-        
+
+        //Limiting velocity
         if (projVel + accelVel > maxVeclocity * scale)
         {
             accelVel = maxVeclocity * scale - projVel;
@@ -122,8 +123,8 @@ public class CharacterMovement : MonoBehaviour {
 
     Vector3 CheckForCollision(Vector3 currVel, CapsuleCollider characterCollider, float deltaTime, int checks)
     {
-        Vector3 capsuleTopSpherePos = transform.position + characterCollider.center + characterCollider.height / 2f * Vector3.up;
-        Vector3 capsuleBottomSpherePos = transform.position + characterCollider.center - characterCollider.height / 2f * Vector3.up;
+        Vector3 capsuleTopSpherePos = transform.position + characterCollider.center + (characterCollider.height / 2f - characterCollider.radius) * Vector3.up;
+        Vector3 capsuleBottomSpherePos = transform.position + characterCollider.center - (characterCollider.height / 2f - characterCollider.radius) * Vector3.up;
         Vector3 rayVector = currVel * deltaTime;
         RaycastHit hitInfo;
         //TODO make movement work on slopes
