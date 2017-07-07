@@ -63,7 +63,7 @@ public class Alchemy : MonoBehaviour {
         c.ingredientElements[Element.Force] = a.ingredientElements[Element.Force] + b.ingredientElements[Element.Force];
         c.ingredientElements[Element.Secrets] = a.ingredientElements[Element.Secrets] + b.ingredientElements[Element.Secrets];
         c.ingredientElements[Element.Beauty] = a.ingredientElements[Element.Beauty] + b.ingredientElements[Element.Beauty];
-
+        c.useDefaults = false;
 
         Destroy(a.gameObject);
         Destroy(b.gameObject);

@@ -10,6 +10,11 @@ public abstract class AlchemyProblem : MonoBehaviour {
     [SerializeField, Header("SIN, CHANGE, FORCE, SECRETS, BEAUTY")]
     List<int> elementValues = new List<int> { 0, 0, 0, 0, 0 };
 
+    [SerializeField]
+    AlchemyUI alcUI;
+
+    public bool useDefaults = true;
+
     public Dictionary<Element, int> unbalancedElements = new Dictionary<Element, int>
         {
             { Element.Beauty, 0 },
@@ -21,7 +26,10 @@ public abstract class AlchemyProblem : MonoBehaviour {
 
     // Use this for initialization
     virtual public void Start () {
-        SetElementTargets();
+        if(useDefaults)
+            SetElementTargets();
+
+        alcUI.SetGoal(unbalancedElements);
     }
 
     void SetElementTargets()
@@ -34,16 +42,26 @@ public abstract class AlchemyProblem : MonoBehaviour {
 
     }
 
-    public bool CheckSuccess() {
+    public bool CheckSuccess(AlchemyIngredient a) {
+        int successes = 0;
         foreach(Element e in unbalancedElements.Keys)
         {
-            if(unbalancedElements[e] < 10 && unbalancedElements[e] > -10)
+            if(a.ingredientElements[e] < (unbalancedElements[e] + 10) && a.ingredientElements[e] > (unbalancedElements[e] -10))
             {
-                print("SUCESS");
-                return true;
+                successes++;
             }
         }
-        return false;
+        if(successes == 5)
+        {
+            print("SUCCESS");
+            return true;
+        }
+        else
+        {
+            print("FAILURE");
+            return false;
+        }
+        
     }
 
 

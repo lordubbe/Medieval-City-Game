@@ -11,6 +11,8 @@ public class AlchemyIngredient : MonoBehaviour {
     [SerializeField, Header("SIN, CHANGE, FORCE, SECRETS, BEAUTY")]
     List<int> elementValues = new List<int>() { 0, 0, 0, 0, 0 };
 
+    public bool useDefaults = true;
+
     public Dictionary<Element, int> ingredientElements = new Dictionary<Element, int>
         {
             { Element.Beauty, 0 },
@@ -22,7 +24,8 @@ public class AlchemyIngredient : MonoBehaviour {
 
     // Use this for initialization
     void Start () {
-        SetElements();
+        if(useDefaults)
+            SetElements();
 
     }
 	
