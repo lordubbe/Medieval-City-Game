@@ -25,7 +25,7 @@ public class CharacterMovement : MonoBehaviour {
 
     public int maxCollisionChecks = 10;
     public float safetyWidth = 0.02f;
-    public float maxVeclocity = 5.5f;
+    public float maxVelocity = 5.5f;
     public float acceleration = 8.5f;
     public float friction = 6f;
     public float airAcceleration = 0.85f;
@@ -110,15 +110,48 @@ public class CharacterMovement : MonoBehaviour {
         float oppositeAngleScale = Mathf.Max(1f - Vector3.Angle(-flatDir, flatVel) / 140f, 0f);
         float oppositeScaling = 1f + Mathf.Abs(Vector3.Dot((flatDir - flatVel), flatVel)) * oppositeAccelerationScale * oppositeAngleScale;
         float projVel = Vector3.Dot(currVel, flatDir);
-        float accelVel = isGrounded ? acceleration * oppositeScaling * scale * deltaTime : airAcceleration * deltaTime;
+
+        bool goingForwards;
+        float directionAccelScale;
+        float directionVelScale = CheckDirection(flatDir, out goingForwards, out directionAccelScale);
+
+        float accel = acceleration;
+        float maxVel = maxVelocity;
+        if(goingForwards && currVel.magnitude > maxVelocity)
+        {
+            accel = extraForwardsAcceleration;
+            maxVel = extraForwardsMaxVelocity;
+        }
+
+        float accelVel = isGrounded ? accel * directionAccelScale * oppositeScaling * scale * deltaTime : airAcceleration * deltaTime;
 
         //Limiting velocity
-        if (projVel + accelVel > maxVeclocity * scale)
+        if (projVel + accelVel > maxVel * directionVelScale * scale)
         {
-            accelVel = maxVeclocity * scale - projVel;
+            accelVel = maxVel * directionVelScale * scale - projVel;
         }
 
         return currVel + flatDir * accelVel;
+    }
+
+    float CheckDirection(Vector3 flatDir, out bool goingForwards, out float directionAccelerationScale)
+    {
+        float angle = Vector3.Angle(flatDir, transform.forward);
+        float scale;
+        if(angle < 90f)
+        {
+            goingForwards = true;
+            scale = angle / 90f;
+            directionAccelerationScale = 1f - (1f - sidewaysAccelerationScale) * scale;
+            return 1f - (1f - sidewaysVeclocityScale) * scale;
+        }
+        else
+        {
+            goingForwards = false;
+            scale = (angle - 90f) / 90f;
+            directionAccelerationScale = sidewaysAccelerationScale - (sidewaysAccelerationScale - backwardsAccelerationScale) * scale;
+            return sidewaysVeclocityScale - (sidewaysVeclocityScale - backwardsVeclocityScale) * scale;
+        }
     }
 
     Vector3 CheckForCollision(Vector3 currVel, CapsuleCollider characterCollider, float deltaTime, int checks)
