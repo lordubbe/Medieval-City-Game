@@ -99,7 +99,7 @@ public class AlchemyTestPlace : MonoBehaviour {
         b.useDefaults = false;
         goal.useDefaults = false;
 
-
+		print("done "+goal.unbalancedElements[Element.Beauty]+" "+goal.unbalancedElements[Element.Change]+" "+goal.unbalancedElements[Element.Force]);
     }
 
 }
