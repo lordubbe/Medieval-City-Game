@@ -9,11 +9,11 @@ public class AlchemyIngredient : MonoBehaviour {
     public List<IngredientStates> states = new List<IngredientStates>();
 
     [SerializeField, Header("SIN, CHANGE, FORCE, SECRETS, BEAUTY")]
-    List<int> elementValues = new List<int>() { 0, 0, 0, 0, 0 };
+    List<float> elementValues = new List<float>() { 0f, 0f, 0f, 0f, 0f };
 
     public bool useDefaults = true;
 
-    public Dictionary<Element, int> ingredientElements = new Dictionary<Element, int>
+    public Dictionary<Element, float> ingredientElements = new Dictionary<Element, float>
         {
             { Element.Beauty, 0 },
             { Element.Sin, 0 },

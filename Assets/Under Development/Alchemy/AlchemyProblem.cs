@@ -15,7 +15,7 @@ public abstract class AlchemyProblem : MonoBehaviour {
 
     public bool useDefaults = true;
 
-    public Dictionary<Element, int> unbalancedElements = new Dictionary<Element, int>
+    public Dictionary<Element, float> unbalancedElements = new Dictionary<Element, float>
         {
             { Element.Beauty, 0 },
             { Element.Sin, 0 },
