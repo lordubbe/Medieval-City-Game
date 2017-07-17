@@ -15,7 +15,7 @@ public abstract class AlchemyProblem : MonoBehaviour {
 
     public bool useDefaults = true;
 
-    public Dictionary<Element, int> unbalancedElements = new Dictionary<Element, int>
+    public Dictionary<Element, float> unbalancedElements = new Dictionary<Element, float>
         {
             { Element.Beauty, 0 },
             { Element.Sin, 0 },
@@ -26,14 +26,17 @@ public abstract class AlchemyProblem : MonoBehaviour {
 
     // Use this for initialization
     virtual public void Start () {
-        if(useDefaults)
-            SetElementTargets();
+		print("problem start");
+		// if(useDefaults)
+        //    SetElementTargets();
 
         alcUI.SetGoal(unbalancedElements);
+
     }
 
     void SetElementTargets()
     {
+		print("setting targets");
         unbalancedElements[Element.Sin] = elementValues[0];
         unbalancedElements[Element.Change] = elementValues[1];
         unbalancedElements[Element.Force] = elementValues[2];

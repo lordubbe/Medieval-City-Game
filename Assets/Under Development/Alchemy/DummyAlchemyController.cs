@@ -69,8 +69,6 @@ public class DummyAlchemyController : MonoBehaviour {
                     }
                 }
 
-
-
                 // Do something with the object that was hit by the raycast.
             }
         }
@@ -82,30 +80,28 @@ public class DummyAlchemyController : MonoBehaviour {
         if (Physics.Raycast(lookRay, out lookHit))
         {
             Transform objectHit = lookHit.transform;
+			lookingAt = objectHit.gameObject;
 
             if (objectHit.gameObject.GetComponent<AlchemyIngredient>() != null)
             {
-                // if (ingredient != null)
-                //{
-                //    alcUI.UpdateUI(ingredient.ingredientElements);
-                //}
-                // else
-                //{
-                alcUI.UpdateUI(objectHit.gameObject.GetComponent<AlchemyIngredient>().ingredientElements, objectHit.gameObject, objectHit.gameObject.GetComponent<AlchemyIngredient>().properties);
+
+                alcUI.UpdateUIING(objectHit.gameObject.GetComponent<AlchemyIngredient>().ingredientElements, objectHit.gameObject, objectHit.gameObject.GetComponent<AlchemyIngredient>().properties);
                 // }
             }
             else if (objectHit.gameObject.GetComponent<AlchemyTool>() != null)
             {
-                alcUI.UpdateUI(objectHit.gameObject.GetComponent<AlchemyTool>().toolElements, objectHit.gameObject, objectHit.gameObject.GetComponent<AlchemyTool>().requiredProperties);
+				alcUI.UpdateUITOOL(objectHit.gameObject.GetComponent<AlchemyTool>().toolElementDestinations, objectHit.gameObject, objectHit.gameObject.GetComponent<AlchemyTool>().requiredProperties);
+				if(ingredient != null){
+					alcUI.UpdateUIING(ingredient.ingredientElements, ingredient.gameObject, ingredient.properties);
+				}
+
             }
             else
             {
                 if (ingredient != null)
                 {
-                    alcUI.UpdateUI(ingredient.ingredientElements, objectHit.gameObject,ingredient.properties);
+                    alcUI.UpdateUIING(ingredient.ingredientElements, objectHit.gameObject,ingredient.properties);
                 }
-
-                //         alcUI.UpdateUI(); SEND EMPTY
 
 
             }

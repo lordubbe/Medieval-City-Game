@@ -7,7 +7,7 @@ public class AlchemyProblemFever : AlchemyProblem {
 	// Use this for initialization
 	public override void Start () {
         base.Start();
-        print(unbalancedElements[Element.Sin]);
+        //print(unbalancedElements[Element.Sin]);
 	}
 	
 }

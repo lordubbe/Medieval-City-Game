@@ -11,7 +11,7 @@ public enum IngredientStates { Distilled, Boiled, Burned, Pulverized, Rotten, Dr
 
 public class Alchemy : MonoBehaviour {
 
-    public Dictionary<Element, int> elements = new Dictionary<Element, int>
+    public Dictionary<Element, float> elements = new Dictionary<Element, float>
         {
             { Element.Beauty, 0 },
             { Element.Sin, 0 },
