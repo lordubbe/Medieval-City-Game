@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public abstract class StoryState : MonoBehaviour {
+public class StoryState : MonoBehaviour {
 
-	public string name;
+	public string statename;
 
 
 
@@ -21,3 +21,5 @@ public abstract class StoryState : MonoBehaviour {
 
 
 /// DUNNNNO how to make these editable for me for individual states and stories. think I need some editor thing. but maybe I can just do it in script.
+/// like, i need delegates? or something? can't really do delegates in editor?
+/// 

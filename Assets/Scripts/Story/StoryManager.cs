@@ -15,7 +15,7 @@ public struct Bond {
 
 public class StoryManager : MonoBehaviour {
 
-
+	public StoryLoader sloader;
 	public Dictionary<flag, bool> storyflags = new Dictionary<flag, bool>();
 	public List<Story> stories = new List<Story>();
 
@@ -23,6 +23,17 @@ public class StoryManager : MonoBehaviour {
 	public Dictionary<string,int> qualities = new Dictionary<string,int>();
 	public List<Bond> bonds = new List<Bond>();
 
+
+	void Start(){
+
+		sloader.LoadStories();
+
+	}
+	void Update(){
+		if(Input.GetKey(KeyCode.P)){
+			stories[0].StartStory(true);
+		}
+	}
 
 
 	public void StartStory(Story s)
@@ -49,6 +60,17 @@ public class StoryManager : MonoBehaviour {
 	{
 		return storyflags[f];
 	}
+
+	public void SetFlag(Story s, string ss, bool b)
+	{
+		s.storyflags[ss] = b;
+	}
+
+	public bool GetFlag(Story s, string ss)
+	{
+		return s.storyflags[ss];
+	}
+
 
 	public void SetReputation(reputationFactions r, int val)
 	{

@@ -54,15 +54,6 @@ public class AlchemyTool : MonoBehaviour {
             return a;
         }
 
-        foreach(IngredientStates s in setStates)
-        {
-            if (a.states.Exists(x => x == s))
-            {
-                print("this ingredient has already been through this. Why torture it?");
-                return a;
-            }
-        }
-
 		shouldAffect = true;
 		StartCoroutine(AffectIngredientOverTime(a));
 

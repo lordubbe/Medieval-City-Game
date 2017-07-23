@@ -34,7 +34,7 @@ namespace Fungus
 
             methods = new List<MethodInfo>();
             methods = targetMonobehaviour.GetType().GetMethods(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic).ToList();
-            Debug.Log("IT IS "+methods.Find(x => x.Name == methodName).Invoke(targetMonobehaviour, new object[0]));
+            //Debug.Log("IT IS "+methods.Find(x => x.Name == methodName).Invoke(targetMonobehaviour, new object[0]));
             bool check = (bool)methods.Find(x => x.Name == methodName).Invoke(targetMonobehaviour, new object[0]);
 
             if (check)
