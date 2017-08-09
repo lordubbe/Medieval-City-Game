@@ -10,7 +10,7 @@ public class StoryLoader : MonoBehaviour {
 	public List<Flowchart> flowsForStories = new List<Flowchart>();
 
 	public void LoadStories(){
-
+/*
 		Story newStory = new Story();
 		newStory.storyname = "The First Story";
 		newStory.flowcharts.Add(flowsForStories[0]);
@@ -23,12 +23,10 @@ public class StoryLoader : MonoBehaviour {
 		newStory.states.Add(s1); newStory.states.Add(s2);
 
 		Dictionary<string, bool> newFlags = new Dictionary<string, bool>();
-		newFlags.Add("item delivered",false);
-		newFlags.Add("merchant angry",false);
 
 		newStory.storyflags = newFlags;
 
-		sman.stories.Add(newStory);
+		sman.stories.Add(newStory);*/
 	}
 		
 }

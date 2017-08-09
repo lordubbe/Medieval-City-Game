@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using Fungus;
+using System.Linq;
 
 public enum flag { startedgame, foundthirdfire, dead }
 
@@ -27,6 +28,9 @@ public class StoryManager : MonoBehaviour {
 	void Start(){
 
 		sloader.LoadStories();
+
+		stories = GetComponentsInChildren<Story>().ToList();
+
 
 	}
 	void Update(){

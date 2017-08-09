@@ -12,7 +12,7 @@ using System.Collections.Generic;
 namespace Fungus.EditorUtils
 {
     [CustomEditor(typeof(InvokeMethod))]
-    public class InvokeMethodEditor : CommandEditor
+    public class IfCheckFlagEditor : CommandEditor
     {
         InvokeMethod targetMethod;
 
