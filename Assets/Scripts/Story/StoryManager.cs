@@ -24,6 +24,7 @@ public class StoryManager : MonoBehaviour {
 	public Dictionary<string,int> qualities = new Dictionary<string,int>();
 	public List<Bond> bonds = new List<Bond>();
 
+    public ConversationManager convos;
 
 	void Start(){
 
