@@ -18,7 +18,7 @@ public class StoryManager : MonoBehaviour {
 
 	public StoryLoader sloader;
 	public Dictionary<flag, bool> storyflags = new Dictionary<flag, bool>();
-	public List<Story> stories = new List<Story>();
+	public List<QuestStory> stories = new List<QuestStory>();
 
 	public Dictionary<reputationFactions,int> reputations = new Dictionary<reputationFactions, int>();
 	public Dictionary<string,int> qualities = new Dictionary<string,int>();
@@ -30,7 +30,7 @@ public class StoryManager : MonoBehaviour {
 
 		sloader.LoadStories();
 
-		stories = GetComponentsInChildren<Story>().ToList();
+		stories = GetComponentsInChildren<QuestStory>().ToList();
 
 
 	}
@@ -41,17 +41,13 @@ public class StoryManager : MonoBehaviour {
 	}
 
 
-	public void StartStory(Story s)
+	public void StartStory(QuestStory s)
 	{
-
 		s.isActive = true;
 		s.ChangeState(s.states[0]); //potentially change!
-
-
-
 	}
 
-	public void UpdateStory(Story s, StoryState newState)
+	public void UpdateStory(QuestStory s, StoryState newState)
 	{
 		s.ChangeState(newState);
 	}
@@ -66,12 +62,12 @@ public class StoryManager : MonoBehaviour {
 		return storyflags[f];
 	}
 
-	public void SetFlag(Story s, string ss, bool b)
+	public void SetFlag(QuestStory s, string ss, bool b)
 	{
 		s.storyflags[ss] = b;
 	}
 
-	public bool GetFlag(Story s, string ss)
+	public bool GetFlag(QuestStory s, string ss)
 	{
 		return s.storyflags[ss];
 	}
