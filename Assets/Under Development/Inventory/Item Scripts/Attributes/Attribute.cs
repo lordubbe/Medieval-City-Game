@@ -64,7 +64,7 @@ public static class AttributeCompletionLabels{
 			return "pulverized";
 			break;
 		case Attribute.Type.Rottable:
-			return "rotted";
+			return "rotten";
 			break;
 		case Attribute.Type.Dryable:
 			return "dried";
@@ -79,7 +79,7 @@ public static class AttributeCompletionLabels{
 			return "evaporated";
 			break;
 		case Attribute.Type.Subliminable:
-			return "sublimed?";
+			return "gaseous";
 			break;
 		case Attribute.Type.Crystallizable:
 			return "crystallized";
