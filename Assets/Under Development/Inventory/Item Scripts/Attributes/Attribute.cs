@@ -20,10 +20,7 @@ public class Attribute {
 
 	public Type type;
 	private State state = State.Not;
-	private float progress {
-		get { return progress; }
-		set { progress = Mathf.Clamp01 (value); }
-	}
+	private float progress;
 
 	public State GetState(){
 		return state;
