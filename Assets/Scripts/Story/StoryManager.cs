@@ -1,41 +1,52 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using Fungus;
+using System.Linq;
 
 public enum flag { startedgame, foundthirdfire, dead }
 
 public enum reputationFactions { University, Commoners, Nobility } 
 
 public struct Bond {
-	public Character character;
+    public Person p;
 	public int bondValue;
 	public List<string> bondTexts;
 };
 
 public class StoryManager : MonoBehaviour {
 
-
+	public StoryLoader sloader;
 	public Dictionary<flag, bool> storyflags = new Dictionary<flag, bool>();
-	public List<Story> stories = new List<Story>();
+	public List<QuestStory> stories = new List<QuestStory>();
 
 	public Dictionary<reputationFactions,int> reputations = new Dictionary<reputationFactions, int>();
 	public Dictionary<string,int> qualities = new Dictionary<string,int>();
 	public List<Bond> bonds = new List<Bond>();
 
+    public ConversationManager convos;
 
+	void Start(){
 
-	public void StartStory(Story s)
-	{
+		sloader.LoadStories();
 
-		s.isActive = true;
-		s.ChangeState(s.states[0]); //potentially change!
-
+		stories = GetComponentsInChildren<QuestStory>().ToList();
 
 
 	}
+	void Update(){
+		if(Input.GetKey(KeyCode.P)){
+			stories[0].StartStory(true);
+		}
+	}
 
-	public void UpdateStory(Story s, StoryState newState)
+
+	public void StartStory(QuestStory s)
+	{
+		s.isActive = true;
+		s.ChangeState(s.states[0]); //potentially change!
+	}
+
+	public void UpdateStory(QuestStory s, StoryState newState)
 	{
 		s.ChangeState(newState);
 	}
@@ -49,6 +60,17 @@ public class StoryManager : MonoBehaviour {
 	{
 		return storyflags[f];
 	}
+
+	public void SetFlag(QuestStory s, string ss, bool b)
+	{
+		s.storyflags[ss] = b;
+	}
+
+	public bool GetFlag(QuestStory s, string ss)
+	{
+		return s.storyflags[ss];
+	}
+
 
 	public void SetReputation(reputationFactions r, int val)
 	{
@@ -70,18 +92,20 @@ public class StoryManager : MonoBehaviour {
 		qualities[q] = val;
 	}
 
-	public void SetBond(Character c, int newBond)
+	public void SetBond(Person p, int newBond)
 	{
-		Bond toChange = bonds.Find(x=>x.character = c);
+		Bond toChange = bonds.Find(x=>x.p == p);
 		toChange.bondValue = newBond;
 	}
 
-	public int GetBondValue(Character c){
-		return bonds.Find(x=>x.character = c).bondValue;
+	public int GetBondValue(Person p)
+    {
+		return bonds.Find(x=>x.p == p).bondValue;
 	}
 
-	public string GetBondText(Character c){
-		return bonds.Find(x=>x.character = c).bondTexts[bonds.Find(x=>x.character = c).bondValue];
+	public string GetBondText(Person p)
+    {
+		return bonds.Find(x=>x.p == p).bondTexts[bonds.Find(x=>x.p == p).bondValue];
 	}
 		
 }

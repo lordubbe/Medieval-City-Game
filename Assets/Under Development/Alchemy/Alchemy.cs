@@ -11,7 +11,7 @@ public enum IngredientStates { Distilled, Boiled, Burned, Pulverized, Rotten, Dr
 
 public class Alchemy : MonoBehaviour {
 
-    public Dictionary<Element, int> elements = new Dictionary<Element, int>
+    public Dictionary<Element, float> elements = new Dictionary<Element, float>
         {
             { Element.Beauty, 0 },
             { Element.Sin, 0 },
@@ -63,7 +63,7 @@ public class Alchemy : MonoBehaviour {
         c.ingredientElements[Element.Force] = a.ingredientElements[Element.Force] + b.ingredientElements[Element.Force];
         c.ingredientElements[Element.Secrets] = a.ingredientElements[Element.Secrets] + b.ingredientElements[Element.Secrets];
         c.ingredientElements[Element.Beauty] = a.ingredientElements[Element.Beauty] + b.ingredientElements[Element.Beauty];
-
+        c.useDefaults = false;
 
         Destroy(a.gameObject);
         Destroy(b.gameObject);

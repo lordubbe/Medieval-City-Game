@@ -7,6 +7,12 @@ public class DummyAlchemyController : MonoBehaviour {
     public AlchemyIngredient ingredient;
     public AlchemyTool tool;
     public AlchemyProblem prob;
+
+    public GameObject lookingAt;
+
+
+    [SerializeField]
+    AlchemyUI alcUI;
 	// Use this for initialization
 	void Start () {
 		
@@ -44,7 +50,7 @@ public class DummyAlchemyController : MonoBehaviour {
                 if (objectHit.gameObject.GetComponent<AlchemyProblem>() != null)
                 {
                     prob = objectHit.gameObject.GetComponent<AlchemyProblem>();
-                    prob.CheckSuccess();
+                    prob.CheckSuccess(ingredient);
                 }
 
 
@@ -63,10 +69,46 @@ public class DummyAlchemyController : MonoBehaviour {
                     }
                 }
 
-
-
                 // Do something with the object that was hit by the raycast.
             }
         }
-	}
+
+
+
+        Ray lookRay = Camera.main.ScreenPointToRay(Input.mousePosition);
+        RaycastHit lookHit;
+        if (Physics.Raycast(lookRay, out lookHit))
+        {
+            Transform objectHit = lookHit.transform;
+			lookingAt = objectHit.gameObject;
+
+            if (objectHit.gameObject.GetComponent<AlchemyIngredient>() != null)
+            {
+
+                alcUI.UpdateUIING(objectHit.gameObject.GetComponent<AlchemyIngredient>().ingredientElements, objectHit.gameObject, objectHit.gameObject.GetComponent<AlchemyIngredient>().properties);
+                // }
+            }
+            else if (objectHit.gameObject.GetComponent<AlchemyTool>() != null)
+            {
+				if(ingredient != null){
+					alcUI.UpdateUIING(ingredient.ingredientElements, ingredient.gameObject, ingredient.properties);
+				}
+				alcUI.UpdateUITOOL(objectHit.gameObject.GetComponent<AlchemyTool>().toolElementDestinations, objectHit.gameObject, objectHit.gameObject.GetComponent<AlchemyTool>().requiredProperties);
+            }
+            else
+            {
+                if (ingredient != null)
+                {
+                    alcUI.UpdateUIING(ingredient.ingredientElements, objectHit.gameObject,ingredient.properties);
+                }
+
+
+            }
+
+        }
+            
+
+
+
+    }
 }

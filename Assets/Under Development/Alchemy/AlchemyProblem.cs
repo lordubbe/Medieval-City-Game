@@ -10,7 +10,12 @@ public abstract class AlchemyProblem : MonoBehaviour {
     [SerializeField, Header("SIN, CHANGE, FORCE, SECRETS, BEAUTY")]
     List<int> elementValues = new List<int> { 0, 0, 0, 0, 0 };
 
-    public Dictionary<Element, int> unbalancedElements = new Dictionary<Element, int>
+    [SerializeField]
+    AlchemyUI alcUI;
+
+    public bool useDefaults = true;
+
+    public Dictionary<Element, float> unbalancedElements = new Dictionary<Element, float>
         {
             { Element.Beauty, 0 },
             { Element.Sin, 0 },
@@ -21,11 +26,17 @@ public abstract class AlchemyProblem : MonoBehaviour {
 
     // Use this for initialization
     virtual public void Start () {
-        SetElementTargets();
+		print("problem start");
+		// if(useDefaults)
+        //    SetElementTargets();
+
+        alcUI.SetGoal(unbalancedElements);
+
     }
 
     void SetElementTargets()
     {
+		print("setting targets");
         unbalancedElements[Element.Sin] = elementValues[0];
         unbalancedElements[Element.Change] = elementValues[1];
         unbalancedElements[Element.Force] = elementValues[2];
@@ -34,16 +45,26 @@ public abstract class AlchemyProblem : MonoBehaviour {
 
     }
 
-    public bool CheckSuccess() {
+    public bool CheckSuccess(AlchemyIngredient a) {
+        int successes = 0;
         foreach(Element e in unbalancedElements.Keys)
         {
-            if(unbalancedElements[e] < 10 && unbalancedElements[e] > -10)
+            if(a.ingredientElements[e] < (unbalancedElements[e] + 10) && a.ingredientElements[e] > (unbalancedElements[e] -10))
             {
-                print("SUCESS");
-                return true;
+                successes++;
             }
         }
-        return false;
+        if(successes == 5)
+        {
+            print("SUCCESS");
+            return true;
+        }
+        else
+        {
+            print("FAILURE");
+            return false;
+        }
+        
     }
 
 

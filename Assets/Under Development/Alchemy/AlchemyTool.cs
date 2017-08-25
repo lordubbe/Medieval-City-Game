@@ -10,7 +10,10 @@ public class AlchemyTool : MonoBehaviour {
     [SerializeField, Header("SIN, CHANGE, FORCE, SECRETS, BEAUTY")]
     List<int> elementAffect = new List<int> { 0,0,0,0,0 };
 
-    public Dictionary<Element, int> toolElements = new Dictionary<Element, int>
+	[SerializeField]
+	List<bool> elementsToChange = new List<bool> { false, false, false, false, false };
+
+    public Dictionary<Element, float> toolElementDestinations = new Dictionary<Element, float>
         {
             { Element.Beauty, 0 },
             { Element.Sin, 0 },
@@ -18,6 +21,10 @@ public class AlchemyTool : MonoBehaviour {
             { Element.Force, 0 },
             { Element.Secrets, 0 }
         };
+		
+	public float changeSpeed = 0.2f;
+	public bool shouldAffect = false;
+
 
 
     [SerializeField]
@@ -31,12 +38,11 @@ public class AlchemyTool : MonoBehaviour {
 
     void SetElements()
     {
-        toolElements[Element.Sin] = elementAffect[0];
-        toolElements[Element.Change] = elementAffect[1];
-        toolElements[Element.Force] = elementAffect[2];
-        toolElements[Element.Secrets] = elementAffect[3];
-        toolElements[Element.Beauty] = elementAffect[4];
-
+        toolElementDestinations[Element.Sin] = elementAffect[0];
+        toolElementDestinations[Element.Change] = elementAffect[1];
+        toolElementDestinations[Element.Force] = elementAffect[2];
+        toolElementDestinations[Element.Secrets] = elementAffect[3];
+        toolElementDestinations[Element.Beauty] = elementAffect[4];
     }
 
 
@@ -48,21 +54,8 @@ public class AlchemyTool : MonoBehaviour {
             return a;
         }
 
-        foreach(IngredientStates s in setStates)
-        {
-            if (a.states.Exists(x => x == s))
-            {
-                print("this ingredient has already been through this. Why torture it?");
-                return a;
-            }
-        }
-
-        
-        a.ingredientElements[Element.Sin] += toolElements[Element.Sin];
-        a.ingredientElements[Element.Beauty] += toolElements[Element.Beauty];
-        a.ingredientElements[Element.Secrets] += toolElements[Element.Secrets];
-        a.ingredientElements[Element.Force] += toolElements[Element.Force];
-        a.ingredientElements[Element.Change] += toolElements[Element.Change];
+		shouldAffect = true;
+		StartCoroutine(AffectIngredientOverTime(a));
 
         foreach(IngredientStates s in setStates)
         {
@@ -71,11 +64,50 @@ public class AlchemyTool : MonoBehaviour {
 
         Instantiate(particles, transform.position, Quaternion.identity);
 
-        print("INGREDIENT IS " + a.ingredientElements[Element.Sin]+" "+ a.ingredientElements[Element.Change]+" "+ a.ingredientElements[Element.Force] + " " + a.ingredientElements[Element.Secrets] + " " + a.ingredientElements[Element.Beauty]);
 
         return a; //DO WHATEVS
     }
-	
+
+
+
+	public IEnumerator AffectIngredientOverTime(AlchemyIngredient a){
+
+		//while((a.ingredientElements[Element.Sin] < toolElementDestinations[Element.Sin])
+
+		DummyAlchemyController dum = GameObject.FindGameObjectWithTag("Player").GetComponent<DummyAlchemyController>();
+		//DUM. FIX. Later. Needs to be changed. Don't like dependency on a controller. should refer to a manager or something. a general "What Object am I looking at" thing.
+
+		print("starting affecting");
+
+		while(shouldAffect){
+
+			if(elementsToChange[0]){ a.ingredientElements[Element.Sin] = Mathf.Lerp(a.ingredientElements[Element.Sin],toolElementDestinations[Element.Sin],Time.deltaTime*changeSpeed); }
+			if(elementsToChange[1]){ a.ingredientElements[Element.Change] = Mathf.Lerp(a.ingredientElements[Element.Change],toolElementDestinations[Element.Change],Time.deltaTime*changeSpeed); }
+			if(elementsToChange[2]){ a.ingredientElements[Element.Force] = Mathf.Lerp(a.ingredientElements[Element.Force],toolElementDestinations[Element.Force],Time.deltaTime*changeSpeed); }
+			if(elementsToChange[3]){ a.ingredientElements[Element.Secrets] = Mathf.Lerp(a.ingredientElements[Element.Secrets],toolElementDestinations[Element.Secrets],Time.deltaTime*changeSpeed); }
+			if(elementsToChange[4]){ a.ingredientElements[Element.Beauty] = Mathf.Lerp(a.ingredientElements[Element.Beauty],toolElementDestinations[Element.Beauty],Time.deltaTime*changeSpeed); }
+
+			//need to make the UI update
+
+			//print("INGREDIENT IS " + a.ingredientElements[Element.Sin]+" "+ a.ingredientElements[Element.Change]+" "+ a.ingredientElements[Element.Force] + " " + a.ingredientElements[Element.Secrets] + " " + a.ingredientElements[Element.Beauty]);
+
+			if(dum.lookingAt != gameObject){
+				shouldAffect = false;
+			}
+
+			yield return new WaitForEndOfFrame();
+		}
+
+		print("Stopped affecting");
+
+
+	}
+
+
+
+
+
+
 	
     public bool TestProperties(AlchemyIngredient i)
     {
@@ -88,8 +120,6 @@ public class AlchemyTool : MonoBehaviour {
             }
         }
         print("ALL GOOD");
-        return true;
-
-        
+        return true;        
     }
 }
