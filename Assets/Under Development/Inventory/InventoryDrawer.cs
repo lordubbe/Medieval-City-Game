@@ -48,7 +48,7 @@ public class InventoryDrawer : MonoBehaviour {
 
 	void OnItemDrop(GameObject item){
 		ItemBehaviour objBeh = ItemHandler.currentlyHeldItem.GetComponent<ItemBehaviour> ();
-		if (objBeh.overInventory) {
+		if (objBeh.overInventory && isAvailable) {
 			inventory.AddItem (item, currentX, currentY);
 			item.transform.parent = this.transform;
 			objBeh.inInventory = true;
@@ -86,10 +86,8 @@ public class InventoryDrawer : MonoBehaviour {
 				img.color = inventory.spaces [x].isActive ? Color.white.WithAlpha (0.5f) : Color.black.WithAlpha (0f); //toggle color
 
 				// Check if current tile has an item
-//				int idx = Util.coordsToIndex (inventory, x, y);
-
-				if (inventory.spaces [x].itemObj != null) {
-					Debug.Log ("Item found at " + Util.indexToCoords (inventory, x) + " (" + inventory.spaces [x].itemObj.name + ")"); 
+				if (inventory.spaces [x].item != null) {
+//					Debug.Log ("Item found at " + Util.indexToCoords (inventory, x) + " (" + inventory.spaces [x].itemObj.name + ")"); 
 				}
 
 			}

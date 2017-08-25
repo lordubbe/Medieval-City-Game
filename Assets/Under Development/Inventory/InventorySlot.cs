@@ -12,6 +12,7 @@ public class InventorySlot : MonoBehaviour {
 	public Text text;
 
 	public void toggleInventory(){
+		//TODO: In the future, the inventory slot should dynamically spawn an inventory in a referenced Canvas ...
 		drawer.ToggleInventory ();
 	}
 
