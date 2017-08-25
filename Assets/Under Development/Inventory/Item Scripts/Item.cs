@@ -22,6 +22,9 @@ public class Item : ScriptableObject{
 	//[HideInInspector]
 	public IconSettings iconSettings;
 
+    public Elements elements;
+    public List<Attribute> attributes;
+
 	/// <summary>
 	/// Initializes a new <see cref="Item"/> with the given information.
 	/// </summary>

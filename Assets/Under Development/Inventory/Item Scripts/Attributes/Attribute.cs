@@ -1,24 +1,30 @@
 ﻿using UnityEngine;
 
 public delegate void ProgressEvent();
+
+public enum AttributeType
+{
+    Distillable, Boilable, Burnable, Pulverizable, Rottable, Dryable, Edible, Soluble, Vaporable, Subliminable, Crystallizable, Filterable, Calcinable
+}
+
+[System.Serializable]
 public class Attribute {
 
-	public Attribute(Type attributeType){
+	public Attribute(AttributeType attributeType){
 		type = attributeType;
 		progress = 0f;
 	}
 
-	public enum Type{
-		Distillable, Boilable, Burnable, Pulverizable, Rottable, Dryable, Edible, Soluble, Vaporable, Subliminable, Crystallizable, Filterable, Calcinable
-	}
 
-	public enum State{
-		Not, Lightly, Moderately, Very, Fully
-	}
 
-	public ProgressEvent OnComplete;
+    public enum State
+    {
+        Not, Lightly, Moderately, Very, Fully
+    }
 
-	public Type type;
+    public ProgressEvent OnComplete;
+
+	public AttributeType type;
 	private State state = State.Not;
 	private float progress {
 		get { return progress; }
