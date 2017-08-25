@@ -38,6 +38,8 @@ public class CharacterMovement : MonoBehaviour {
     // Use this for initialization
     void Awake () {
         playerCollider = GetComponent<CapsuleCollider>();
+
+
 	}
 
     //TODO make a summary

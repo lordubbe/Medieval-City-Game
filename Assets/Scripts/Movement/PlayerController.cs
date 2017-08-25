@@ -12,6 +12,7 @@ public class PlayerController : MonoBehaviour {
     Vector3 moveDir;
 
     [SerializeField] MouseLook mouseLook;
+    public bool inCursorMode = false;
 
 	// Use this for initialization
 	void Start () {
@@ -25,11 +26,16 @@ public class PlayerController : MonoBehaviour {
         }
 
         mouseLook.Init(transform, characterCam.transform);
+
+        mouseLook.LockCursor();
 	}
 	
 	// Update is called once per frame
 	void Update () {
-        mouseLook.UpdateLook(Time.deltaTime);
+        if (!inCursorMode)
+        {
+            mouseLook.UpdateLook(Time.deltaTime);
+        }
 
         moveInput.x = Input.GetAxis("Horizontal");
         moveInput.y = Input.GetAxis("Vertical");
@@ -38,6 +44,20 @@ public class PlayerController : MonoBehaviour {
         moveDir.y = Input.GetButton("Jump") ? 1f : 0f;
 
         character.Move(moveDir, Time.deltaTime);
+
+        if (Input.GetKeyDown(KeyCode.LeftAlt))
+        {
+            if (!inCursorMode)
+            {
+                inCursorMode = true;
+                mouseLook.UnlockCursor();
+            }
+            else
+            {
+                inCursorMode = false;
+                mouseLook.LockCursor();
+            }
+        }
 	}
 
     void AddCharacterCamera()
