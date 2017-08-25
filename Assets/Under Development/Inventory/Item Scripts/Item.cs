@@ -5,7 +5,7 @@ using UnityEngine;
 [System.Serializable]
 public class Item : ScriptableObject{
 
-	public string name;
+    public string name;
 //	public List<ItemProperties> properties;
 //	public List<ItemStatus> propertyStatuses;
 
@@ -22,7 +22,7 @@ public class Item : ScriptableObject{
 	//[HideInInspector]
 	public IconSettings iconSettings;
 
-    public Elements elements;
+    private Elements elements;
     public List<Attribute> attributes;
 
 	/// <summary>
@@ -52,6 +52,16 @@ public class Item : ScriptableObject{
 			height = 1;
 		}
 	}
+
+    public Elements GetElements()
+    {
+        Elements elToSend = elements;
+        foreach(Attribute a in attributes)
+        {
+            elToSend += a.elementsModifier;
+        }
+        return elToSend;
+    }
 
 }
 
