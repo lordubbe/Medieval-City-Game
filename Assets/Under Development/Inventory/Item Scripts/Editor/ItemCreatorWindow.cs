@@ -25,6 +25,7 @@ public class ItemCreatorWindow : EditorWindow {
 
 	public Item currentItem;
 
+	private bool itemIsDirty;
 
 
 	void OnGUI(){
@@ -69,8 +70,14 @@ public class ItemCreatorWindow : EditorWindow {
 		//save item
 		Rect saveItemRect = newItemRect;
 		saveItemRect.x = newItemRect.xMax;
-		if (GUI.Button (saveItemRect.WithHorizontalPadding(2f), "Save Item (autosaves)")) {
-			SaveItem ();
+		if (itemIsDirty) {
+			GUI.color = Color.red;
+			if (GUI.Button (saveItemRect.WithHorizontalPadding (2f), "Save Item")) {
+				SaveItem ();
+			}
+			GUI.color = Color.white;
+		} else {
+			EditorGUI.LabelField (saveItemRect.WithHorizontalPadding (2f), "Item is up to date!");
 		}
 
 		//load item
@@ -108,21 +115,31 @@ public class ItemCreatorWindow : EditorWindow {
 			Rect itemNameSpace = editSpace;
 			Util.DropShadowHeaderLabel (itemNameSpace, "Now editing '"+currentItem.name+"'", GUIStyles.ItemNameStyle, Color.white);
 
+			//Only draw if currentItem.runtimeRepresentation has been selected
 			if (currentItem.runtimeRepresentation != null) {
+
+				//If a texture doesn't already exist, fetch the standard AssetPreview texture
 				if (currentItem.iconTexture != null) {
-//					GUI.DrawTexture (itemPreviewSpace, (Texture)currentItem.icon);
 					EditorGUI.DrawTextureTransparent(itemPreviewSpace, (Texture)currentItem.iconTexture);
 				} else {
 					currentItem.iconTexture = AssetPreview.GetAssetPreview (currentItem.runtimeRepresentation);
-					currentItem.iconTexture.filterMode = FilterMode.Bilinear;
-					currentItem.iconTexture.alphaIsTransparency = true;
+					int maxCount = 50;
+					while (currentItem.iconTexture == null && maxCount > 0) {
+						EditorGUI.HelpBox (itemPreviewSpace, "Loading preview texture...", MessageType.Info);
+						maxCount--;
+					}
+					if (currentItem.iconTexture != null) {
+						currentItem.iconTexture.filterMode = FilterMode.Bilinear;
+						currentItem.iconTexture.alphaIsTransparency = true;
+					} else {
+						EditorGUI.HelpBox (itemPreviewSpace, "Couldn't get preview texture :(", MessageType.Error);
+					}
 				}
 
-				//draw grid
+				//draw item space grid
 				for (int x = 0; x < currentItem.width; x++) {
 					for (int y = 0; y < currentItem.height; y++) {
 						Rect square = new Rect (itemPreviewSpace.x + x * gridSquareSize, itemPreviewSpace.y + y * gridSquareSize, gridSquareSize, gridSquareSize);
-						//EditorGUI.DrawRect (square.WithInsidePadding (1f), Color.white.WithAlpha (0.2f));
 						Util.DrawOutlineRect(square.WithInsidePadding(2f), Color.black.WithAlpha(0f), Color.white.WithAlpha(0.45f), 1f);
 					}
 				}
@@ -131,7 +148,7 @@ public class ItemCreatorWindow : EditorWindow {
 				Rect itemPreviewSettingsSpace = itemPreviewSpace;
 				itemPreviewSettingsSpace.x = itemPreviewSpace.xMax + 5;
 				itemPreviewSettingsSpace.xMax = space.xMax - 15;
-				itemPreviewSettingsSpace.height = showIconSettings ? 145 : 20f;
+				itemPreviewSettingsSpace.height = showIconSettings ? 100 : 20f;
 
 				if (SectionUI ("Icon Settings", itemPreviewSettingsSpace, ref showIconSettings)) {
 					totalOffset += 120f;
@@ -157,23 +174,13 @@ public class ItemCreatorWindow : EditorWindow {
 					currentItem.iconSettings.itemRotation = EditorGUI.Vector3Field (rotationRect, "Item Rotation", currentItem.iconSettings.itemRotation);
 
 					//Generate Sprite button
-					Rect spriteButton = rotationRect;
-					spriteButton.y = rotationRect.yMax + 45;
-					if (GUI.Button (spriteButton, "Generate Sprite")) {
-						Sprite icon = Sprite.Create (currentItem.iconTexture, new Rect (0, 0, currentItem.iconTexture.width, currentItem.iconTexture.height), new Vector2 (0.5f, 0.5f));
-						icon.name = currentItem.name + "_icon";
-						currentItem.icon = icon;
+//					Rect spriteButton = rotationRect;
+//					spriteButton.y = rotationRect.yMax + 25;
 
-						string currentItemPath = AssetDatabase.GetAssetPath (currentItem);
-						string[] pathFolders = currentItemPath.Split (new char[]{ '/' }, System.StringSplitOptions.None);
-
-						string currentItemPathNoAsset = currentItemPath.Substring (0, currentItemPath.Length - pathFolders [pathFolders.Length - 1].Length-1); 
-						currentItemPathNoAsset += "/" + icon.name + ".asset";
-
-						AssetDatabase.CreateAsset (icon, currentItemPathNoAsset);
-					}
-
-
+//					if (GUI.Button (spriteButton, "Generate Sprite")) {
+//						GenerateSpriteAndTexture ();
+//					}
+						
 					//Load the snapshot environment if it's not already loaded
 					if (iconCamEnvironment == null) {
 						string[] paths = AssetDatabase.FindAssets ("Item Icon Snapshot Environment");
@@ -182,20 +189,29 @@ public class ItemCreatorWindow : EditorWindow {
 					} else {
 						//spawn it if it's not already spawned
 						if (iconCamEnvInstance == null) {
-							iconCamEnvInstance = Instantiate (iconCamEnvironment, new Vector3 (0, 0, 0), Quaternion.identity) as GameObject;
-							iconCamEnvInstance.name = "Item Icon Snapshot Environment";
+							//Check if it's already present in the scene (from previous session, etc.)
+							GameObject e = GameObject.Find("Item Icon Snapshot Environment");
+							//link it if it already exists
+							if (e != null) {
+								DestroyImmediate (e);
+							} else {
+								//Instantiate a new version if it doesn't already exist
+								iconCamEnvInstance = Instantiate (iconCamEnvironment, new Vector3 (0, 0, 0), Quaternion.identity) as GameObject;
+								iconCamEnvInstance.name = "Item Icon Snapshot Environment";
+							}
 						}
 
 						//Render to the render texture
 						ItemIconEditorEnvironment envScript = iconCamEnvInstance.GetComponent<ItemIconEditorEnvironment>();
 
-						Rect blackBG = rotationRect;
-						blackBG.y = rotationRect.yMax + 20f;
-						envScript.BGactive = EditorGUI.ToggleLeft (blackBG, "Black Background", envScript.BGactive);
-
 						if (!envScript.hasSpawnedModel) {
 							GameObject itemModel = (GameObject)Instantiate (currentItem.runtimeRepresentation, envScript.itemParent.transform.position, Quaternion.identity, envScript.itemParent);
+							//set layer to the one rendered by the icon environment
 							itemModel.layer = LayerMask.NameToLayer ("Item Setup");
+							foreach (Transform child in itemModel.transform) {
+								child.gameObject.layer = LayerMask.NameToLayer ("Item Setup");
+							}
+							
 							envScript.hasSpawnedModel = true;
 						}
 						if (envScript != null) {
@@ -223,22 +239,23 @@ public class ItemCreatorWindow : EditorWindow {
 								}
 							}
 
-							//Update the camera in the Icon Design Environment
-							if (!currentItem.iconSettings.orthographicCamera) {
-								Vector3 camToItem = envScript.itemParent.transform.position - envScript.camera.transform.position;
-								Vector3 newPos = envScript.camera.transform.position + (camToItem.normalized * currentItem.iconSettings.itemDistance);
-								envScript.itemParent.transform.position = newPos;
+							//Check if icon has been updated
+							Vector3 newPos = envScript.camera.transform.forward * currentItem.iconSettings.itemDistance;
+							if (envScript.camera.orthographic != currentItem.iconSettings.orthographicCamera ||
+							envScript.camera.orthographicSize != currentItem.iconSettings.orthographicScale ||
+							envScript.itemParent.position != envScript.camera.transform.position + (newPos + currentItem.iconSettings.itemOffset) ||
+							envScript.itemParent.eulerAngles != currentItem.iconSettings.itemRotation) 
+							{
+								SetItemDirty (); //TODO: Only set dirty when it's because values have been changed. NOT when the item was just changed while the icon settings was opened.
+								envScript.camera.orthographic = currentItem.iconSettings.orthographicCamera;
+								envScript.camera.orthographicSize = currentItem.iconSettings.orthographicScale;
+								envScript.itemParent.position = envScript.camera.transform.position + (newPos + currentItem.iconSettings.itemOffset);
+								envScript.itemParent.eulerAngles = currentItem.iconSettings.itemRotation;
 							}
-							envScript.camera.orthographic = currentItem.iconSettings.orthographicCamera;
-							envScript.camera.orthographicSize = currentItem.iconSettings.orthographicScale;
-							envScript.itemParent.position += currentItem.iconSettings.itemOffset;
-							envScript.itemParent.eulerAngles = currentItem.iconSettings.itemRotation;
 
-
-							//Update the render texture
-							if (Event.current.type == EventType.repaint) {
+							//Update the render texture (only when item is marked as dirty)
+							if (Event.current.type == EventType.repaint && itemIsDirty) {
 								RenderTexture renderTex = RenderTexture.active;
-
 								if (envScript.camera.targetTexture.name != (currentItem.name + " (" + currentItem.width + "x" + currentItem.height + ")")) {
 									RenderTexture r = new RenderTexture (256 * currentItem.width, 256 * currentItem.height, 32, RenderTextureFormat.ARGB32);
 									r.Create ();
@@ -253,7 +270,7 @@ public class ItemCreatorWindow : EditorWindow {
 								tex.ReadPixels (new Rect (0, 0, tex.width, tex.height), 0, 0);
 								tex.Apply ();
 								currentItem.iconTexture = tex;
-								currentItem.iconTexture.name = "HOV!";
+								currentItem.iconTexture.name = (currentItem.name+"_icon_texture");
 								RenderTexture.active = renderTex;
 							}
 						}
@@ -272,9 +289,17 @@ public class ItemCreatorWindow : EditorWindow {
 				//ITEM SETTINGS
 				Rect itemSettingsSpace = itemPreviewSettingsSpace;
 				itemSettingsSpace.y = itemPreviewSettingsSpace.yMax + 5f;
-				itemSettingsSpace.height = showItemSettings ? 320 : 20f;
+				itemSettingsSpace.height = showItemSettings ? 435 : 20f;
 
 				if (SectionUI ("Item Settings", itemSettingsSpace, ref showItemSettings)) {
+
+					Rect autoSaveInfo = itemSettingsSpace;
+					autoSaveInfo.width /= 2;
+					autoSaveInfo.height = 16;
+					autoSaveInfo.x += autoSaveInfo.width;
+					autoSaveInfo.y += 4f;
+					EditorGUI.LabelField (autoSaveInfo, "(autosaves)");
+
 					//Name field
 					Rect nameField = itemSettingsSpace;
 					nameField.height = 15f;
@@ -315,17 +340,156 @@ public class ItemCreatorWindow : EditorWindow {
 
 					//Inventory
 					if (currentItem is Inventory) {
+						Inventory currentItemInv = currentItem as Inventory;
 						isContainerBox.yMax = itemSettingsSpace.yMax - 2;
-						GUI.Box (isContainerBox, "Inventory Settings");
+						GUI.Box (isContainerBox, "");
+
+						Rect downGradeButton = isContainerBox;
+						downGradeButton.xMin = isContainerBox.xMax - 110f;
+						downGradeButton.yMax = isContainerBox.y + 18;
+						downGradeButton.y += 2f;
+
+						if (GUI.Button (downGradeButton, "Remove Inventory")) {
+							InventoryToItem ((Inventory)currentItem);
+						}
+
+						//Inventory Scale
+						Rect invDimFields = itemDimFields;
+						invDimFields.width /= 2;
+						invDimFields.y = downGradeButton.yMax + 5;
+						EditorGUI.LabelField (invDimFields, "Textures should be square.");
+						invDimFields.x += invDimFields.width - 2;
+
+						Rect invDimPart = invDimFields;
+						invDimPart.width /= 2;
+						EditorGUIUtility.labelWidth = 40f;
+						currentItemInv.inventoryWidth = (int)Mathf.Clamp(EditorGUI.IntField (invDimPart, "Width", currentItemInv.inventoryWidth), 1, int.MaxValue);
+						invDimPart.x += invDimPart.width;
+						currentItemInv.inventoryHeight = (int)EditorGUI.IntField (invDimPart, "Height", currentItemInv.inventoryWidth);
+						EditorGUIUtility.labelWidth = prevLabelWidth;
+
+						//Inventory Background Image Picker
+						Rect bgImg = invDimFields;
+						bgImg.width /= 2;
+						bgImg.x += bgImg.width;
+						bgImg.y = invDimPart.yMax + 5;
+						bgImg.height = bgImg.width;
+
+						currentItemInv.inventoryBackgroundImage = (Texture2D) EditorGUI.ObjectField (bgImg, currentItemInv.inventoryBackgroundImage, typeof(Texture2D), false);
+
+						//Show preview
+						Rect invPrev = invDimFields;
+						invPrev.y = invDimFields.yMax + 5;
+						invPrev.x -= invPrev.width - 5;
+						invPrev.xMax = bgImg.x - 5;
+						invPrev.height = invPrev.width;
+
+						if (currentItemInv.inventoryBackgroundImage != null) {
+							//draw texture preview
+							GUI.DrawTexture (invPrev, currentItemInv.inventoryBackgroundImage);
+
+							//Create sprite if it doesn't already exist
+							if (currentItemInv.inventoryBackgroundSprite == null || currentItemInv.inventoryBackgroundImage != currentItemInv.inventoryBackgroundSprite.texture) {
+								Sprite bg = Sprite.Create (currentItemInv.inventoryBackgroundImage, new Rect (0, 0, currentItemInv.inventoryBackgroundImage.width, currentItemInv.inventoryBackgroundImage.height), new Vector2 (0, 0));
+								bg.name = (currentItemInv.name + "_InvBG_Sprite");
+								currentItemInv.inventoryBackgroundSprite = bg;
+
+								string currentItemPath = AssetDatabase.GetAssetPath (currentItemInv);
+								string[] pathFolders = currentItemPath.Split (new char[]{ '/' }, System.StringSplitOptions.None);
+
+								string currentItemPathNoAsset = currentItemPath.Substring (0, currentItemPath.Length - pathFolders [pathFolders.Length - 1].Length-1); 
+								currentItemPathNoAsset += "/" + bg.name + ".asset";
+
+								AssetDatabase.CreateAsset (bg, currentItemPathNoAsset);
+								EditorUtility.SetDirty (currentItemInv);
+								AssetDatabase.SaveAssets ();
+								AssetDatabase.Refresh ();
+							}
+
+							//draw grid
+							float gridSize = invPrev.width/currentItemInv.inventoryWidth;
+
+							if (currentItemInv.spaces == null || (currentItemInv.spaces.Count != currentItemInv.inventoryWidth * currentItemInv.inventoryHeight)){//(currentItemInv.spaces.GetLength (0) != currentItemInv.inventoryWidth || currentItemInv.spaces.GetLength (1) != currentItemInv.inventoryHeight)) {
+								int capacity = currentItemInv.inventoryWidth * currentItemInv.inventoryHeight;
+								currentItemInv.spaces = new List<InventorySpace>(capacity);
+								for (int i = 0; i < capacity; i++) {
+									currentItemInv.spaces.Add(new InventorySpace ());
+								}
+								EditorUtility.SetDirty (currentItemInv);
+								AssetDatabase.SaveAssets ();
+								AssetDatabase.Refresh ();
+							}
+
+							for (int x = 0; x < currentItemInv.inventoryWidth; x++) {
+								for (int y = 0; y < currentItemInv.inventoryHeight; y++) {
+									Rect square = new Rect (invPrev.x + x * gridSize, invPrev.y + y * gridSize, gridSize, gridSize);
+									Event e = Event.current;
+									InventorySpace curSpace = currentItemInv.spaces [y * currentItemInv.inventoryWidth + x]; //rewrite this shitty code
+									if (square.Contains (e.mousePosition)) {
+										EditorGUI.DrawRect (square, Color.white.WithAlpha (0.2f));
+										if (e.type == EventType.mouseDown) {
+											curSpace.isActive = !curSpace.isActive;
+
+											//TODO: Optimize so that it doesn't lag out every time you update a square
+											EditorUtility.SetDirty (currentItemInv);
+											AssetDatabase.SaveAssets ();
+											AssetDatabase.Refresh ();
+										}
+									}
+									if (curSpace != null) {
+										if (curSpace.isActive) {
+											Util.DrawOutlineRect (square.WithInsidePadding (2f), Color.black.WithAlpha (0f), Color.white.WithAlpha (0.45f), 1f);
+										} else {
+											Util.DrawOutlineRect (square.WithInsidePadding (2f), Color.black.WithAlpha (0f), Color.white.WithAlpha (0.2f), 1f);
+											EditorGUI.DrawRect (square.WithInsidePadding (2f), Color.black.WithAlpha (0.5f));
+										}
+									} else {
+										
+										curSpace = new InventorySpace ();
+									}
+								}
+							}
+
+
+						} else {
+							EditorGUI.HelpBox (invPrev, "Please select a background image for the inventory.", MessageType.Error);
+						}
+
 					} else {
-						if (GUI.Button (isContainerBox, "Add Inventory")) {
-							UpgradeToInventory (currentItem);
+						if (GUI.Button (isContainerBox, "Make Inventory")) {
+							ItemToInventory (currentItem);
 						}
 					}
 				}
 
 			} else {
-				EditorGUI.HelpBox (itemPreviewSpace, "No graphical representation selected! Oh noes!", MessageType.Warning);
+
+				//Drag & drop of new item
+				Event e = Event.current;
+				//change mouse cursor
+				if (e.type == EventType.dragUpdated) {
+					DragAndDrop.visualMode = DragAndDropVisualMode.Copy;
+				}
+
+				if (itemPreviewSpace.Contains (e.mousePosition)) {
+					EditorGUI.HelpBox (itemPreviewSpace, "Release left mouse button to drop the item as the graphical representation of this object!", MessageType.Info);
+
+					if (e.type == EventType.DragPerform) {
+						Object[] dragObjs = DragAndDrop.objectReferences;
+
+						for(int i=0; i<dragObjs.Length; i++){
+							if (dragObjs [i] is GameObject) {
+								currentItem.runtimeRepresentation = dragObjs [i] as GameObject;
+								SetItemDirty ();
+								break;
+							}
+						}
+
+						DragAndDrop.AcceptDrag ();
+					}
+				} else {
+					EditorGUI.HelpBox (itemPreviewSpace, "No graphical representation selected! Drag & Drop an object into this box!", MessageType.Warning);
+				}
 			}
 
 		} else {
@@ -356,9 +520,58 @@ public class ItemCreatorWindow : EditorWindow {
 		return showBool;
 	}
 
-	void UpgradeToInventory (Item item){
+	void SetItemDirty(){
+		itemIsDirty = true;
+	}
+
+	void GenerateSpriteAndTexture(){
+		Sprite icon = Sprite.Create (currentItem.iconTexture, new Rect (0, 0, currentItem.iconTexture.width, currentItem.iconTexture.height), new Vector2 (0.5f, 0.5f));
+		icon.name = currentItem.name + "_icon";
+		currentItem.icon = icon;
+
+		SaveAsAsset (icon, currentItem, icon.name);
+		AssetDatabase.AddObjectToAsset (currentItem.iconTexture, icon);
+	}
+
+	void SaveAsAsset(Object obj, Item item, string name){
+		string currentItemPath = AssetDatabase.GetAssetPath (item);
+		string[] pathFolders = currentItemPath.Split (new char[]{ '/' }, System.StringSplitOptions.None);
+
+		string currentItemPathNoAsset = currentItemPath.Substring (0, currentItemPath.Length - pathFolders [pathFolders.Length - 1].Length-1); 
+		currentItemPathNoAsset += "/" + name + ".asset";
+
+		AssetDatabase.CreateAsset (obj, currentItemPathNoAsset);
+		EditorUtility.SetDirty (item);
+		AssetDatabase.SaveAssets ();
+		AssetDatabase.Refresh ();
+	}
+
+	void ItemToInventory (Item item){
 		//Create inventory and copy all settings
 		Inventory newItem = Inventory.CreateInstance<Inventory> ();
+		newItem.width = item.width;
+		newItem.height = item.height;
+		newItem.iconSettings = item.iconSettings;
+		newItem.iconTexture = item.iconTexture;
+		newItem.icon = item.icon;
+		newItem.flavorText = item.flavorText;
+		newItem.name = item.name;
+		newItem.runtimeRepresentation = item.runtimeRepresentation;
+
+		//Inventory specifics
+		newItem.spaces = new List<InventorySpace>(1);
+		newItem.spaces.Add(new InventorySpace ());
+//		newItem.inventoryWidth = 1;
+//		newItem.inventoryHeight = 1;
+		newItem.availableSpace = item.width * item.height;
+
+		string path = AssetDatabase.GetAssetPath (item);
+		AssetDatabase.CreateAsset (newItem, path);
+		currentItem = newItem;
+	}
+
+	void InventoryToItem(Inventory item){
+		Item newItem = Item.CreateInstance<Item> ();
 		newItem.width = item.width;
 		newItem.height = item.height;
 		newItem.iconSettings = item.iconSettings;
@@ -383,9 +596,6 @@ public class ItemCreatorWindow : EditorWindow {
 
 			//make new folder if it doesn't exist
 			string[] folderNames = path.Split(new char[]{'/'}, System.StringSplitOptions.None);
-//			foreach (string s in folderNames) {
-//				Debug.Log (s);
-//			}
 			string itemName = folderNames[folderNames.Length-1].Substring(0, folderNames[folderNames.Length-1].Length-6);
 			if (!AssetDatabase.IsValidFolder (path.Substring (0, path.Length - 6))) {
 				string folderPath = path.Substring (0, path.Length - folderNames [folderNames.Length - 1].Length-1); Debug.Log (folderPath);
@@ -401,10 +611,12 @@ public class ItemCreatorWindow : EditorWindow {
 	}
 
 	void SaveItem(){
-		Debug.LogWarning("OH SHIT! THIS FEATURE IS NOT IMPLEMENTED YET! ARRRGGGHHHH!!!!!");
+		//TODO: Save all aspects of the asset
+		GenerateSpriteAndTexture();
+		itemIsDirty = false;
 	}
 
-	void OnDestroy(){
+	void OnLostFocus(){
 		if (iconCamEnvInstance != null) {
 			DestroyImmediate (iconCamEnvInstance);
 		}
@@ -436,62 +648,4 @@ public class GUIStyles{
 		return newStyle;
 	}
 
-}
-
-public class Util{
-
-	public static void HeaderLabel(Rect space, string label, GUIStyle style, Color color){
-		style.normal.textColor = color;
-		EditorGUI.LabelField (space, label, style);
-	}
-
-	public static void DropShadowHeaderLabel(Rect space, string label, GUIStyle style, Color color){
-		//Shadow
-		Vector2 prevOff = style.contentOffset;
-		style.contentOffset = new Vector2 (2f, 2f);
-		style.normal.textColor = Color.black.WithAlpha(0.5f);
-		EditorGUI.LabelField (space, label, style);
-
-		//Label
-		style.contentOffset = prevOff;
-		style.normal.textColor = color;
-		EditorGUI.LabelField (space, label, style);
-
-	}
-
-	public static void DrawOutlineRect(Rect r, Color fillColor, Color strokeColor, float strokewidth)
-	{
-		for (int i = 0; i < strokewidth; i++) {
-			r.x -= 1;
-			r.y -= 1;
-			r.xMax += 2;
-			r.yMax += 2;
-			Handles.DrawSolidRectangleWithOutline (r, fillColor, strokeColor);
-		}
-	}
-
-}
-
-public static class ExtensionMethods{
-
-	public static Color WithAlpha(this Color color, float alpha){
-		color.a = alpha;
-		return color;
-	}
-
-	public static Rect WithInsidePadding(this Rect rect, float padding){
-		rect.x += padding;
-		rect.xMax -= padding * 2;
-		rect.y += padding;
-		rect.yMax -= padding * 2;
-
-		return rect;
-	}
-
-	public static Rect WithHorizontalPadding(this Rect rect, float padding){
-		rect.x += padding;
-		rect.xMax -= padding * 2;
-
-		return rect;
-	}
 }

@@ -17,12 +17,10 @@ public class Item : ScriptableObject{
 
 	public Texture2D iconTexture;
 	public Sprite icon;
+	public Sprite iconBorder;
 
 	//[HideInInspector]
 	public IconSettings iconSettings;
-
-	//Settings
-	
 
 	/// <summary>
 	/// Initializes a new <see cref="Item"/> with the given information.
@@ -58,7 +56,7 @@ public class Item : ScriptableObject{
 public class IconSettings{
 	public Vector3 itemOffset = Vector3.zero;
 	public Vector3 itemRotation = Vector3.zero;
-	public float itemDistance = 1f;
+	public float itemDistance = 4f;
 	public bool orthographicCamera = true;
 	public float orthographicScale = 5f;
 
@@ -67,5 +65,6 @@ public class IconSettings{
 		itemRotation = rotation;
 		orthographicCamera = orthographic;
 		orthographicScale = orthographicSize;
+		itemDistance = 4f;
 	}
 }
