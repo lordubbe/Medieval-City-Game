@@ -1,14 +1,11 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using Fungus;
 
 public class StoryLoader : MonoBehaviour {
 
 	public StoryManager sman;
-
-	public List<Flowchart> flowsForStories = new List<Flowchart>();
-
+    
 	public void LoadStories(){
 /*
 		Story newStory = new Story();
