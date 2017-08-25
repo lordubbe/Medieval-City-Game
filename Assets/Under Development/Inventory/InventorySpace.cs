@@ -4,7 +4,6 @@ using UnityEngine;
 
 [System.Serializable]
 public class InventorySpace {
-	public GameObject itemObj;
 	public Item item;
 	public bool isActive;
 	public bool isAvailable;
@@ -15,7 +14,6 @@ public class InventorySpace {
 	}
 
 	public void SetItem(GameObject obj){
-		itemObj = obj;
-		item = obj.GetComponent<ItemBehaviour> ().item ?? null;
+		item = obj.GetComponent<Item> () ?? null;
 	}
 }
