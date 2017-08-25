@@ -39,32 +39,4 @@ public class Inventory : Item {
 		spaces [i].SetItem (obj);
 		itemObjects.Add (obj);
 	}
-
-
-	public void ResetInventory(){
-		itemObjects = new List<GameObject> ();
-		for (int i = 0; i < spaces.Count; i++) {
-			spaces [i].isAvailable = true;
-			spaces [i].item = null;
-			spaces [i].itemObj = null;
-			availableSpace = inventoryWidth * inventoryHeight;
-		}
-	}
-	
-}
-
-[CustomEditor(typeof(Inventory))]
-public class InventoryInspector : Editor{
-
-	public override void OnInspectorGUI ()
-	{
-		base.OnInspectorGUI ();
-
-		Inventory inv = (Inventory)target;
-
-		if (GUILayout.Button ("Reset Inventory")) {
-			inv.ResetInventory ();
-		}
-	}
-
 }

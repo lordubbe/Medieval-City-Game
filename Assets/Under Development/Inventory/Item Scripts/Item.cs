@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [System.Serializable]
-public class Item : ScriptableObject{
+public class Item : MonoBehaviour{
 
     public string name;
 //	public List<ItemProperties> properties;
