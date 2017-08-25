@@ -90,11 +90,10 @@ public class DummyAlchemyController : MonoBehaviour {
             }
             else if (objectHit.gameObject.GetComponent<AlchemyTool>() != null)
             {
-				alcUI.UpdateUITOOL(objectHit.gameObject.GetComponent<AlchemyTool>().toolElementDestinations, objectHit.gameObject, objectHit.gameObject.GetComponent<AlchemyTool>().requiredProperties);
 				if(ingredient != null){
 					alcUI.UpdateUIING(ingredient.ingredientElements, ingredient.gameObject, ingredient.properties);
 				}
-
+				alcUI.UpdateUITOOL(objectHit.gameObject.GetComponent<AlchemyTool>().toolElementDestinations, objectHit.gameObject, objectHit.gameObject.GetComponent<AlchemyTool>().requiredProperties);
             }
             else
             {

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using Fungus;
+using System.Linq;
 
 public enum flag { startedgame, foundthirdfire, dead }
 
@@ -15,27 +16,38 @@ public struct Bond {
 
 public class StoryManager : MonoBehaviour {
 
-
+	public StoryLoader sloader;
 	public Dictionary<flag, bool> storyflags = new Dictionary<flag, bool>();
-	public List<Story> stories = new List<Story>();
+	public List<QuestStory> stories = new List<QuestStory>();
 
 	public Dictionary<reputationFactions,int> reputations = new Dictionary<reputationFactions, int>();
 	public Dictionary<string,int> qualities = new Dictionary<string,int>();
 	public List<Bond> bonds = new List<Bond>();
 
+    public ConversationManager convos;
 
+	void Start(){
 
-	public void StartStory(Story s)
-	{
+		sloader.LoadStories();
 
-		s.isActive = true;
-		s.ChangeState(s.states[0]); //potentially change!
-
+		stories = GetComponentsInChildren<QuestStory>().ToList();
 
 
 	}
+	void Update(){
+		if(Input.GetKey(KeyCode.P)){
+			stories[0].StartStory(true);
+		}
+	}
 
-	public void UpdateStory(Story s, StoryState newState)
+
+	public void StartStory(QuestStory s)
+	{
+		s.isActive = true;
+		s.ChangeState(s.states[0]); //potentially change!
+	}
+
+	public void UpdateStory(QuestStory s, StoryState newState)
 	{
 		s.ChangeState(newState);
 	}
@@ -49,6 +61,17 @@ public class StoryManager : MonoBehaviour {
 	{
 		return storyflags[f];
 	}
+
+	public void SetFlag(QuestStory s, string ss, bool b)
+	{
+		s.storyflags[ss] = b;
+	}
+
+	public bool GetFlag(QuestStory s, string ss)
+	{
+		return s.storyflags[ss];
+	}
+
 
 	public void SetReputation(reputationFactions r, int val)
 	{
