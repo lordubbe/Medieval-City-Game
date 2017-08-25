@@ -31,7 +31,7 @@ public class Attribute {
 
 	public virtual string GetStateAsString(){
 		// Future functionality: if last state - return empty string?
-		return System.Enum.GetNames (typeof(State)) [state] + AttributeCompletionLabels.GetTypeCompletionLabel(type) ?? "N/A";
+		return (string)(System.Enum.GetNames (typeof(State)) [(int)state] + AttributeCompletionLabels.GetTypeCompletionLabel(type)) ?? "N/A";
 	}
 
 	public virtual void Trigger(){
@@ -94,7 +94,7 @@ public static class AttributeCompletionLabels{
 			return "calcinated";
 			break;
 		}
-
+		return null;
 	}
 
 }
