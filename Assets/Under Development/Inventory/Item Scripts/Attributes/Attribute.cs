@@ -55,45 +55,45 @@ public class Attribute {
 
 public static class AttributeCompletionLabels{
 
-	public static string GetTypeCompletionLabel(Attribute.Type type){
+	public static string GetTypeCompletionLabel(AttributeType type){
 		switch (type) {
-		case Attribute.Type.Distillable:
+		case AttributeType.Distillable:
 			return "distilled";
 			break;
-		case Attribute.Type.Boilable:
+		case AttributeType.Boilable:
 			return "boiled";
 			break;
-		case Attribute.Type.Burnable:
+		case AttributeType.Burnable:
 			return "burnt";
 			break;
-		case Attribute.Type.Pulverizable:
+		case AttributeType.Pulverizable:
 			return "pulverized";
 			break;
-		case Attribute.Type.Rottable:
+		case AttributeType.Rottable:
 			return "rotten";
 			break;
-		case Attribute.Type.Dryable:
+		case AttributeType.Dryable:
 			return "dried";
 			break;
-		case Attribute.Type.Edible:
+		case AttributeType.Edible:
 			return "eaten";
 			break;
-		case Attribute.Type.Soluble:
+		case AttributeType.Soluble:
 			return "dissolved";
 			break;
-		case Attribute.Type.Vaporable:
+		case AttributeType.Vaporable:
 			return "evaporated";
 			break;
-		case Attribute.Type.Subliminable:
+		case AttributeType.Subliminable:
 			return "gaseous";
 			break;
-		case Attribute.Type.Crystallizable:
+		case AttributeType.Crystallizable:
 			return "crystallized";
 			break;
-		case Attribute.Type.Filterable:
+		case AttributeType.Filterable:
 			return "filtered";
 			break;
-		case Attribute.Type.Calcinable:
+		case AttributeType.Calcinable:
 			return "calcinated";
 			break;
 		}
