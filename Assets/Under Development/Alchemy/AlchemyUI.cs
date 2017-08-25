@@ -33,67 +33,67 @@ public class AlchemyUI : MonoBehaviour {
 	}
 
 
-    public void UpdateUIING(Dictionary<Element, float> elements, GameObject g, List<IngredientProperties> props)
-    {
-       // print("----------------------- "+elements[Element.Sin]);
-        List<float> elVals = new List<float>() { elements[Element.Sin], elements[Element.Change], elements[Element.Force], elements[Element.Secrets], elements[Element.Beauty] };
-	//	 print("FORCE: "+elVals[2]);
-        for (int i = 0; i < 5; i++)
-        {
+ //   public void UpdateUIING(Dictionary<Element, float> elements, GameObject g, List<IngredientProperties> props)
+ //   {
+ //      // print("----------------------- "+elements[Element.Sin]);
+ //       List<float> elVals = new List<float>() { elements[Element.Sin], elements[Element.Change], elements[Element.Force], elements[Element.Secrets], elements[Element.Beauty] };
+	////	 print("FORCE: "+elVals[2]);
+ //       for (int i = 0; i < 5; i++)
+ //       {
            
-            Vector3 scale = ingImages[i].rectTransform.localScale;
-            scale.y = elVals[i] / 100f;
-            ingImages[i].rectTransform.localScale = scale;
-            //print(i + "  " + (elVals[i]));
-        }
+ //           Vector3 scale = ingImages[i].rectTransform.localScale;
+ //           scale.y = elVals[i] / 100f;
+ //           ingImages[i].rectTransform.localScale = scale;
+ //           //print(i + "  " + (elVals[i]));
+ //       }
 
-        lookAtText.text = "" + g.name;
+ //       lookAtText.text = "" + g.name;
 
-        propertyText.text = "PROPERTIES ";
-        foreach(IngredientProperties p in props)
-        {
-            propertyText.text += " "+p.ToString();
-        }
+ //       propertyText.text = "PROPERTIES ";
+ //       foreach(IngredientProperties p in props)
+ //       {
+ //           propertyText.text += " "+p.ToString();
+ //       }
 
-    }
+ //   }
 
-	public void UpdateUITOOL(Dictionary<Element, float> elements, GameObject g, List<IngredientProperties> props)
-	{
-		List<float> elVals = new List<float>() { elements[Element.Sin], elements[Element.Change], elements[Element.Force], elements[Element.Secrets], elements[Element.Beauty] };
+	//public void UpdateUITOOL(Dictionary<Element, float> elements, GameObject g, List<IngredientProperties> props)
+	//{
+	//	List<float> elVals = new List<float>() { elements[Element.Sin], elements[Element.Change], elements[Element.Force], elements[Element.Secrets], elements[Element.Beauty] };
 
-		for (int i = 0; i < 5; i++)
-		{
-			// print(elVals[i]);
-			Vector3 scale = toolImages[i].rectTransform.localScale;
-			scale.y = elVals[i] / 100f;
-			toolImages[i].rectTransform.localScale = scale;
-			//print(i + "  " + (elVals[i]));
-		}
+	//	for (int i = 0; i < 5; i++)
+	//	{
+	//		// print(elVals[i]);
+	//		Vector3 scale = toolImages[i].rectTransform.localScale;
+	//		scale.y = elVals[i] / 100f;
+	//		toolImages[i].rectTransform.localScale = scale;
+	//		//print(i + "  " + (elVals[i]));
+	//	}
 
-		lookAtText.text = "" + g.name;
+	//	lookAtText.text = "" + g.name;
 
-		propertyText.text = "PROPERTIES ";
-		foreach(IngredientProperties p in props)
-		{
-			propertyText.text += " "+p.ToString();
-		}
+	//	propertyText.text = "PROPERTIES ";
+	//	foreach(IngredientProperties p in props)
+	//	{
+	//		propertyText.text += " "+p.ToString();
+	//	}
 
-	}
+	//}
 
 
 
-    public void SetGoal(Dictionary<Element, float> elements)
-    {
-        List<float> elVals = new List<float>() { elements[Element.Sin], elements[Element.Change], elements[Element.Force], elements[Element.Secrets], elements[Element.Beauty] };
+ //   public void SetGoal(Dictionary<Element, float> elements)
+ //   {
+ //       List<float> elVals = new List<float>() { elements[Element.Sin], elements[Element.Change], elements[Element.Force], elements[Element.Secrets], elements[Element.Beauty] };
 
-        for (int i = 0; i < 5; i++)
-        {
-           // print(elVals[i]);
-            Vector3 scale = goalBars[i].rectTransform.localScale;
-            scale.y = (float)elVals[i] / 100f;
-            goalBars[i].rectTransform.localScale = scale;
-        }
-    }
+ //       for (int i = 0; i < 5; i++)
+ //       {
+ //          // print(elVals[i]);
+ //           Vector3 scale = goalBars[i].rectTransform.localScale;
+ //           scale.y = (float)elVals[i] / 100f;
+ //           goalBars[i].rectTransform.localScale = scale;
+ //       }
+ //   }
 
 
 }

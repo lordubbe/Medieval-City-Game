@@ -2,12 +2,11 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+public enum ItemTag { Liquid, Solid, Powder, Gas, Organic, Dead };
 [System.Serializable]
 public class Item : MonoBehaviour{
 
     public string name;
-//	public List<ItemProperties> properties;
-//	public List<ItemStatus> propertyStatuses;
 
 	public GameObject runtimeRepresentation;
 	public string flavorText;
@@ -22,8 +21,9 @@ public class Item : MonoBehaviour{
 	//[HideInInspector]
 	public IconSettings iconSettings;
 
-    private Elements elements;
+    private Elements elements = new Elements();
     public List<Attribute> attributes;
+    public List<ItemTag> tags = new List<ItemTag>();
 
 	/// <summary>
 	/// Initializes a new <see cref="Item"/> with the given information.
@@ -53,7 +53,7 @@ public class Item : MonoBehaviour{
 		}
 	}
 
-    public Elements GetElements()
+    public virtual Elements GetElements()
     {
         Elements elToSend = elements;
         foreach(Attribute a in attributes)
