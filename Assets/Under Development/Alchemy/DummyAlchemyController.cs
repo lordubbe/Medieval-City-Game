@@ -80,24 +80,24 @@ public class DummyAlchemyController : MonoBehaviour {
             //if (objectHit.gameObject.GetComponent<AlchemyIngredient>() != null)
             //{
 
-                //    alcUI.UpdateUIING(objectHit.gameObject.GetComponent<AlchemyIngredient>().ingredientElements, objectHit.gameObject, objectHit.gameObject.GetComponent<AlchemyIngredient>().properties);
-                //    // }
-                //}
-                //else if (objectHit.gameObject.GetComponent<AlchemyTool>() != null)
-                //{
-                //    if (ingredient != null)
-                //    {
-                //        alcUI.UpdateUIING(ingredient.ingredientElements, ingredient.gameObject, ingredient.properties);
-                //    }
-                //    alcUI.UpdateUITOOL(objectHit.gameObject.GetComponent<AlchemyTool>().toolElementDestinations, objectHit.gameObject, objectHit.gameObject.GetComponent<AlchemyTool>().requiredProperties);
-                //}
-                //else
-                //{
-                //    if (ingredient != null)
-                //    {
-                //        alcUI.UpdateUIING(ingredient.ingredientElements, objectHit.gameObject, ingredient.properties);
-                //    }
-                // }
+            //    alcUI.UpdateUIING(objectHit.gameObject.GetComponent<AlchemyIngredient>().ingredientElements, objectHit.gameObject, objectHit.gameObject.GetComponent<AlchemyIngredient>().properties);
+            //    // }
+            //}
+            //else if (objectHit.gameObject.GetComponent<AlchemyTool>() != null)
+            //{
+            //    if (ingredient != null)
+            //    {
+            //        alcUI.UpdateUIING(ingredient.ingredientElements, ingredient.gameObject, ingredient.properties);
+            //    }
+            //    alcUI.UpdateUITOOL(objectHit.gameObject.GetComponent<AlchemyTool>().toolElementDestinations, objectHit.gameObject, objectHit.gameObject.GetComponent<AlchemyTool>().requiredProperties);
+            //}
+            //else
+            //{
+            //    if (ingredient != null)
+            //    {
+            //        alcUI.UpdateUIING(ingredient.ingredientElements, objectHit.gameObject, ingredient.properties);
+            //    }
+            // }
 
         }
     }
