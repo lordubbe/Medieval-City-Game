@@ -1,7 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using Fungus;
 using System.Linq;
 
 public enum flag { startedgame, foundthirdfire, dead }
@@ -9,7 +8,7 @@ public enum flag { startedgame, foundthirdfire, dead }
 public enum reputationFactions { University, Commoners, Nobility } 
 
 public struct Bond {
-	public Character character;
+    public Person p;
 	public int bondValue;
 	public List<string> bondTexts;
 };
@@ -93,18 +92,20 @@ public class StoryManager : MonoBehaviour {
 		qualities[q] = val;
 	}
 
-	public void SetBond(Character c, int newBond)
+	public void SetBond(Person p, int newBond)
 	{
-		Bond toChange = bonds.Find(x=>x.character = c);
+		Bond toChange = bonds.Find(x=>x.p == p);
 		toChange.bondValue = newBond;
 	}
 
-	public int GetBondValue(Character c){
-		return bonds.Find(x=>x.character = c).bondValue;
+	public int GetBondValue(Person p)
+    {
+		return bonds.Find(x=>x.p == p).bondValue;
 	}
 
-	public string GetBondText(Character c){
-		return bonds.Find(x=>x.character = c).bondTexts[bonds.Find(x=>x.character = c).bondValue];
+	public string GetBondText(Person p)
+    {
+		return bonds.Find(x=>x.p == p).bondTexts[bonds.Find(x=>x.p == p).bondValue];
 	}
 		
 }

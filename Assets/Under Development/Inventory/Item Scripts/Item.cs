@@ -2,12 +2,11 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+public enum ItemTag { Liquid, Solid, Powder, Gas, Organic, Dead };
 [System.Serializable]
-public class Item : ScriptableObject{
+public class Item : MonoBehaviour{
 
-	public string name;
-//	public List<ItemProperties> properties;
-//	public List<ItemStatus> propertyStatuses;
+    public string name;
 
 	public GameObject runtimeRepresentation;
 	public string flavorText;
@@ -17,12 +16,14 @@ public class Item : ScriptableObject{
 
 	public Texture2D iconTexture;
 	public Sprite icon;
+	public Sprite iconBorder;
 
 	//[HideInInspector]
 	public IconSettings iconSettings;
 
-	//Settings
-	
+    private Elements elements = new Elements();
+    public List<Attribute> attributes;
+    public List<ItemTag> tags = new List<ItemTag>();
 
 	/// <summary>
 	/// Initializes a new <see cref="Item"/> with the given information.
@@ -52,13 +53,23 @@ public class Item : ScriptableObject{
 		}
 	}
 
+    public virtual Elements GetElements()
+    {
+        Elements elToSend = elements;
+        foreach(Attribute a in attributes)
+        {
+            elToSend += a.elementsModifier;
+        }
+        return elToSend;
+    }
+
 }
 
 [System.Serializable]
 public class IconSettings{
 	public Vector3 itemOffset = Vector3.zero;
 	public Vector3 itemRotation = Vector3.zero;
-	public float itemDistance = 1f;
+	public float itemDistance = 4f;
 	public bool orthographicCamera = true;
 	public float orthographicScale = 5f;
 
@@ -67,5 +78,6 @@ public class IconSettings{
 		itemRotation = rotation;
 		orthographicCamera = orthographic;
 		orthographicScale = orthographicSize;
+		itemDistance = 4f;
 	}
 }

@@ -10,7 +10,7 @@ public class MouseLook {
     public bool lockVerticalLook = true;
     public float minVerticalLock = -90f;
     public float maxVerticalLock = 95f;
-    public bool lockCursor = true;
+    public bool lockedCursor = true;
 
     Transform character;
     Transform camera;
@@ -49,11 +49,7 @@ public class MouseLook {
         {
             camera.localRotation = ClampVerticalRotation(camera);
         }
-
-        if (lockCursor)
-        {
-            LockCursor();
-        }
+        
     }
 
     Quaternion ClampVerticalRotation(Transform clampedTransform)
@@ -66,9 +62,17 @@ public class MouseLook {
         return Quaternion.Euler(euler);
     }
 
-    void LockCursor()
+    public void LockCursor()
     {
-        //TODO: Cursorlocking
+        lockedCursor = true;
+        Cursor.lockState = CursorLockMode.Locked;
+        Cursor.visible = false;
+    }
 
+    public void UnlockCursor()
+    {
+        lockedCursor = false;
+        Cursor.lockState = CursorLockMode.None;
+        Cursor.visible = true;
     }
 }
