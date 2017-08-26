@@ -17,7 +17,6 @@ public class uvTEST : MonoBehaviour {
         uvsss[2] = Vector2.one;
         uvsss[3] = Vector2.one;
 
-        print(m.vertices.Length);
         m.uv = uvsss;
 	}
 	

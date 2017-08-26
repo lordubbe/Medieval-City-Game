@@ -3,15 +3,15 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
-using System;
 
 public class AlchemyUI : MonoBehaviour {
 
-    [SerializeField]
-	List<Image> ingImages = new List<Image>();
+    
+    public RectTransform itemSpot;
+    public RectTransform toolSpot;
+    public RectTransform goalSpot;
 
-	[SerializeField]
-	List<Image> toolImages = new List<Image>();
+    [SerializeField] PentagonShape penta;
 
     [SerializeField]
     Text lookAtText;
@@ -19,8 +19,7 @@ public class AlchemyUI : MonoBehaviour {
     [SerializeField]
     Text propertyText;
 
-    [SerializeField]
-    List<Image> goalBars = new List<Image>();
+
 
     // Use this for initialization
     void Start () {
@@ -32,6 +31,10 @@ public class AlchemyUI : MonoBehaviour {
 		
 	}
 
+    public void SetPentagon(Elements e, RectTransform rt)
+    {
+        penta.DrawElementPentagon(e, rt.transform);
+    }
 
  //   public void UpdateUIING(Dictionary<Element, float> elements, GameObject g, List<IngredientProperties> props)
  //   {

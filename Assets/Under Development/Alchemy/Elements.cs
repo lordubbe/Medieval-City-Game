@@ -12,6 +12,7 @@ public class Elements {
     public float beauty;
 
     public static Elements zero = new Elements(0, 0, 0, 0, 0);
+    public static Elements full = new Elements(100, 100, 100, 100, 100);
 
 
     public Elements(float s, float c, float f, float se, float b)
@@ -48,6 +49,11 @@ public class Elements {
     public override string ToString()
     {
         return "("+sin+", "+change+", "+force+", "+secrets+", "+beauty+")";
+    }
+
+    public float[] ToArray()
+    {
+        return new float[5] { sin, change, force, secrets, beauty };
     }
 
 }
