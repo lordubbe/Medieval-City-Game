@@ -8,28 +8,26 @@ using UnityEditor;
 #endif
 
 [System.Serializable]
-public class Inventory : Item {
+public class Inventory : MonoBehaviour {
+
+	public Item connectedItem;
+
 	[Header("Inventory")]
 	public List<InventorySpace> spaces;
 	public int availableSpace;
 
-	public List<GameObject> itemObjects;
+	public List<Item> items;
 
 	public int inventoryWidth; 
 	public int inventoryHeight;
 
-	public Texture2D inventoryBackgroundImage;
-	public Sprite inventoryBackgroundSprite;
+	public Sprite inventoryBackground;
 
-	public float tileSize;
 
-	public InventoryDrawer drawer;
-
-	public void AddItem(GameObject obj, int x, int y){
-		Item item = obj.GetComponent<ItemBehaviour> ().item;
-		Debug.Log ("Adding " + item.name + " to inventory...");
-		for (int _x = x; _x < x+item.width; _x++) {
-			for (int _y = y; _y < y+item.height; _y++) {
+	public void AddItem(Item obj, int x, int y){
+		Debug.Log ("Adding " + obj.name + " to inventory...");
+		for (int _x = x; _x < x+obj.width; _x++) {
+			for (int _y = y; _y < y+obj.height; _y++) {
 				int idx = Util.coordsToIndex (this, _x, _y);
 				spaces [idx].isAvailable = false;
 				availableSpace--;
@@ -37,6 +35,6 @@ public class Inventory : Item {
 		}
 		int i = Util.coordsToIndex(this, x,y);
 		spaces [i].SetItem (obj);
-		itemObjects.Add (obj);
+		items.Add (obj);
 	}
 }

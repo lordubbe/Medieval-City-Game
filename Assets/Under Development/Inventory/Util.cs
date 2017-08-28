@@ -81,4 +81,9 @@ public static class ExtensionMethods{
 		
 		return rect;
 	}
+
+	public static Rect WithHeight(this Rect rect, float height){
+		rect.height = height;
+		return rect;
+	}
 }

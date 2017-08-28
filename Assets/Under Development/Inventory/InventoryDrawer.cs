@@ -2,16 +2,14 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-public class InventoryDrawer : MonoBehaviour {
+using UnityEngine.EventSystems;
 
-	public KeyCode openInventoryKey;
+public class InventoryDrawer : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler {
 
 	[Header("GameObject Hookups")]
 	public GameObject inventoryCanvas;
 	public GameObject gridParent;
-
 	public GameObject inventoryTile;
-	public float tileSize;
 
 	public bool isOpen;
 
@@ -22,11 +20,10 @@ public class InventoryDrawer : MonoBehaviour {
 	[Header("Inventory Info")]
 	public Inventory inventory;
 
-	// Private stuff
 	private bool transitioning;
-	private List<GameObject> tiles = new List<GameObject>();
+	private List<RuntimeInventoryTile> tiles = new List<RuntimeInventoryTile>();
 	private int currentX = 0, currentY = 0;
-	public bool isAvailable = false;
+	public bool sufficientSpace = false;
 
 	void OnEnable(){ 
 		InventoryEvents.OnInventoryExit += OnExitInventory;
@@ -46,9 +43,9 @@ public class InventoryDrawer : MonoBehaviour {
 		}
 	}
 
-	void OnItemDrop(GameObject item){
+	void OnItemDrop(Item item){
 		ItemBehaviour objBeh = ItemHandler.currentlyHeldItem.GetComponent<ItemBehaviour> ();
-		if (objBeh.overInventory && isAvailable) {
+		if (objBeh.overInventory && sufficientSpace) {
 			inventory.AddItem (item, currentX, currentY);
 			item.transform.parent = this.transform;
 			objBeh.inInventory = true;
@@ -59,29 +56,29 @@ public class InventoryDrawer : MonoBehaviour {
 
 	void SpawnInventory(){
 		if (inventory != null) {
-			// Firest spawn the tiles
+			// First spawn the tiles
 
 			//Adjust grid size
-			gridMaster.cellSize = new Vector2 (tileSize, tileSize);
+			gridMaster.cellSize = new Vector2 (GlobalInventorySettings.INVENTORY_TILE_SIZE, GlobalInventorySettings.INVENTORY_TILE_SIZE);
 
 			//(Shitty) Adjust size of section
-			gridParentTransform.sizeDelta = new Vector2 (inventory.inventoryWidth * tileSize, gridMaster.padding.top + inventory.inventoryHeight * tileSize);
-
-			//set tileSize for inventory object
-			inventory.tileSize = this.tileSize;
+			gridParentTransform.sizeDelta = new Vector2 (inventory.inventoryWidth * GlobalInventorySettings.INVENTORY_TILE_SIZE, inventory.inventoryHeight * GlobalInventorySettings.INVENTORY_TILE_SIZE);
 
 			//Set background image
-			invBackground.sprite = inventory.inventoryBackgroundSprite;
+			invBackground.sprite = inventory.inventoryBackground;
 			invBackground.color = Color.white;
 
 			for (int x = 0; x < inventory.spaces.Count; x++) {
 				GameObject tile = Instantiate (inventoryTile, gridParentTransform) as GameObject;
-				tiles.Add (tile);
 				RuntimeInventoryTile script = tile.GetComponent<RuntimeInventoryTile> ();
+				tiles.Add (script);
+				script.inventorySpace = inventory.spaces [x];
 				script.drawer = this;
 				script.x = (int)(x % inventory.inventoryWidth);
 				script.y = (int)(x / inventory.inventoryWidth);
-//				tile.GetComponent<RuntimeInventoryTile>().y = x / inventory.inventoryWidth
+
+				tile.name = ("Tile "+script.x+","+script.y);
+
 				Image img = tile.GetComponent<Image> ();
 				img.color = inventory.spaces [x].isActive ? Color.white.WithAlpha (0.5f) : Color.black.WithAlpha (0f); //toggle color
 
@@ -116,7 +113,7 @@ public class InventoryDrawer : MonoBehaviour {
 		for (int x = 0; x < inventory.inventoryWidth; x++) {
 			for (int y = 0; y < inventory.inventoryHeight; y++) {
 				//Get the coordinate in 1D-array format
-				int idx = coordsToIndex (x, y);
+				int idx = Util.coordsToIndex (inventory, x, y);
 				InventorySpace currentSpace = inventory.spaces [idx];
 
 				//Make sure we're within bounds
@@ -128,17 +125,17 @@ public class InventoryDrawer : MonoBehaviour {
 					if (currentSpace.isActive) {
 						if (currentSpace.isAvailable) {
 							//Available (green)
-							tiles [idx].GetComponent<Image> ().color = Color.green.WithAlpha (0.5f);
+							tiles [idx].image.color = Color.green.WithAlpha (0.5f);
 							availableToPlaceCount++;
 						} else {
 							//Occupied (red)
-							tiles [idx].GetComponent<Image> ().color = Color.red.WithAlpha (0.5f);
+							tiles [idx].image.color = Color.red.WithAlpha (0.5f);
 						}
 					}
 				} else {
 					if (currentSpace.isActive) {
 						//Not at item (white)
-						tiles [idx].GetComponent<Image> ().color = Color.white.WithAlpha (0.5f);
+						tiles [idx].image.color = Color.white.WithAlpha (0.5f);
 					}
 				}
 			}
@@ -146,7 +143,7 @@ public class InventoryDrawer : MonoBehaviour {
 
 		currentX = xCoord-halfWidth;
 		currentY = yCoord-halfHeight;
-		isAvailable = availableToPlaceCount == item.width * item.height;
+		sufficientSpace = availableToPlaceCount == item.width * item.height;
 	}
 
 	public void ResetInventoryColoring(){
@@ -154,21 +151,17 @@ public class InventoryDrawer : MonoBehaviour {
 		for (int x = 0; x < inventory.inventoryWidth; x++) {
 			for (int y = 0; y < inventory.inventoryHeight; y++) {
 				//Get the coordinate in 1D-array format
-				int idx = coordsToIndex (x, y);
+				int idx = Util.coordsToIndex (inventory, x, y);
 				InventorySpace currentSpace = inventory.spaces [idx];
 
 				if (currentSpace.isActive) {
-					tiles [idx].GetComponent<Image> ().color = Color.white.WithAlpha (0.5f);
+					tiles [idx].image.color = Color.white.WithAlpha (0.5f);
 				}
 			}
 		}
 	}
 
-	int coordsToIndex(int x, int y){
-		return y * inventory.inventoryWidth + x;
-	}
-
-	void OnExitInventory(Inventory inv){
+	void OnExitInventory(InventoryDrawer inv){
 		ResetInventoryColoring ();
 	}
 
@@ -179,17 +172,30 @@ public class InventoryDrawer : MonoBehaviour {
 		SpawnInventory();
 
 		isOpen = true;
-
-		inventory.drawer = this;
 	}
 
 	IEnumerator CloseInventory(){
 		yield return null;
 		//disable
 		tiles.ForEach (x => Destroy (x));
-		tiles = new List<GameObject> ();
+		tiles = new List<RuntimeInventoryTile> ();
 		gridParent.SetActive (false);
-
 		isOpen = false;
 	}
+
+	#region Pointer Event Callbacks
+	//Pointer events
+	public void OnPointerEnter(PointerEventData evtData){
+		//Something about checking if player is holding an object, and if it does then send that object along
+		if (InventoryEvents.OnInventoryEnter != null) {
+			InventoryEvents.OnInventoryEnter (this);
+		}
+	}
+
+	public void OnPointerExit(PointerEventData evtData){
+		if (InventoryEvents.OnInventoryExit != null) {
+			InventoryEvents.OnInventoryExit (this);
+		}
+	}
+	#endregion
 }

@@ -1,10 +1,15 @@
 fileFormatVersion: 2
 guid: 87c6bb78ce97246b5901ddf2bd0bd020
-timeCreated: 1499347107
-licenseType: Pro
+timeCreated: 1503667683
+licenseType: Free
 MonoImporter:
   serializedVersion: 2
-  defaultReferences: []
+  defaultReferences:
+  - inventoryCanvas: {instanceID: 0}
+  - gridParent: {instanceID: 0}
+  - inventoryTile: {fileID: 1154951334575662, guid: c3c7b95b275894473bbd1c8514fc1618,
+      type: 2}
+  - inventory: {instanceID: 0}
   executionOrder: 0
   icon: {instanceID: 0}
   userData: 

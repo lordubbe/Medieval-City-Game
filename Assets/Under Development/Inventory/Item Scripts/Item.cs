@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+[RequireComponent(typeof(ItemBehaviour))]
 public class Item : MonoBehaviour{
 
 	public string name;
@@ -28,7 +29,7 @@ public class Item : MonoBehaviour{
 	/// <param name="prefab">The runtime representation of the Item.</param>
 	/// <param name="dimensions">The inventory dimensions of the item in the format "WxH" (eg. "2x4" is an item that is 2 squares wide and 4 squares tall)</param>
 	/// <param name="text">The flavor text of the item.</param>
-	public void InitItem(string name, GameObject prefab, string dimensions, string text){
+	public virtual void InitItem(string name, GameObject prefab, string dimensions, string text){
 		string[] dim = dimensions.Split (new char[]{'x'}, 2);
 		width = int.Parse(dim [0]);
 		height = int.Parse(dim [1]);

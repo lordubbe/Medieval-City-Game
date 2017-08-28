@@ -17,8 +17,13 @@ public class InventorySlot : MonoBehaviour {
 	}
 
 	void OnEnable(){
-		image.sprite = inventory.icon;
-		text.text = inventory.name;
+		drawer.inventory = inventory;
+		if (inventory.connectedItem != null) {
+			image.sprite = inventory.connectedItem.icon;
+			text.text = inventory.name;
+		} else {
+			this.enabled = false;
+		}
 	}
 
 }

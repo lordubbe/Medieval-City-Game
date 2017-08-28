@@ -4,9 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
 
-public class DraggableWindow : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, IPointerEnterHandler, IPointerExitHandler {
-
-	public Inventory inventory; //TODO: Automatically assign pls
+public class DraggableWindow : MonoBehaviour, IPointerDownHandler, IPointerUpHandler {
 
 	private RectTransform windowRect;
 	private bool draggingWindow;
@@ -14,35 +12,16 @@ public class DraggableWindow : MonoBehaviour, IPointerDownHandler, IPointerUpHan
 
 	Vector3 prevMousePos = Vector3.zero;
 
-	//Pointer events
-	public void OnPointerEnter(PointerEventData evtData){
-		//Something about checking if player is holding an object, and if it does then send that object along
-		if (InventoryEvents.OnInventoryEnter != null) {
-			InventoryEvents.OnInventoryEnter (inventory);
-		}
-	}
-
-	public void OnPointerExit(PointerEventData evtData){
-		if (InventoryEvents.OnInventoryExit != null) {
-			InventoryEvents.OnInventoryExit (inventory);
-		}
-	}
-
 	public void OnPointerDown(PointerEventData evtData){
 		if (altDown) {
 			prevMousePos = Input.mousePosition;
-			draggingWindow = true;
+			draggingWindow = true; 
 		}
 	}
 
 	public void OnPointerUp(PointerEventData evtData){
 		// If dragging, no longer drag window
 		draggingWindow = false;
-
-		// Handle adding an item to the inventory
-//		if (ItemHandler.currentlyHeldItem != null) {
-			
-//		}
 	}
 		
 	void OnEnable(){
@@ -58,10 +37,6 @@ public class DraggableWindow : MonoBehaviour, IPointerDownHandler, IPointerUpHan
 		Vector3 mousePos = Input.mousePosition;
 		mousePos.x = Mathf.Clamp (mousePos.x, 0, Screen.width);
 		mousePos.y = Mathf.Clamp (mousePos.y, 0, Screen.height);
-
-//		Debug.Log (mousePos + "(" + testRect + ")");
-
-
 
 		if (Input.GetKeyDown (KeyCode.LeftAlt)) {
 			altDown = true;
@@ -81,15 +56,16 @@ public class DraggableWindow : MonoBehaviour, IPointerDownHandler, IPointerUpHan
 			prevMousePos = Input.mousePosition;
 		}
 
-		if (Input.GetMouseButtonUp (0)) {
-			if (ItemHandler.currentlyHeldItem != null) {
-				//add to inventory pls m'jacob
-				if (InventoryEvents.OnDropItem != null) {
-
-					InventoryEvents.OnDropItem (ItemHandler.currentlyHeldItem);
-				}
-			}
-		}
+		// TODO: Move to somewhere else
+//		if (Input.GetMouseButtonUp (0)) {
+//			if (ItemHandler.currentlyHeldItem != null) {
+//				//add to inventory pls m'jacob
+//				if (InventoryEvents.OnDropItem != null) {
+//
+//					InventoryEvents.OnDropItem (ItemHandler.currentlyHeldItem);
+//				}
+//			}
+//		}
 
 	}
 }

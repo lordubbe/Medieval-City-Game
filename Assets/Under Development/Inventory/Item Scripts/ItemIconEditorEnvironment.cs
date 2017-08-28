@@ -19,4 +19,17 @@ public class ItemIconEditorEnvironment : MonoBehaviour {
 			BG.SetActive (false);
 		}
 	}
+
+	public void Init(Item i){
+		if (!hasSpawnedModel) {
+			GameObject itemModel = (GameObject)Instantiate (i.runtimeRepresentation, itemParent.transform.position, Quaternion.identity, itemParent);
+
+			//set layer to the one rendered by the icon environment
+			itemModel.layer = LayerMask.NameToLayer ("Item Setup");
+			foreach (Transform child in itemModel.transform) {
+				child.gameObject.layer = LayerMask.NameToLayer ("Item Setup");
+			}
+			hasSpawnedModel = true;
+		}
+	}
 }
