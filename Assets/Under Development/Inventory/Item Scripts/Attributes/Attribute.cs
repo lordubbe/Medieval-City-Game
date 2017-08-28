@@ -15,8 +15,6 @@ public class Attribute {
 		progress = 0f;
 	}
 
-
-
     public enum State
     {
         Not, Lightly, Moderately, Very, Fully
@@ -26,7 +24,8 @@ public class Attribute {
 
 	public AttributeType type;
 	private State state = State.Not;
-	private float progress;
+	public float progress;
+    public Elements elementsModifier;
 
 	public State GetState(){
 		return state;
@@ -42,8 +41,14 @@ public class Attribute {
 	}
 
 
-	public virtual void Trigger(float rate){
-		progress += rate;
+	public virtual void Trigger(float rate, Elements elmod){
+        if(progress >= 1)
+        {
+            return;
+        }
+        progress += rate;
+
+        elementsModifier = elmod * progress;
 
 		if (progress >= 1f) {
 			if (OnComplete != null) {

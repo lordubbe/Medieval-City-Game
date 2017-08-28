@@ -6,24 +6,20 @@ public class AlchemyMixer : MonoBehaviour {
 
     public Alchemy alc;
 
-    List<AlchemyIngredient> ingredientsToMix = new List<AlchemyIngredient>();
-
-	// Use this for initialization
-	void Start () {
-		
-	}
+    //List<AlchemyIngredient> ingredientsToMix = new List<AlchemyIngredient>();
+    
 
 
 
-    public void AddIngredient(AlchemyIngredient i)
-    {
-        ingredientsToMix.Add(i);
-    }
+    //public void AddIngredient(AlchemyIngredient i)
+    //{
+    //    ingredientsToMix.Add(i);
+    //}
 
-    public void Mix()
-    {
-        alc.MixIngredients(ingredientsToMix[0], ingredientsToMix[1],transform.position + Vector3.up);
-    }
+    //public void Mix()
+    //{
+    //    alc.MixIngredients(ingredientsToMix[0], ingredientsToMix[1],transform.position + Vector3.up);
+    //}
 
 
 

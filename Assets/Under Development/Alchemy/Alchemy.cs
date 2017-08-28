@@ -2,74 +2,58 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public enum Element { Force, Secrets, Beauty, Sin, Change }
-
-public enum IngredientProperties { Distillable, Boilable, Burnable, Pulverizable, Will_Rot, Will_Dry }
-
-public enum IngredientStates { Distilled, Boiled, Burned, Pulverized, Rotten, Dried }
-
 
 public class Alchemy : MonoBehaviour {
-
-    public Dictionary<Element, float> elements = new Dictionary<Element, float>
-        {
-            { Element.Beauty, 0 },
-            { Element.Sin, 0 },
-            { Element.Change, 0 },
-            { Element.Force, 0 },
-            { Element.Secrets, 0 }
-        };
-
+    
     [SerializeField]
-    GameObject baseIngredient;
+    GameObject testIngredient;
 
 
 	// Use this for initialization
 	void Start () {
-		
+        Elements el = new Elements();
+        el.sin = 40f;
+
+
 	}
 	
-	// Update is called once per frame
-	void Update () {
-		
-	}
 
-    public AlchemyIngredient MixIngredients(AlchemyIngredient a, AlchemyIngredient b, Vector3 posToSpawn)
+    public Item MixIngredients(Item a, Item b, Vector3 posToSpawn)
     {
-        GameObject ing = Instantiate(baseIngredient, posToSpawn, Quaternion.identity);
+        GameObject ing = Instantiate(testIngredient, posToSpawn, Quaternion.identity);
 
-        AlchemyIngredient c = ing.GetComponent<AlchemyIngredient>();
+        Item c = ing.GetComponent<Item>();
 
-        c.properties.AddRange(a.properties);
-        foreach(IngredientProperties p in b.properties)
-        {
-            if (!c.properties.Exists(x => x == p))
-            {
-                c.properties.Add(p);
-            }
-        }
+        //c.properties.AddRange(a.properties);
+        //foreach(IngredientProperties p in b.properties)
+        //{
+        //    if (!c.properties.Exists(x => x == p))
+        //    {
+        //        c.properties.Add(p);
+        //    }
+        //}
 
-        c.states.AddRange(a.states);
-        foreach (IngredientStates p in b.states)
-        {
-            if (!c.states.Exists(x => x == p))
-            {
-                c.states.Add(p);
-            }
-        }
+        //c.states.AddRange(a.states);
+        //foreach (IngredientStates p in b.states)
+        //{
+        //    if (!c.states.Exists(x => x == p))
+        //    {
+        //        c.states.Add(p);
+        //    }
+        //}
 
-        c.ingredientElements[Element.Sin] = a.ingredientElements[Element.Sin] + b.ingredientElements[Element.Sin];
-        c.ingredientElements[Element.Change] = a.ingredientElements[Element.Change] + b.ingredientElements[Element.Change];
-        c.ingredientElements[Element.Force] = a.ingredientElements[Element.Force] + b.ingredientElements[Element.Force];
-        c.ingredientElements[Element.Secrets] = a.ingredientElements[Element.Secrets] + b.ingredientElements[Element.Secrets];
-        c.ingredientElements[Element.Beauty] = a.ingredientElements[Element.Beauty] + b.ingredientElements[Element.Beauty];
-        c.useDefaults = false;
+        //c.ingredientElements[Element.Sin] = a.ingredientElements[Element.Sin] + b.ingredientElements[Element.Sin];
+        //c.ingredientElements[Element.Change] = a.ingredientElements[Element.Change] + b.ingredientElements[Element.Change];
+        //c.ingredientElements[Element.Force] = a.ingredientElements[Element.Force] + b.ingredientElements[Element.Force];
+        //c.ingredientElements[Element.Secrets] = a.ingredientElements[Element.Secrets] + b.ingredientElements[Element.Secrets];
+        //c.ingredientElements[Element.Beauty] = a.ingredientElements[Element.Beauty] + b.ingredientElements[Element.Beauty];
+        //c.useDefaults = false;
 
-        Destroy(a.gameObject);
-        Destroy(b.gameObject);
+      //  Destroy(a.gameObject);
+      //  Destroy(b.gameObject);
 
 
-        print("Created new Ingredient with " + c.ingredientElements[Element.Sin] + " " + c.ingredientElements[Element.Change] + " " + c.ingredientElements[Element.Force] + " " + c.ingredientElements[Element.Secrets] + " " + c.ingredientElements[Element.Beauty]);
+     //   print("Created new Ingredient with " + c.ingredientElements[Element.Sin] + " " + c.ingredientElements[Element.Change] + " " + c.ingredientElements[Element.Force] + " " + c.ingredientElements[Element.Secrets] + " " + c.ingredientElements[Element.Beauty]);
 
 
         return c;

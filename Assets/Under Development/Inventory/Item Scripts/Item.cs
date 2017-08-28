@@ -2,13 +2,13 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-[RequireComponent(typeof(ItemBehaviour))]
+public enum ItemTag { Liquid, Solid, Powder, Gas, Organic, Dead };
+[System.Serializable]
 public class Item : MonoBehaviour{
 
-	public string name;
+    public string name;
 
 	public GameObject runtimeRepresentation;
-
 	public string flavorText;
 
 	public int width = 1;
@@ -18,10 +18,12 @@ public class Item : MonoBehaviour{
 	public Sprite icon;
 	public Sprite iconBorder;
 
+	//[HideInInspector]
 	public IconSettings iconSettings;
 
-    public Elements elements;
+    private Elements elements = new Elements();
     public List<Attribute> attributes;
+    public List<ItemTag> tags = new List<ItemTag>();
 
 	/// <summary>
 	/// Initializes a new <see cref="Item"/> with the given information.
@@ -29,12 +31,17 @@ public class Item : MonoBehaviour{
 	/// <param name="prefab">The runtime representation of the Item.</param>
 	/// <param name="dimensions">The inventory dimensions of the item in the format "WxH" (eg. "2x4" is an item that is 2 squares wide and 4 squares tall)</param>
 	/// <param name="text">The flavor text of the item.</param>
-	public virtual void InitItem(string name, GameObject prefab, string dimensions, string text){
+	public Item(string name, GameObject prefab, string dimensions, string text){
 		string[] dim = dimensions.Split (new char[]{'x'}, 2);
 		width = int.Parse(dim [0]);
 		height = int.Parse(dim [1]);
 		flavorText = text;
 		runtimeRepresentation = prefab;
+	}
+
+	public Item(){
+		width = 1;
+		height = 1;
 	}
 
 	void OnValidate(){
@@ -45,6 +52,16 @@ public class Item : MonoBehaviour{
 			height = 1;
 		}
 	}
+
+    public virtual Elements GetElements()
+    {
+        Elements elToSend = elements;
+        foreach(Attribute a in attributes)
+        {
+            elToSend += a.elementsModifier;
+        }
+        return elToSend;
+    }
 
 }
 
