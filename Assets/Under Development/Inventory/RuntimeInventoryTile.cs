@@ -30,10 +30,6 @@ public class RuntimeInventoryTile : MonoBehaviour, IPointerEnterHandler, IPointe
 		}
 	}
 
-	public void OnDrag(PointerEventData evt){
-		Debug.Log (evt.position);
-	}
-
 	public void OnPointerExit(PointerEventData evt){
 		inTile = false;
 	}
@@ -50,7 +46,7 @@ public class RuntimeInventoryTile : MonoBehaviour, IPointerEnterHandler, IPointe
 					currentLocalPos = Rect.PointToNormalized (space.rect, currentLocalPos);
 
 					int _x = currentLocalPos.x < 0.5 ? x : Mathf.Clamp (x + 1, 0, drawer.inventory.inventoryWidth - 1);
-					int _y = currentLocalPos.y > 0.5 ? y : Mathf.Clamp (y, 0, drawer.inventory.inventoryHeight - 1);
+					int _y = currentLocalPos.y > 0.5 ? y : Mathf.Clamp (y + 1, 0, drawer.inventory.inventoryHeight - 1);
 
 					drawer.CheckOccupiance (ItemHandler.currentlyHeldItem, _x, _y); //put in actual item
 				}

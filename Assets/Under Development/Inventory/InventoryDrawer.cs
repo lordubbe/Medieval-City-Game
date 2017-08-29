@@ -50,7 +50,6 @@ public class InventoryDrawer : MonoBehaviour, IPointerEnterHandler, IPointerExit
 			item.transform.parent = this.transform;
 			objBeh.inInventory = true;
 			ItemHandler.Drop (item);
-//			Destroy (ItemHandler.currentlyHeldItem);
 		}
 	}
 
@@ -119,8 +118,8 @@ public class InventoryDrawer : MonoBehaviour, IPointerEnterHandler, IPointerExit
 				//Make sure we're within bounds
 				if (x >= xCoord - halfWidth &&
 					x < xCoord + halfWidth &&
-					y >= yCoord - halfWidth &&
-					y < yCoord + halfWidth +1) {
+					y >= yCoord - halfHeight &&
+					y < yCoord + halfHeight) {
 
 					if (currentSpace.isActive) {
 						if (currentSpace.isAvailable) {

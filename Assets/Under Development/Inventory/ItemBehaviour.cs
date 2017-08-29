@@ -30,9 +30,14 @@ public class ItemBehaviour : MonoBehaviour {
 
 	private InventoryDrawer drawer;
 
+	private Vector3 pickupOffset = Vector3.zero;
+
 	void Awake(){
 		//Prepare the runtime objects for spawning/despawning
 		Init (); 
+
+		//Subscribe to interaction events
+		MouseInteractionManager.OnMouseDown += OnMouseDown;
 
 		//Subscribe to inventory events
 		InventoryEvents.OnInventoryEnter += OnEnterInventory;
@@ -63,75 +68,84 @@ public class ItemBehaviour : MonoBehaviour {
 	
 	public void OnEnterInventory(InventoryDrawer inv){
 		drawer = inv;
+		overInventory = true;
+
 		//change from object to icon
 		if (holdingObject) {
 			SetIconSize (GlobalInventorySettings.INVENTORY_TILE_SIZE);
-			clickDistance = (Camera.main.transform.position - inv.transform.position).magnitude;
 			ToggleDisplayState ();
 
 			transform.parent = inv.inventoryCanvas.transform;
 			transform.localScale = Vector3.one;
 			transform.localRotation = Quaternion.identity;
-			transform.position = Camera.main.ScreenToWorldPoint (new Vector3 (Input.mousePosition.x, Input.mousePosition.y, Camera.main.transform.position.z + 100f));
+			transform.position = MouseInteractionManager.hoverPoint;
 		}
-		overInventory = true;
 	}
 		
 	public void OnExitInventory(InventoryDrawer inv){
 		drawer = null;
+		overInventory = false;
+
 		//change from icon to object
 		if (holdingObject) {
 			ToggleDisplayState ();
 			transform.parent = null;
 			runtimeIcon.transform.position = transform.position;
-			overInventory = false;
+			transform.localScale = Vector3.one;
 		}
-
 	}
 		
 	void ToggleDisplayState(){
-		if (runtimeIcon.activeInHierarchy) {
-			runtimeIcon.SetActive (false);
-			runtimeGraphics.SetActive (true);
-		} else {
-			runtimeIcon.SetActive (true);
-			runtimeGraphics.SetActive (false);
-
-		}
+		runtimeIcon.SetActive (!runtimeIcon.activeInHierarchy);
+		runtimeGraphics.SetActive (!runtimeGraphics.activeInHierarchy);
 	}
 
 
-	public void PickUp(Vector3 clickPos){
-		//pick up / drag
+	void PickUp(){
+		// Subscribe to OnMouseUp event
+		MouseInteractionManager.OnMouseUp += OnMouseUp;
+
+		// Pick up / drag
 		ItemHandler.Equip(item);
-
-		//spawn joint, etc.
-		if (clickPoint != null) {
-			Destroy (clickPoint);
-		}
-		clickPoint = new GameObject ("clickPoint");
-		clickPoint.transform.position = clickPos;
-
-		if (clickPoint.GetComponent<CharacterJoint> () == null) {
-			activeJoint = clickPoint.AddComponent<CharacterJoint> ();
-		}
-
-		SoftJointLimit lim = new SoftJointLimit ();
-		lim.limit = 360f;
-		lim.contactDistance = 20f;
-		activeJoint.swing1Limit = activeJoint.swing2Limit = lim;
-
-		activeJoint.connectedBody = runtimeGraphics.GetComponent<Rigidbody> ();
-		clickPoint.GetComponent<Rigidbody> ().useGravity = false;
-		clickPoint.GetComponent<Rigidbody> ().isKinematic = true;
-
 		holdingObject = true;
+
+		Rigidbody rb = item.GetComponentInChildren<Rigidbody> ();
+		rb.isKinematic = true;
+		rb.useGravity = false;
+	}
+
+	void Drop(){
+		ItemHandler.Drop (item);
+		holdingObject = false;
+
+		Rigidbody rb = item.GetComponentInChildren<Rigidbody> ();
+		rb.isKinematic = false;
+		rb.useGravity = true;
 	}
 
 	void SetIconSize(float tileSize){
 		Vector2 size = new Vector2 (tileSize * item.width, tileSize * item.height);
 		iconImgRect.sizeDelta = size;
 		iconBorderRect.sizeDelta = size;
+	}
+
+	public void OnMouseDown(){
+		if (MouseInteractionManager.currentHoverObject == runtimeGraphics) { //TODO: Unlink from runtime graphics somehow, so it'll work with the icon as well?
+			clickDistance = (MouseInteractionManager.hoverPoint - Camera.main.transform.position).magnitude;
+
+			//If item is physical
+			if (!inInventory) {
+				PickUp ();
+			} else {
+				// Pick it up, but in the inventory
+			}
+		}
+	}
+
+	public void OnMouseUp(){
+		if (holdingObject && !overInventory) {
+			Drop ();
+		}
 	}
 
 	public void OnMouseEnter(){
@@ -142,72 +156,35 @@ public class ItemBehaviour : MonoBehaviour {
 		//Outline off?
 	}
 
-	public void OnMouseDown(){
-		//If item is physical
-		if (!inInventory) {
-			Ray camToMouse = Camera.main.ScreenPointToRay (Input.mousePosition);
-			RaycastHit hit;
-			float maxDistance = 100f;
-			if (Physics.Raycast (camToMouse, out hit, maxDistance)){
-				PickUp (hit.point); 
-				clickDistance = hit.distance - Camera.main.nearClipPlane;
-			}
-		}
-	}
-
-	public void OnMouseUp(){
-		if (holdingObject && !overInventory) {
-			Vector3 vel = activeJoint.connectedBody.velocity;
-			activeJoint.connectedBody = null;
-			holdingObject = false;
-			ItemHandler.Drop (item);
-		}
-	}
-
-	void OnPickup(){
-		holdingObject = true;
-	}
-
-	void OnDrop(){
-		holdingObject = false;
-	}
-
 	//Bad code from here
 	void Update(){
-		if (clickPoint != null && holdingObject) {
-			if (drawer != null) { // Item is over inventory
-				clickPoint.transform.position = Camera.main.ScreenToWorldPoint (new Vector3 (Input.mousePosition.x, Input.mousePosition.y, drawer.gridParent.transform.position.z));
-				transform.position = clickPoint.transform.position;
-			} else { // Item is not over inventory
-				clickPoint.transform.position = Camera.main.ScreenToWorldPoint (new Vector3 (Input.mousePosition.x, Input.mousePosition.y, clickDistance));
+		
+		if (holdingObject) {
+			if (!overInventory) {
+				transform.position = Camera.main.ScreenToWorldPoint (new Vector3 (Input.mousePosition.x, Input.mousePosition.y, clickDistance));
+				runtimeGraphics.transform.position = transform.position;
+			} else {
+				transform.position = Camera.main.ScreenToWorldPoint (new Vector3 (Input.mousePosition.x, Input.mousePosition.y, drawer.gridParent.transform.position.z));
 			}
 		}
 
-		if (runtimeIcon.activeInHierarchy && holdingObject) {
-//			transform.position = new Vector3 (Input.mousePosition.x, Input.mousePosition.y, Camera.main.transform.position.z);
-			SetIconSize (50f); //CHANGE
-			runtimeIcon.transform.rotation = Quaternion.identity;
-			Rect fis = runtimeIcon.GetComponent<RectTransform> ().rect;
-			runtimeIcon.transform.position = transform.position - new Vector3 (fis.width / 2, fis.height / 2, 0);
-			Vector2 relPos = new Vector2 (Input.mousePosition.x / Screen.width, Input.mousePosition.y / Screen.height);
-			runtimeIcon.GetComponent<RectTransform> ().localPosition = new Vector3 ((relPos.x * fis.width) - fis.width / 2, (relPos.y * fis.height) - fis.height / 2, 0);
-		}
 
+//		if (clickPoint != null && holdingObject) {
+//			if (drawer != null) { // Item is over inventory
+//				clickPoint.transform.position = Camera.main.ScreenToWorldPoint (new Vector3 (Input.mousePosition.x, Input.mousePosition.y, drawer.gridParent.transform.position.z));
+//				transform.position = clickPoint.transform.position;
+//			} else { // Item is not over inventory
+//				clickPoint.transform.position = Camera.main.ScreenToWorldPoint (new Vector3 (Input.mousePosition.x, Input.mousePosition.y, clickDistance));
+//			}
+//		}
+//
 //		if (runtimeIcon.activeInHierarchy && holdingObject) {
-//			//NEW
-//
-//
-//			//OLD
-//			runtimeIcon.GetComponent<RectTransform> ().position = new Vector3 (Input.mousePosition.x, Input.mousePosition.y, Camera.main.transform.position.z + 100f);
 //			SetIconSize (50f); //CHANGE
 //			runtimeIcon.transform.rotation = Quaternion.identity;
-//			Rect fis = runtimeIcon.transform.parent.GetComponent<RectTransform> ().rect;
-//			Vector2 relPos = new Vector2(Input.mousePosition.x / Screen.width, Input.mousePosition.y / Screen.height);
-//			runtimeIcon.GetComponent<RectTransform> ().localPosition = new Vector3 ((relPos.x * fis.width) - fis.width/2, (relPos.y * fis.height)  - fis.height/2, 0);
-//
-//			//check for inventory space occupiance
-//			Rect space = iconImgRect.rect;
-//
+//			Rect fis = runtimeIcon.GetComponent<RectTransform> ().rect;
+//			runtimeIcon.transform.position = transform.position - new Vector3 (fis.width / 2, fis.height / 2, 0);
+//			Vector2 relPos = new Vector2 (Input.mousePosition.x / Screen.width, Input.mousePosition.y / Screen.height);
+//			runtimeIcon.GetComponent<RectTransform> ().localPosition = new Vector3 ((relPos.x * fis.width) - fis.width / 2, (relPos.y * fis.height) - fis.height / 2, 0);
 //		}
 	}
 
