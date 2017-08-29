@@ -17,7 +17,8 @@ public class InventorySlot : MonoBehaviour {
 	}
 
 	void OnEnable(){
-		drawer.inventory = inventory;
+		GameObject inventoryInstance = Instantiate (inventory.gameObject, drawer.transform) as GameObject;
+		drawer.inventory = inventoryInstance.GetComponent<Inventory> ();
 		if (inventory.connectedItem != null) {
 			image.sprite = inventory.connectedItem.icon;
 			text.text = inventory.name;

@@ -7,7 +7,7 @@ public class ItemBehaviour : MonoBehaviour {
 
 	private Item item;
 
-	private bool holdingObject = false;
+	public bool holdingObject = false;
 
 	public bool inInventory;
 	public bool overInventory;
@@ -28,9 +28,9 @@ public class ItemBehaviour : MonoBehaviour {
 	private RectTransform iconImgRect;
 	private RectTransform iconBorderRect;
 
-	private InventoryDrawer drawer;
+	public InventoryDrawer drawer;
 
-	private Vector3 pickupOffset = Vector3.zero;
+	private Vector3 originalScale = Vector3.one;
 
 	void Awake(){
 		//Prepare the runtime objects for spawning/despawning
@@ -40,11 +40,13 @@ public class ItemBehaviour : MonoBehaviour {
 		MouseInteractionManager.OnMouseDown += OnMouseDown;
 
 		//Subscribe to inventory events
-		InventoryEvents.OnInventoryEnter += OnEnterInventory;
-		InventoryEvents.OnInventoryExit += OnExitInventory;
+		InventoryEvents.OnInventoryEnter += OnEnterInventoryFrame;
+		InventoryEvents.OnInventoryExit += OnExitInventoryFrame;
 	}
 
 	void Init(){
+		originalScale = transform.localScale;
+
 		//Make sure Item is linked
 		if (item == null) {
 			item = GetComponent<Item> ();
@@ -66,7 +68,7 @@ public class ItemBehaviour : MonoBehaviour {
 		}
 	}
 	
-	public void OnEnterInventory(InventoryDrawer inv){
+	public void OnEnterInventoryFrame(InventoryDrawer inv){
 		drawer = inv;
 		overInventory = true;
 
@@ -82,7 +84,7 @@ public class ItemBehaviour : MonoBehaviour {
 		}
 	}
 		
-	public void OnExitInventory(InventoryDrawer inv){
+	public void OnExitInventoryFrame(InventoryDrawer inv){
 		drawer = null;
 		overInventory = false;
 
@@ -91,7 +93,7 @@ public class ItemBehaviour : MonoBehaviour {
 			ToggleDisplayState ();
 			transform.parent = null;
 			runtimeIcon.transform.position = transform.position;
-			transform.localScale = Vector3.one;
+			transform.localScale = originalScale;
 		}
 	}
 		
@@ -136,8 +138,13 @@ public class ItemBehaviour : MonoBehaviour {
 			//If item is physical
 			if (!inInventory) {
 				PickUp ();
-			} else {
-				// Pick it up, but in the inventory
+			}
+
+		} else if (MouseInteractionManager.currentHoverObject == runtimeIcon) {
+			if (inInventory) {
+				InventoryEvents.OnRemoveFromInventory (item);
+				runtimeIcon.GetComponent<Image> ().raycastTarget = false;
+				Debug.Log ("Trying to pick up item in inventory! This is not implemented yet ;)");
 			}
 		}
 	}
@@ -145,6 +152,9 @@ public class ItemBehaviour : MonoBehaviour {
 	public void OnMouseUp(){
 		if (holdingObject && !overInventory) {
 			Drop ();
+		} else if(holdingObject && overInventory){
+			InventoryEvents.OnAddToInventory (item);
+			runtimeIcon.GetComponent<Image> ().raycastTarget = true;
 		}
 	}
 

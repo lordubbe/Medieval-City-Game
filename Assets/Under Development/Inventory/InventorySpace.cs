@@ -13,7 +13,11 @@ public class InventorySpace {
 		isAvailable = true;
 	}
 
-	public void SetItem(Item obj){
-		item = obj.GetComponent<Item> () ?? null;
+	public void SetItem(Item item){
+		item = item.GetComponent<Item> () ?? null;
+	}
+
+	public void RemoveItem(Item item){
+		item = null;
 	}
 }

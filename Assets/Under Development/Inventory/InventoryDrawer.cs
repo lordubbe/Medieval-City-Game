@@ -27,7 +27,8 @@ public class InventoryDrawer : MonoBehaviour, IPointerEnterHandler, IPointerExit
 
 	void OnEnable(){ 
 		InventoryEvents.OnInventoryExit += OnExitInventory;
-		InventoryEvents.OnDropItem += OnItemDrop;
+		InventoryEvents.OnAddToInventory += OnItemDrop;
+		InventoryEvents.OnRemoveFromInventory += OnItemPickup;
 
 		gridMaster = gridParent.GetComponent<GridLayoutGroup> ();
 		gridParentTransform = gridParent.GetComponent<RectTransform>();
@@ -45,12 +46,26 @@ public class InventoryDrawer : MonoBehaviour, IPointerEnterHandler, IPointerExit
 
 	void OnItemDrop(Item item){
 		ItemBehaviour objBeh = ItemHandler.currentlyHeldItem.GetComponent<ItemBehaviour> ();
-		if (objBeh.overInventory && sufficientSpace) {
+		if (objBeh.drawer == this && sufficientSpace) {
 			inventory.AddItem (item, currentX, currentY);
+
+			// Parent the item object to the tile
+			item.gameObject.transform.parent = tiles[Util.coordsToIndex(inventory, currentX, currentY)].transform;
+
+			// TODO: Move to ItemBehaviour
+			RectTransform itemRect = item.transform.Find("Icon").GetComponent<RectTransform> ();
+			Rect r = itemRect.rect;
+			item.gameObject.transform.localPosition = new Vector3 (r.width / 4, -r.height / 4, 0); // Y is inverted in the UI system :/
+
 			item.transform.parent = this.transform;
 			objBeh.inInventory = true;
+			objBeh.holdingObject = false; // TODO: Make better. It maybe return a bool whether the inventory placement was successful or not?
 			ItemHandler.Drop (item);
 		}
+	}
+
+	void OnItemPickup(Item item){
+		// ... I'll get to this xD
 	}
 
 	void SpawnInventory(){

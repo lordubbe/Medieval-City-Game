@@ -8,6 +8,7 @@ public class InventoryEvents : MonoBehaviour {
 
 	public static InventoryEvent OnInventoryEnter;
 	public static InventoryEvent OnInventoryExit;
-	public static InventoryItemEvent OnDropItem;
+	public static InventoryItemEvent OnAddToInventory;
+	public static InventoryItemEvent OnRemoveFromInventory;
 
 }

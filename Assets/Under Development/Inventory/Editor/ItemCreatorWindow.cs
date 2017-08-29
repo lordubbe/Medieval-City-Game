@@ -406,6 +406,7 @@ public class ItemCreatorWindow : EditorWindow, IHasCustomMenu {
 									Rect square = new Rect (invPrev.x + x * gridSize, invPrev.y + y * gridSize, gridSize, gridSize);
 									Event e = Event.current;
 									InventorySpace curSpace = currentItemInv.spaces [y * currentItemInv.inventoryWidth + x]; //rewrite this shitty code
+
 									if (square.Contains (e.mousePosition)) {
 										EditorGUI.DrawRect (square, Color.white.WithAlpha (0.2f));
 										if (e.type == EventType.mouseDown) {
@@ -522,9 +523,9 @@ public class ItemCreatorWindow : EditorWindow, IHasCustomMenu {
 		GameObject prefabInstance = PrefabUtility.InstantiatePrefab(currentItem.gameObject) as GameObject;
 
 		// Check to see if the prefab already has an 'Icon' object
-		GameObject existingIcon = prefabInstance.transform.Find("Icon").gameObject;
+		Transform existingIcon = prefabInstance.transform.Find("Icon");
 		if (existingIcon != null) {
-			DestroyImmediate (existingIcon);
+			DestroyImmediate (existingIcon.gameObject);
 		}
 
 		// Icon
