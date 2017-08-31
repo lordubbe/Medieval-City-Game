@@ -6,42 +6,14 @@ using UnityEngine.UI;
 [RequireComponent(typeof(RenderMeshOnCanvas))]
 public class PentagonShape : MonoBehaviour {
 
-    private RenderMeshOnCanvas renderShape;
+    public RenderMeshOnCanvas renderShape;
     public CanvasRenderer canvasRenderer;
     public Material topPentaMat;
     public Material basePentaMat;
 
     public GameObject pentagonObj;
-
-    void Awake()
-    {
-        renderShape = GetComponent<RenderMeshOnCanvas>();
-    }
-
-    void Start()
-    {
-        //DrawElementPentagon(Elements.full, canvasRenderer);
-    }
-
-    void Update()
-    {
-        //DrawElementPentagon(Elements.full, transform);
-    }
-
-
-    //public void DrawElementPentagon(Elements el, Vector2 p, CanvasRenderer r) 
-    //{
-        
-    //    renderShape.sizes = el.ToArray();
-    //    Mesh m = renderShape.CreateMesh(p);
-        
-    //   // renderShape.SetMesh();
-
-    //    r.Clear();
-    //    r.SetMaterial(topPentaMat,null);
-    //    r.SetMesh(m);
-    //}
-
+    
+    
     /// <summary>
     /// called without position, means it'll get rendered on transforms's 0,0 position. Use this, generally, unless you want to offset it for some reason.
     /// </summary>
@@ -105,6 +77,4 @@ public class PentagonShape : MonoBehaviour {
         p.customPenta.Clear();
         Destroy(p.gameObject);
     }
-
-
 }

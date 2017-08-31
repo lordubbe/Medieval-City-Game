@@ -4,62 +4,50 @@ using UnityEngine;
 
 
 public class Alchemy : MonoBehaviour {
-    
-    [SerializeField]
-    GameObject testIngredient;
 
+    public PentagonObject pentaObj;
+    public Material topPentaMat;
+    public Material basePentaMat;
 
-	// Use this for initialization
-	void Start () {
-        Elements el = new Elements();
-        el.sin = 40f;
-
-
-	}
-	
-
-    public Item MixIngredients(Item a, Item b, Vector3 posToSpawn)
+    /// <summary>
+    /// Creates a Gameobject with the pentagon shape as a Child of r. Returns the GameObject
+    /// </summary>
+    /// <param name="el"></param>
+    /// <param name="r"></param>
+    public GameObject DrawElementPentagon(Elements el, Transform r)
     {
-        GameObject ing = Instantiate(testIngredient, posToSpawn, Quaternion.identity);
+        GameObject gbase;
+        PentagonObject p = r.GetComponentInChildren<PentagonObject>();
+        if (p == null)
+        {
+            gbase = Instantiate(Resources.Load("Prefabs/PentagonObject")) as GameObject;
+            gbase.name = "Pentagon Object";
+            gbase.transform.SetParent(r, false);
+            p = gbase.GetComponent<PentagonObject>();
+        }
+        else
+        {
+            gbase = p.gameObject;
+        }
 
-        Item c = ing.GetComponent<Item>();
+        Elements e = ((el + 100f) / 2f);
+        AlchemyUtil.sizes = e.ToArray();
+        Mesh m = AlchemyUtil.CreateMesh(Vector2.zero);
+        // renderShape.SetMesh();
+        CanvasRenderer rr = p.topPenta;
+        rr.Clear();
+        rr.SetMaterial(topPentaMat, null);
+        rr.SetMesh(m);
 
-        //c.properties.AddRange(a.properties);
-        //foreach(IngredientProperties p in b.properties)
-        //{
-        //    if (!c.properties.Exists(x => x == p))
-        //    {
-        //        c.properties.Add(p);
-        //    }
-        //}
+        AlchemyUtil.sizes = Elements.full.ToArray();
+        m = AlchemyUtil.CreateMesh(Vector2.zero);
+        rr = p.basePenta;
+        rr.Clear();
+        rr.SetMaterial(basePentaMat, null);
+        rr.SetMesh(m);
 
-        //c.states.AddRange(a.states);
-        //foreach (IngredientStates p in b.states)
-        //{
-        //    if (!c.states.Exists(x => x == p))
-        //    {
-        //        c.states.Add(p);
-        //    }
-        //}
-
-        //c.ingredientElements[Element.Sin] = a.ingredientElements[Element.Sin] + b.ingredientElements[Element.Sin];
-        //c.ingredientElements[Element.Change] = a.ingredientElements[Element.Change] + b.ingredientElements[Element.Change];
-        //c.ingredientElements[Element.Force] = a.ingredientElements[Element.Force] + b.ingredientElements[Element.Force];
-        //c.ingredientElements[Element.Secrets] = a.ingredientElements[Element.Secrets] + b.ingredientElements[Element.Secrets];
-        //c.ingredientElements[Element.Beauty] = a.ingredientElements[Element.Beauty] + b.ingredientElements[Element.Beauty];
-        //c.useDefaults = false;
-
-      //  Destroy(a.gameObject);
-      //  Destroy(b.gameObject);
-
-
-     //   print("Created new Ingredient with " + c.ingredientElements[Element.Sin] + " " + c.ingredientElements[Element.Change] + " " + c.ingredientElements[Element.Force] + " " + c.ingredientElements[Element.Secrets] + " " + c.ingredientElements[Element.Beauty]);
-
-
-        return c;
+        return gbase;
     }
-
-
 
 
 }

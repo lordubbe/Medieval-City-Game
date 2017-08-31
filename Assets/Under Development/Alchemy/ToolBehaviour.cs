@@ -5,13 +5,15 @@ using UnityEngine.UI;
 
 public class ToolBehaviour : MonoBehaviour {
 
+    public Alchemy alc;
     private AlchemyTool tool;
     public Canvas toolCanvas;
+    public Transform pentaSpot;
 
 	// Use this for initialization
 	void Start () {
 
-
+        tool = GetComponent<AlchemyTool>();
         MouseInteractionManager.OnMouseDown += OnMouseDown;
 	}
 	
@@ -25,6 +27,7 @@ public class ToolBehaviour : MonoBehaviour {
     {
         // click and open tool item window.
         toolCanvas.gameObject.SetActive(true);
+        alc.DrawElementPentagon(tool.elements, pentaSpot);
         //find correct position and move ??
 
         //get and draw pentagon shape
@@ -32,6 +35,7 @@ public class ToolBehaviour : MonoBehaviour {
 
     public void OnMouseEnter()
     {
+        GameObject g = alc.DrawElementPentagon(tool.elements, pentaSpot);
         //outline?
     }
 
