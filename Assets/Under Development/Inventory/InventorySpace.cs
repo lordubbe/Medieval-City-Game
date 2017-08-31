@@ -14,10 +14,10 @@ public class InventorySpace {
 	}
 
 	public void SetItem(Item item){
-		item = item.GetComponent<Item> () ?? null;
+		this.item = item;
 	}
 
 	public void RemoveItem(Item item){
-		item = null;
+		this.item = null;
 	}
 }

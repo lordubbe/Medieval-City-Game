@@ -50,7 +50,7 @@ public class InventoryDrawer : MonoBehaviour, IPointerEnterHandler, IPointerExit
 			inventory.AddItem (item, currentX, currentY);
 
 			// Parent the item object to the tile
-			item.gameObject.transform.parent = tiles[Util.coordsToIndex(inventory, currentX, currentY)].transform;
+			item.transform.parent = tiles[Util.coordsToIndex(inventory, currentX, currentY)].transform;
 
 			// TODO: Move to ItemBehaviour
 			RectTransform itemRect = item.transform.Find("Icon").GetComponent<RectTransform> ();
@@ -66,6 +66,12 @@ public class InventoryDrawer : MonoBehaviour, IPointerEnterHandler, IPointerExit
 
 	void OnItemPickup(Item item){
 		// ... I'll get to this xD
+		ItemBehaviour objBeh = item.GetComponent<ItemBehaviour>();
+		if (objBeh.drawer == this) {
+			inventory.RemoveItem (item);
+			item.transform.parent = null;
+						
+		}
 	}
 
 	void SpawnInventory(){

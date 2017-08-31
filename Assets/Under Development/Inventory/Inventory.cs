@@ -35,12 +35,13 @@ public class Inventory : MonoBehaviour {
 
 	public void RemoveItem(Item item){
 		InventorySpace space = spaces.Find (a => a.item == item);
-		Vector2 coords = Util.indexToCoords(this, spaces.IndexOf (space));
+		int i = spaces.IndexOf (space);
+		Vector2 coords = Util.indexToCoords(this, i);
 		int x = (int)coords.x; 
 		int y = (int)coords.y;
 
-		for (int _x = x; _x < x + item.width; x++) {
-			for (int _y = y; _y < y + item.height; y++) {
+		for (int _x = x; _x < x + item.width; _x++) {
+			for (int _y = y; _y < y + item.height; _y++) {
 				int idx = Util.coordsToIndex (this, _x, _y);
 				spaces [idx].isAvailable = true;
 				availableSpace++;
@@ -48,5 +49,6 @@ public class Inventory : MonoBehaviour {
 		}
 		space.RemoveItem (item);
 		items.Remove (item);
+
 	}
 }

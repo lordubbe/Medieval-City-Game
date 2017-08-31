@@ -5,6 +5,9 @@ using UnityEngine.UI;
 
 public class ItemBehaviour : MonoBehaviour {
 
+	private enum DisplayMode{ graphics, icon };
+	private DisplayMode displayMode;
+
 	private Item item;
 
 	public bool holdingObject = false;
@@ -23,6 +26,7 @@ public class ItemBehaviour : MonoBehaviour {
 	private GameObject runtimeIcon;
 //	[SerializeField, Tooltip("If this object was placed directly in an inventory, assign the icon object to this field.")]
 	private GameObject runtimeGraphics;
+	private Rigidbody runtimeGraphicsRb;
 
 	//Icon
 	private RectTransform iconImgRect;
@@ -46,7 +50,6 @@ public class ItemBehaviour : MonoBehaviour {
 
 	void Init(){
 		originalScale = transform.localScale;
-
 		//Make sure Item is linked
 		if (item == null) {
 			item = GetComponent<Item> ();
@@ -57,6 +60,7 @@ public class ItemBehaviour : MonoBehaviour {
 		runtimeIcon = transform.Find ("Icon").gameObject;
 		iconImgRect = runtimeIcon.GetComponent<RectTransform> ();
 		iconBorderRect = runtimeIcon.transform.Find ("Icon_border").GetComponent<RectTransform> ();
+		runtimeGraphicsRb = runtimeGraphics.GetComponent<Rigidbody> ();
 
 		// Init display mode
 		if (inInventory) {
@@ -75,7 +79,7 @@ public class ItemBehaviour : MonoBehaviour {
 		//change from object to icon
 		if (holdingObject) {
 			SetIconSize (GlobalInventorySettings.INVENTORY_TILE_SIZE);
-			ToggleDisplayState ();
+			SetDisplayMode (DisplayMode.icon);
 
 			transform.parent = inv.inventoryCanvas.transform;
 			transform.localScale = Vector3.one;
@@ -90,16 +94,24 @@ public class ItemBehaviour : MonoBehaviour {
 
 		//change from icon to object
 		if (holdingObject) {
-			ToggleDisplayState ();
+			SetDisplayMode (DisplayMode.graphics);
 			transform.parent = null;
 			runtimeIcon.transform.position = transform.position;
 			transform.localScale = originalScale;
 		}
 	}
-		
-	void ToggleDisplayState(){
-		runtimeIcon.SetActive (!runtimeIcon.activeInHierarchy);
-		runtimeGraphics.SetActive (!runtimeGraphics.activeInHierarchy);
+
+	void SetDisplayMode(DisplayMode mode){
+		switch (mode) {
+		case DisplayMode.graphics:
+			runtimeGraphics.SetActive (true);
+			runtimeIcon.SetActive (false);
+			break;
+		case DisplayMode.icon:
+			runtimeIcon.SetActive (true);
+			runtimeGraphics.SetActive (false);
+			break;
+		}
 	}
 
 
@@ -111,18 +123,16 @@ public class ItemBehaviour : MonoBehaviour {
 		ItemHandler.Equip(item);
 		holdingObject = true;
 
-		Rigidbody rb = item.GetComponentInChildren<Rigidbody> ();
-		rb.isKinematic = true;
-		rb.useGravity = false;
+		runtimeGraphicsRb.isKinematic = true;
+		runtimeGraphicsRb.useGravity = false;
 	}
 
 	void Drop(){
 		ItemHandler.Drop (item);
 		holdingObject = false;
 
-		Rigidbody rb = item.GetComponentInChildren<Rigidbody> ();
-		rb.isKinematic = false;
-		rb.useGravity = true;
+		runtimeGraphicsRb.isKinematic = false;
+		runtimeGraphicsRb.useGravity = true;
 	}
 
 	void SetIconSize(float tileSize){
@@ -132,7 +142,7 @@ public class ItemBehaviour : MonoBehaviour {
 	}
 
 	public void OnMouseDown(){
-		if (MouseInteractionManager.currentHoverObject == runtimeGraphics) { //TODO: Unlink from runtime graphics somehow, so it'll work with the icon as well?
+		if (MouseInteractionManager.currentHoverObject == runtimeGraphics) { //TODO: Unlink from runtimeGraphics somehow, so it'll work with the icon as well?
 			clickDistance = (MouseInteractionManager.hoverPoint - Camera.main.transform.position).magnitude;
 
 			//If item is physical
@@ -140,11 +150,12 @@ public class ItemBehaviour : MonoBehaviour {
 				PickUp ();
 			}
 
-		} else if (MouseInteractionManager.currentHoverObject == runtimeIcon) {
+		} else if (MouseInteractionManager.currentHoverObject == runtimeIcon) { //TODO: Unlink from runtimeIcon somehow
 			if (inInventory) {
 				InventoryEvents.OnRemoveFromInventory (item);
 				runtimeIcon.GetComponent<Image> ().raycastTarget = false;
-				Debug.Log ("Trying to pick up item in inventory! This is not implemented yet ;)");
+				inInventory = false;
+				PickUp ();
 			}
 		}
 	}
@@ -177,25 +188,6 @@ public class ItemBehaviour : MonoBehaviour {
 				transform.position = Camera.main.ScreenToWorldPoint (new Vector3 (Input.mousePosition.x, Input.mousePosition.y, drawer.gridParent.transform.position.z));
 			}
 		}
-
-
-//		if (clickPoint != null && holdingObject) {
-//			if (drawer != null) { // Item is over inventory
-//				clickPoint.transform.position = Camera.main.ScreenToWorldPoint (new Vector3 (Input.mousePosition.x, Input.mousePosition.y, drawer.gridParent.transform.position.z));
-//				transform.position = clickPoint.transform.position;
-//			} else { // Item is not over inventory
-//				clickPoint.transform.position = Camera.main.ScreenToWorldPoint (new Vector3 (Input.mousePosition.x, Input.mousePosition.y, clickDistance));
-//			}
-//		}
-//
-//		if (runtimeIcon.activeInHierarchy && holdingObject) {
-//			SetIconSize (50f); //CHANGE
-//			runtimeIcon.transform.rotation = Quaternion.identity;
-//			Rect fis = runtimeIcon.GetComponent<RectTransform> ().rect;
-//			runtimeIcon.transform.position = transform.position - new Vector3 (fis.width / 2, fis.height / 2, 0);
-//			Vector2 relPos = new Vector2 (Input.mousePosition.x / Screen.width, Input.mousePosition.y / Screen.height);
-//			runtimeIcon.GetComponent<RectTransform> ().localPosition = new Vector3 ((relPos.x * fis.width) - fis.width / 2, (relPos.y * fis.height) - fis.height / 2, 0);
-//		}
 	}
 
 }
