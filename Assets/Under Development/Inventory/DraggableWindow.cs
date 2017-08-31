@@ -55,17 +55,5 @@ public class DraggableWindow : MonoBehaviour, IPointerDownHandler, IPointerUpHan
 
 			prevMousePos = Input.mousePosition;
 		}
-
-		// TODO: Move to somewhere else
-//		if (Input.GetMouseButtonUp (0)) {
-//			if (ItemHandler.currentlyHeldItem != null) {
-//				//add to inventory pls m'jacob
-//				if (InventoryEvents.OnDropItem != null) {
-//
-//					InventoryEvents.OnDropItem (ItemHandler.currentlyHeldItem);
-//				}
-//			}
-//		}
-
 	}
 }

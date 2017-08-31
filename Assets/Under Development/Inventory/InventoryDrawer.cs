@@ -26,10 +26,6 @@ public class InventoryDrawer : MonoBehaviour, IPointerEnterHandler, IPointerExit
 	public bool sufficientSpace = false;
 
 	void OnEnable(){ 
-		InventoryEvents.OnInventoryExit += OnExitInventory;
-		InventoryEvents.OnAddToInventory += OnItemDrop;
-		InventoryEvents.OnRemoveFromInventory += OnItemPickup;
-
 		gridMaster = gridParent.GetComponent<GridLayoutGroup> ();
 		gridParentTransform = gridParent.GetComponent<RectTransform>();
 		invBackground = gridParent.GetComponent<Image> ();
@@ -44,34 +40,37 @@ public class InventoryDrawer : MonoBehaviour, IPointerEnterHandler, IPointerExit
 		}
 	}
 
-	void OnItemDrop(Item item){
-		ItemBehaviour objBeh = ItemHandler.currentlyHeldItem.GetComponent<ItemBehaviour> ();
-		if (objBeh.drawer == this && sufficientSpace) {
+	// TODO: Make this function return a bool for whether the drop was successful
+	public bool OnItemDrop(Item item){
+		ItemBehaviour objBeh = ItemHandler.currentItem.GetComponent<ItemBehaviour> ();
+		if (sufficientSpace) {
 			inventory.AddItem (item, currentX, currentY);
 
 			// Parent the item object to the tile
-			item.transform.parent = tiles[Util.coordsToIndex(inventory, currentX, currentY)].transform;
+			Debug.Log (tiles [Util.coordsToIndex (inventory, currentX, currentY)].name);
+			item.transform.parent = tiles [Util.coordsToIndex (inventory, currentX, currentY)].transform;
 
 			// TODO: Move to ItemBehaviour
-			RectTransform itemRect = item.transform.Find("Icon").GetComponent<RectTransform> ();
+			RectTransform itemRect = item.transform.Find ("Icon").GetComponent<RectTransform> ();
 			Rect r = itemRect.rect;
 			item.gameObject.transform.localPosition = new Vector3 (r.width / 4, -r.height / 4, 0); // Y is inverted in the UI system :/
 
-			item.transform.parent = this.transform;
+			item.transform.parent = this.gridParentTransform;
 			objBeh.inInventory = true;
 			objBeh.holdingObject = false; // TODO: Make better. It maybe return a bool whether the inventory placement was successful or not?
 			ItemHandler.Drop (item);
+
+			return true;
+		} else {
+			return false; //No space or invalid position
 		}
 	}
 
-	void OnItemPickup(Item item){
-		// ... I'll get to this xD
+	public void OnItemPickup(Item item){
 		ItemBehaviour objBeh = item.GetComponent<ItemBehaviour>();
-		if (objBeh.drawer == this) {
-			inventory.RemoveItem (item);
-			item.transform.parent = null;
-						
-		}
+
+		inventory.RemoveItem (item);
+		item.transform.parent = null;
 	}
 
 	void SpawnInventory(){
@@ -88,25 +87,26 @@ public class InventoryDrawer : MonoBehaviour, IPointerEnterHandler, IPointerExit
 			invBackground.sprite = inventory.inventoryBackground;
 			invBackground.color = Color.white;
 
-			for (int x = 0; x < inventory.spaces.Count; x++) {
-				GameObject tile = Instantiate (inventoryTile, gridParentTransform) as GameObject;
-				RuntimeInventoryTile script = tile.GetComponent<RuntimeInventoryTile> ();
-				tiles.Add (script);
-				script.inventorySpace = inventory.spaces [x];
-				script.drawer = this;
-				script.x = (int)(x % inventory.inventoryWidth);
-				script.y = (int)(x / inventory.inventoryWidth);
+			if (tiles.Count == 0) {
+				for (int x = 0; x < inventory.spaces.Count; x++) {
+					GameObject tile = Instantiate (inventoryTile, gridParentTransform) as GameObject;
+					RuntimeInventoryTile script = tile.GetComponent<RuntimeInventoryTile> ();
+					tiles.Add (script);
+					script.inventorySpace = inventory.spaces [x];
+					script.drawer = this;
+					script.x = (int)(x % inventory.inventoryWidth);
+					script.y = (int)(x / inventory.inventoryWidth);
 
-				tile.name = ("Tile "+script.x+","+script.y);
+					tile.name = ("Tile " + script.x + "," + script.y);
 
-				Image img = tile.GetComponent<Image> ();
-				img.color = inventory.spaces [x].isActive ? Color.white.WithAlpha (0.5f) : Color.black.WithAlpha (0f); //toggle color
+					Image img = tile.GetComponent<Image> ();
+					img.color = inventory.spaces [x].isActive ? Color.white.WithAlpha (0.5f) : Color.black.WithAlpha (0f); //toggle color
 
-				// Check if current tile has an item
-				if (inventory.spaces [x].item != null) {
+					// Check if current tile has an item
+					if (inventory.spaces [x].item != null) {
 //					Debug.Log ("Item found at " + Util.indexToCoords (inventory, x) + " (" + inventory.spaces [x].itemObj.name + ")"); 
+					}
 				}
-
 			}
 			gridParent.SetActive (true);
 
@@ -181,13 +181,10 @@ public class InventoryDrawer : MonoBehaviour, IPointerEnterHandler, IPointerExit
 		}
 	}
 
-	void OnExitInventory(InventoryDrawer inv){
-		ResetInventoryColoring ();
-	}
-
 
 	IEnumerator OpenInventory(){
-		yield return null;
+		yield return null; //Some kind of animation here?
+
 		//enable
 		SpawnInventory();
 
@@ -196,9 +193,8 @@ public class InventoryDrawer : MonoBehaviour, IPointerEnterHandler, IPointerExit
 
 	IEnumerator CloseInventory(){
 		yield return null;
+
 		//disable
-		tiles.ForEach (x => Destroy (x));
-		tiles = new List<RuntimeInventoryTile> ();
 		gridParent.SetActive (false);
 		isOpen = false;
 	}
@@ -206,16 +202,12 @@ public class InventoryDrawer : MonoBehaviour, IPointerEnterHandler, IPointerExit
 	#region Pointer Event Callbacks
 	//Pointer events
 	public void OnPointerEnter(PointerEventData evtData){
-		//Something about checking if player is holding an object, and if it does then send that object along
-		if (InventoryEvents.OnInventoryEnter != null) {
-			InventoryEvents.OnInventoryEnter (this);
-		}
+		ItemHandler.OnEnterInventoryFrame(this);
 	}
 
 	public void OnPointerExit(PointerEventData evtData){
-		if (InventoryEvents.OnInventoryExit != null) {
-			InventoryEvents.OnInventoryExit (this);
-		}
+		ItemHandler.OnExitInventoryFrame (this);
+		ResetInventoryColoring ();
 	}
 	#endregion
 }

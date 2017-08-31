@@ -21,10 +21,8 @@ public class ItemBehaviour : MonoBehaviour {
 	private float clickDistance;
 	private CharacterJoint activeJoint;
 
-//	[Header("Assign these if possible (read tooltip)")]
-//	[SerializeField, Tooltip("If this object was placed in the game world, assign the graphics object to this field.")]
 	private GameObject runtimeIcon;
-//	[SerializeField, Tooltip("If this object was placed directly in an inventory, assign the icon object to this field.")]
+	private Image runtimeIconImage;
 	private GameObject runtimeGraphics;
 	private Rigidbody runtimeGraphicsRb;
 
@@ -43,9 +41,8 @@ public class ItemBehaviour : MonoBehaviour {
 		//Subscribe to interaction events
 		MouseInteractionManager.OnMouseDown += OnMouseDown;
 
-		//Subscribe to inventory events
-		InventoryEvents.OnInventoryEnter += OnEnterInventoryFrame;
-		InventoryEvents.OnInventoryExit += OnExitInventoryFrame;
+		//Subscribe to Item events
+		ItemHandler.OnItemPickUp += OnItemPickup;
 	}
 
 	void Init(){
@@ -60,7 +57,9 @@ public class ItemBehaviour : MonoBehaviour {
 		runtimeIcon = transform.Find ("Icon").gameObject;
 		iconImgRect = runtimeIcon.GetComponent<RectTransform> ();
 		iconBorderRect = runtimeIcon.transform.Find ("Icon_border").GetComponent<RectTransform> ();
+
 		runtimeGraphicsRb = runtimeGraphics.GetComponent<Rigidbody> ();
+		runtimeIconImage = runtimeIcon.GetComponent<Image> ();
 
 		// Init display mode
 		if (inInventory) {
@@ -71,7 +70,22 @@ public class ItemBehaviour : MonoBehaviour {
 			runtimeIcon.SetActive (false);
 		}
 	}
-	
+
+	void OnItemPickup(Item item){
+		//if(item != this.item){
+			runtimeIconImage.raycastTarget = false;
+			ItemHandler.OnItemDrop += OnItemDrop;
+			Debug.LogFormat ("set '{0}' raycastTarget to false!", this.gameObject.name); 
+		//}
+	}
+
+	void OnItemDrop(Item item){
+		//if (item != this.item) {
+			runtimeIconImage.raycastTarget = true;
+			Debug.LogFormat ("set '{0}' raycastTarget to true!", this.gameObject.name);
+		//}
+	}
+
 	public void OnEnterInventoryFrame(InventoryDrawer inv){
 		drawer = inv;
 		overInventory = true;
@@ -120,7 +134,7 @@ public class ItemBehaviour : MonoBehaviour {
 		MouseInteractionManager.OnMouseUp += OnMouseUp;
 
 		// Pick up / drag
-		ItemHandler.Equip(item);
+		ItemHandler.PickUp(item);
 		holdingObject = true;
 
 		runtimeGraphicsRb.isKinematic = true;
@@ -152,7 +166,7 @@ public class ItemBehaviour : MonoBehaviour {
 
 		} else if (MouseInteractionManager.currentHoverObject == runtimeIcon) { //TODO: Unlink from runtimeIcon somehow
 			if (inInventory) {
-				InventoryEvents.OnRemoveFromInventory (item);
+				drawer.OnItemPickup (item);
 				runtimeIcon.GetComponent<Image> ().raycastTarget = false;
 				inInventory = false;
 				PickUp ();
@@ -164,8 +178,12 @@ public class ItemBehaviour : MonoBehaviour {
 		if (holdingObject && !overInventory) {
 			Drop ();
 		} else if(holdingObject && overInventory){
-			InventoryEvents.OnAddToInventory (item);
-			runtimeIcon.GetComponent<Image> ().raycastTarget = true;
+			if (drawer.OnItemDrop (item)) {
+				runtimeIcon.GetComponent<Image> ().raycastTarget = true;
+				Debug.Log ("Item drop successful");
+			} else {
+				Debug.Log ("Couldn't drop item");
+			}
 		}
 	}
 
