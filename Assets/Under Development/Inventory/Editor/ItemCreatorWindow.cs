@@ -83,7 +83,7 @@ public class ItemCreatorWindow : EditorWindow, IHasCustomMenu {
 					GameObject j = PrefabUtility.GetPrefabParent (Selection.activeObject) as GameObject;
 					if (j != null) {
 						currentItem = j.GetComponent<Item> ();
-						currentItemObj = currentItem.gameObject;
+						currentItemObj = currentItem.gameObject ?? null;
 					} else {
 						currentItem = i;
 						currentItemObj = i.gameObject;

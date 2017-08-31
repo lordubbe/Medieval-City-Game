@@ -2,16 +2,11 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Person : MonoBehaviour {
+public class Person {
 
+    public string name;
     public StoryManager storyMan;
-
-	// Use this for initialization
-	void Start () {
-		
-	}
-	
-	
+    
 
 
     public void InConvoRange()

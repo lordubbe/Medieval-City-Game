@@ -44,6 +44,16 @@ public class Elements {
         return new Elements(a.sin * b, a.change * b, a.force * b, a.secrets * b, a.beauty * b);
     }
 
+    public static Elements operator /(Elements a, float b)
+    {
+        return new Elements(a.sin / b, a.change / b, a.force / b, a.secrets / b, a.beauty / b);
+    }
+
+    public static Elements operator +(Elements a, float b)
+    {
+        return new Elements(a.sin + b, a.change + b, a.force + b, a.secrets + b, a.beauty + b);
+    }
+
 
 
     public override string ToString()

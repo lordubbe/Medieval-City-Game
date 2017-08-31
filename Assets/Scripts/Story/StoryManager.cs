@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
 
-public enum flag { startedgame, foundthirdfire, dead }
-
+public enum flag { startedgame, foundthirdfire, dead, liketheinnkeeper }
 public enum reputationFactions { University, Commoners, Nobility } 
+
 
 public struct Bond {
     public Person p;
@@ -17,7 +17,7 @@ public class StoryManager : MonoBehaviour {
 
 	public StoryLoader sloader;
 	public Dictionary<flag, bool> storyflags = new Dictionary<flag, bool>();
-	public List<QuestStory> stories = new List<QuestStory>();
+	public List<Story> stories = new List<Story>();
 
 	public Dictionary<reputationFactions,int> reputations = new Dictionary<reputationFactions, int>();
 	public Dictionary<string,int> qualities = new Dictionary<string,int>();
@@ -27,10 +27,14 @@ public class StoryManager : MonoBehaviour {
 
 	void Start(){
 
-		sloader.LoadStories();
+		//sloader.LoadStories();
 
-		stories = GetComponentsInChildren<QuestStory>().ToList();
+		stories = GetComponentsInChildren<Story>().ToList();
 
+        ///// DUMMY
+     //   flag f = flag.liketheinnkeeper;
+        storyflags.Add(flag.liketheinnkeeper, false);
+        //
 
 	}
 	void Update(){
@@ -40,13 +44,13 @@ public class StoryManager : MonoBehaviour {
 	}
 
 
-	public void StartStory(QuestStory s)
+	public void StartStory(Story s)
 	{
 		s.isActive = true;
 		s.ChangeState(s.states[0]); //potentially change!
 	}
 
-	public void UpdateStory(QuestStory s, StoryState newState)
+	public void UpdateStory(Story s, StoryState newState)
 	{
 		s.ChangeState(newState);
 	}
@@ -61,12 +65,12 @@ public class StoryManager : MonoBehaviour {
 		return storyflags[f];
 	}
 
-	public void SetFlag(QuestStory s, string ss, bool b)
+	public void SetFlag(Story s, string ss, bool b)
 	{
 		s.storyflags[ss] = b;
 	}
 
-	public bool GetFlag(QuestStory s, string ss)
+	public bool GetFlag(Story s, string ss)
 	{
 		return s.storyflags[ss];
 	}

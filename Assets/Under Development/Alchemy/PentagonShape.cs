@@ -52,14 +52,14 @@ public class PentagonShape : MonoBehaviour {
         PentagonObject p = r.GetComponentInChildren<PentagonObject>();
         if (p == null)
         {
-            //DON'T SPAWN SHIT
             GameObject gbase = Instantiate(Resources.Load("Prefabs/PentagonObject")) as GameObject;
             gbase.name = "Pentagon Object";
             gbase.transform.SetParent(r, false);
             p = gbase.GetComponent<PentagonObject>();
         }
 
-        renderShape.sizes = el.ToArray();
+        Elements e = ((el + 100f) / 2f);
+        renderShape.sizes = e.ToArray() ;
         Mesh m = renderShape.CreateMesh(Vector2.zero);
         // renderShape.SetMesh();
         CanvasRenderer rr = p.topPenta;

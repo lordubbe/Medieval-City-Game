@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
 
-public class QuestStory : MonoBehaviour {
+public class Story : MonoBehaviour {
 
 	public string storyname;
 	public bool isActive = false;
