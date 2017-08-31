@@ -72,18 +72,12 @@ public class ItemBehaviour : MonoBehaviour {
 	}
 
 	void OnItemPickup(Item item){
-		//if(item != this.item){
-			runtimeIconImage.raycastTarget = false;
-			ItemHandler.OnItemDrop += OnItemDrop;
-			Debug.LogFormat ("set '{0}' raycastTarget to false!", this.gameObject.name); 
-		//}
+		runtimeIconImage.raycastTarget = false;
+		ItemHandler.OnItemDrop += OnItemDrop;
 	}
 
 	void OnItemDrop(Item item){
-		//if (item != this.item) {
-			runtimeIconImage.raycastTarget = true;
-			Debug.LogFormat ("set '{0}' raycastTarget to true!", this.gameObject.name);
-		//}
+		runtimeIconImage.raycastTarget = true;
 	}
 
 	public void OnEnterInventoryFrame(InventoryDrawer inv){
