@@ -47,7 +47,7 @@ public class PentagonShape : MonoBehaviour {
     /// </summary>
     /// <param name="el"></param>
     /// <param name="r"></param>
-    public void DrawElementPentagon(Elements el, Transform r) //should have position/recttransform in parameter
+    public void DrawElementPentagon(Elements el, Transform r)
     {
         PentagonObject p = r.GetComponentInChildren<PentagonObject>();
         if (p == null)

@@ -6,4 +6,5 @@ public class NodeGroup {
 
     public Dictionary<string, Node> nodes = new Dictionary<string, Node>();
     public string id;
+
 }

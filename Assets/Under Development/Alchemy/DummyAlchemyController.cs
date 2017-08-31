@@ -45,7 +45,7 @@ public class DummyAlchemyController : MonoBehaviour {
 
         if (Input.GetKeyDown(KeyCode.Space))
         {
-            print(cont.GetElements());
+        //    print(cont.GetElements());
         }
 
         if (Input.GetKeyDown(KeyCode.M))

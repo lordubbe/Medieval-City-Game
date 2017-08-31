@@ -55,7 +55,7 @@ public class InventoryDrawer : MonoBehaviour, IPointerEnterHandler, IPointerExit
 			Rect r = itemRect.rect;
 			item.gameObject.transform.localPosition = new Vector3 (r.width / 4, -r.height / 4, 0); // Y is inverted in the UI system :/
 
-			item.transform.parent = this.gridParentTransform;
+            item.transform.SetParent(this.gridParentTransform, true);
 			objBeh.inInventory = true;
 			objBeh.holdingObject = false; // TODO: Make better. It maybe return a bool whether the inventory placement was successful or not?
 			ItemHandler.Drop (item);

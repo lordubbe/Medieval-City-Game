@@ -89,10 +89,11 @@ public class ItemBehaviour : MonoBehaviour {
 			SetIconSize (GlobalInventorySettings.INVENTORY_TILE_SIZE);
 			SetDisplayMode (DisplayMode.icon);
 
-			transform.parent = inv.inventoryCanvas.transform;
+			transform.SetParent(inv.inventoryCanvas.transform,false);
 			transform.localScale = Vector3.one;
 			transform.localRotation = Quaternion.identity;
 			transform.position = MouseInteractionManager.hoverPoint;
+            
 		}
 	}
 		
@@ -191,8 +192,7 @@ public class ItemBehaviour : MonoBehaviour {
 
 	//Bad code from here
 	void Update(){
-		
-		if (holdingObject) {
+        if (holdingObject) {
 			if (!overInventory) {
 				transform.position = Camera.main.ScreenToWorldPoint (new Vector3 (Input.mousePosition.x, Input.mousePosition.y, clickDistance));
 				runtimeGraphics.transform.position = transform.position;

@@ -8,12 +8,12 @@ public class DraggableWindow : MonoBehaviour, IPointerDownHandler, IPointerUpHan
 
 	private RectTransform windowRect;
 	private bool draggingWindow;
-	private bool altDown;
+	private bool ctrlDown;
 
 	Vector3 prevMousePos = Vector3.zero;
 
 	public void OnPointerDown(PointerEventData evtData){
-		if (altDown) {
+		if (ctrlDown) {
 			prevMousePos = Input.mousePosition;
 			draggingWindow = true; 
 		}
@@ -38,11 +38,11 @@ public class DraggableWindow : MonoBehaviour, IPointerDownHandler, IPointerUpHan
 		mousePos.x = Mathf.Clamp (mousePos.x, 0, Screen.width);
 		mousePos.y = Mathf.Clamp (mousePos.y, 0, Screen.height);
 
-		if (Input.GetKeyDown (KeyCode.LeftAlt)) {
-			altDown = true;
+		if (Input.GetKeyDown (KeyCode.LeftControl)) {
+			ctrlDown = true;
 		}
-		if (Input.GetKeyUp (KeyCode.LeftAlt)) {
-			altDown = false;
+		if (Input.GetKeyUp (KeyCode.LeftControl)) {
+			ctrlDown = false;
 		}
 
 		if (draggingWindow) {

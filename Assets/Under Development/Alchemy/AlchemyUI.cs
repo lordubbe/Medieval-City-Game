@@ -5,7 +5,6 @@ using UnityEngine;
 using UnityEngine.UI;
 
 public class AlchemyUI : MonoBehaviour {
-
     
     public RectTransform itemSpot;
     public RectTransform toolSpot;

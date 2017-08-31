@@ -20,6 +20,7 @@ public class RuntimeInventoryTile : MonoBehaviour, IPointerEnterHandler, IPointe
 	void Awake(){
 		space = GetComponent<RectTransform> ();
 		image = GetComponent<Image> ();
+//        transform.SetParent(transform,)
 	}
 
 	public void OnPointerEnter(PointerEventData evt){
