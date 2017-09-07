@@ -7,11 +7,15 @@ using UnityEngine.EventSystems;
 public class InventoryDrawer : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler {
 
 	[Header("GameObject Hookups")]
-	public GameObject inventoryCanvas;
+	public Canvas inventoryCanvas;
 	public GameObject gridParent;
 	public GameObject inventoryTile;
+    [HideInInspector]
+    public HoverPanel hoverPanel;
+    public GameObject hoverPanelPrefab;
+    public bool showingHoverPanel;
 
-	public bool isOpen;
+    public bool isOpen;
 
 	private GridLayoutGroup gridMaster;
 	private RectTransform gridParentTransform;
@@ -181,6 +185,23 @@ public class InventoryDrawer : MonoBehaviour, IPointerEnterHandler, IPointerExit
 		}
 	}
 
+    public Vector3 GetMousePosition()
+    {
+        if(inventoryCanvas.renderMode == RenderMode.ScreenSpaceOverlay)
+        {
+            return Input.mousePosition;  
+        }
+        else if (inventoryCanvas.renderMode == RenderMode.ScreenSpaceCamera)
+        {
+            return Util.PosTo2D(Input.mousePosition, inventoryCanvas, false);
+        }
+        else
+        {
+            //return inventory.transform.position;
+            return Util.PosTo2D(Input.mousePosition, inventoryCanvas, true);
+        }
+    }
+
 
 	IEnumerator OpenInventory(){
 		yield return null; //Some kind of animation here?
@@ -199,9 +220,44 @@ public class InventoryDrawer : MonoBehaviour, IPointerEnterHandler, IPointerExit
 		isOpen = false;
 	}
 
-	#region Pointer Event Callbacks
-	//Pointer events
-	public void OnPointerEnter(PointerEventData evtData){
+
+    public void ShowHoverPanel(ItemBehaviour i)
+    {
+        if(hoverPanel == null)
+        {
+            print("mkaing a new one");
+            GameObject g = Instantiate(hoverPanelPrefab, inventoryCanvas.transform) as GameObject;
+            hoverPanel = g.GetComponent<HoverPanel>();
+        }
+        print("yes "+hoverPanel);
+        hoverPanel.gameObject.SetActive(true);
+        hoverPanel.Start();
+        print(hoverPanel);
+        showingHoverPanel = true;
+        hoverPanel.ownRect.position = GetMousePosition();
+        
+        hoverPanel.DisplayHoverText(i.GetItem());
+    }
+
+    public void HideHoverPanel()
+    {
+        showingHoverPanel = false;
+        hoverPanel.gameObject.SetActive(false);
+    }
+
+    public void Update()
+    {
+        if (showingHoverPanel)
+        {
+            hoverPanel.ownRect.position = GetMousePosition();
+        }
+    }
+
+
+
+    #region Pointer Event Callbacks
+    //Pointer events
+    public void OnPointerEnter(PointerEventData evtData){
 		ItemHandler.OnEnterInventoryFrame(this);
 	}
 

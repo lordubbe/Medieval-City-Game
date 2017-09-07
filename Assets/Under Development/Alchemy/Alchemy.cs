@@ -3,7 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 
 
-public class Alchemy : MonoBehaviour {
+public class Alchemy : Singleton<Alchemy> {
+    protected Alchemy() { }
 
     public PentagonObject pentaObj;
     public Material topPentaMat;

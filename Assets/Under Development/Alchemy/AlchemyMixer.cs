@@ -3,8 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class AlchemyMixer : MonoBehaviour {
-
-    public Alchemy alc;
+    
 
     //List<AlchemyIngredient> ingredientsToMix = new List<AlchemyIngredient>();
     

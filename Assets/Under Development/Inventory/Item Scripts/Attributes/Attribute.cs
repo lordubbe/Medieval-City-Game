@@ -33,7 +33,7 @@ public class Attribute {
 
 	public virtual string GetStateAsString(){
 		// Future functionality: if last state - return empty string?
-		return (string)(System.Enum.GetNames (typeof(State)) [(int)state] + AttributeCompletionLabels.GetTypeCompletionLabel(type)) ?? "N/A";
+		return (string)(System.Enum.GetNames (typeof(State)) [(int)state] + " "+ AttributeCompletionLabels.GetTypeCompletionLabel(type)) ?? "N/A";
 	}
 
 	public virtual void Trigger(){

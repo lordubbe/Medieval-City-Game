@@ -453,6 +453,7 @@ public class ItemCreatorWindow : EditorWindow, IHasCustomMenu {
 							if (dragObjs [i] is GameObject) {
 								currentItem.runtimeRepresentation = Instantiate(dragObjs [i], currentItem.gameObject.transform) as GameObject;
 								currentItem.runtimeRepresentation.name = "Graphics";
+                                currentItem.runtimeRepresentation.AddComponent<Item3D>();
 								SetItemDirty ();
 								break;
 							}
@@ -535,6 +536,7 @@ public class ItemCreatorWindow : EditorWindow, IHasCustomMenu {
 		UnityEngine.UI.Image img = icn.AddComponent<UnityEngine.UI.Image> ();
 		img.sprite = currentItem.icon;
 		img.raycastTarget = false;
+        icn.AddComponent<Item2D>();
 
 		// Icon Border
 		GameObject border = new GameObject("Icon_border");
@@ -658,6 +660,7 @@ public class ItemCreatorWindow : EditorWindow, IHasCustomMenu {
 
 			currentItemObj = PrefabUtility.CreatePrefab (path, new GameObject (itemName));
 			currentItem = currentItemObj.AddComponent<Item>();
+            currentItemObj.AddComponent<ItemBehaviour>();
 			currentItem.name = itemName;
 
 //			Item newItem = Item.CreateInstance<Item> ();

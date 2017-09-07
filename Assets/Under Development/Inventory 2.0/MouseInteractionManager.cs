@@ -9,6 +9,7 @@ public class MouseInteractionManager : MonoBehaviour {
 	public static InteractionEvent OnMouseDown;
 	public static InteractionEvent OnMouseUp;
 
+
 	public static GameObject currentHoverObject = null;
 	public static Vector3 hoverPoint = Vector3.zero;
 
