@@ -34,7 +34,7 @@ public class DummyAlchemyController : MonoBehaviour {
 
         if (Input.GetKeyDown(KeyCode.Y))
         {
-            tool.PlaceItem(item);
+            //tool.PlaceItem(item);
             tool.TurnOn();
         }
 

@@ -1,15 +1,19 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class AlchemyTool : MonoBehaviour {
     
     public Elements elements;
 
     public List<AttributeType> neededattributeTypes = new List<AttributeType>();
-    List<Item> itemsInMe = new List<Item>();
+    public List<Item> itemsInMe = new List<Item>();
     
 	public float affectRate = 0.1f;
+
+    Inventory inventory;
+    public Image canvasPanel;
     
     [SerializeField]
     GameObject particles;
@@ -20,30 +24,38 @@ public class AlchemyTool : MonoBehaviour {
     void Start () {
     }
     
-    public void PlaceItem(Item a)
+
+
+    public void SetItemsInMe()
     {
-        a.gameObject.transform.position = transform.position;
-        itemsInMe.Add(a);
+        if(inventory == null)
+        {
+            inventory = GetComponentInChildren<Inventory>();
+        }
+        
+        itemsInMe.AddRange(inventory.items);
+        print(itemsInMe.Count);
     }
 
-    public void TakeItem(Item a, Vector3 pos)
+    public void RemoveItemsInMe()
     {
-        a.gameObject.transform.position = pos;
-        if (itemsInMe.Contains(a))
-        {
-            itemsInMe.Remove(a);
-        }
+        itemsInMe.Clear();
     }
 
 
     public void TurnOn()
     {
+        print("turning on");
+        SetItemsInMe();
+        canvasPanel.color = Color.red;
         on = true;
         StartCoroutine("AffectItems");
     }
 
     public void TurnOff()
     {
+        RemoveItemsInMe();
+        canvasPanel.color = Color.white;
         on = false;
         StopCoroutine("AffectItems");
     }
@@ -53,6 +65,7 @@ public class AlchemyTool : MonoBehaviour {
     {
         while (true)
         {
+            //print("affecting");
             foreach (Item i in itemsInMe)
             {
                 
