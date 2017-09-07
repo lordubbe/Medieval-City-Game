@@ -182,24 +182,23 @@ public class ItemBehaviour : MonoBehaviour {
 		}
 	}
 
-	public void OnMouseEnter(){
-		//Outline on?
-	}
 
-	public void OnMouseExit(){
-		//Outline off?
-	}
 
 	//Bad code from here
 	void Update(){
         if (holdingObject) {
 			if (!overInventory) {
-				transform.position = Camera.main.ScreenToWorldPoint (new Vector3 (Input.mousePosition.x, Input.mousePosition.y, clickDistance));
-				runtimeGraphics.transform.position = transform.position;
+                transform.position = Camera.main.ScreenToWorldPoint (new Vector3 (Input.mousePosition.x, Input.mousePosition.y, clickDistance));
+                runtimeGraphics.transform.position = transform.position;
 			} else {
-				transform.position = Camera.main.ScreenToWorldPoint (new Vector3 (Input.mousePosition.x, Input.mousePosition.y, drawer.gridParent.transform.position.z));
-			}
+                transform.position = drawer.GetMousePosition();
+            }
 		}
 	}
+
+    public Item GetItem()
+    {
+        return item;
+    }
 
 }

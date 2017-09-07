@@ -3,9 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class AlchemyTestPlace : MonoBehaviour {
-
-    Alchemy alc;
-
+    
     public Item a;
     public Item b;
 
@@ -13,7 +11,6 @@ public class AlchemyTestPlace : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
-        alc = GetComponent<Alchemy>();
 
        // CreateProblem();
 

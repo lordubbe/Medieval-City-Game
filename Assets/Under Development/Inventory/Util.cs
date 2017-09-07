@@ -36,20 +36,63 @@ public class Util{
 		}
 	}
 
-	public static int coordsToIndex(Inventory inv, int x, int y){
-		return y * inv.inventoryWidth + x;
-	}
 
-	public static Vector2 indexToCoords(Inventory inv, int idx){
-		Vector2 coords = Vector2.zero;
-		coords.x = idx % inv.inventoryWidth;
-		coords.y = (idx - coords.x) / inv.inventoryWidth;
+#endif
+    public static int coordsToIndex(Inventory inv, int x, int y)
+    {
+        return y * inv.inventoryWidth + x;
+    }
 
-		return coords;
-	}
+    public static Vector2 indexToCoords(Inventory inv, int idx)
+    {
+        Vector2 coords = Vector2.zero;
+        coords.x = idx % inv.inventoryWidth;
+        coords.y = (idx - coords.x) / inv.inventoryWidth;
+
+        return coords;
+    }
+
+    public static Vector3 PosTo2D(Vector3 pos, Canvas c, bool world)
+    {
+        
+        if (world)
+        {
+            Vector3 pos3d;
+            RectTransformUtility.ScreenPointToWorldPointInRectangle(c.transform as RectTransform, pos, c.worldCamera, out pos3d);
+            //return c.transform.TransformPoint(pos3d);
+            return Camera.main.ScreenToWorldPoint(pos);
+        }
+        else
+        {
+            Vector2 pos2d;
+            RectTransformUtility.ScreenPointToLocalPointInRectangle(c.transform as RectTransform, pos, c.worldCamera, out pos2d);
+            return c.transform.TransformPoint(pos2d);
+ 
+        }
+
+
+    }
+
+    public static RectTransform PosTo2DRect(RectTransform rt, Vector3 pos, Canvas c)
+    {
+        Vector3 globalMousePos;
+        if (RectTransformUtility.ScreenPointToWorldPointInRectangle(c.transform as RectTransform, pos, c.worldCamera, out globalMousePos))
+        {
+          //  Debug.Log(rt);
+            
+            rt.position = globalMousePos;
+            rt.rotation = ((RectTransform)c.transform).rotation;
+        }
+        return rt;
+    }
+    
+
+
+
+
 
 }
-#endif
+
 
 public static class ExtensionMethods{
 
@@ -73,7 +116,12 @@ public static class ExtensionMethods{
 		return new Vector3 (v.x, newY, v.z); 
 	}
 
-	public static Rect WithInsidePadding(this Rect rect, float padding){
+    public static Vector3 WithZ(this Vector3 v, float newZ)
+    {
+        return new Vector3(v.x, v.y, newZ);
+    }
+
+    public static Rect WithInsidePadding(this Rect rect, float padding){
 		rect.x += padding;
 		rect.xMax -= padding * 2;
 		rect.y += padding;
