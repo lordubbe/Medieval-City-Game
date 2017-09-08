@@ -36,7 +36,7 @@ public static class ItemHandler {
 	public static void OnEnterInventoryFrame(InventoryDrawer drawer){
 		if (currentItem != null) {
 			currentItemBehaviour.OnEnterInventoryFrame (drawer);
-			Debug.Log (currentItem.name + " entered " + drawer.gameObject.name);
+			//Debug.Log (currentItem.name + " entered " + drawer.gameObject.name);
 		}
 	}
 

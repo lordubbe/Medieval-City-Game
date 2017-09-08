@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using System.Linq;
+using TMPro;
 
 public class AlchemyTool : MonoBehaviour {
     
@@ -9,21 +11,39 @@ public class AlchemyTool : MonoBehaviour {
 
     public List<AttributeType> neededattributeTypes = new List<AttributeType>();
     public List<Item> itemsInMe = new List<Item>();
+    public ParticleSystem ps;
+    public Color particleColor;
+    public TextMeshProUGUI feedback;
     
 	public float affectRate = 0.1f;
+    public float affectAmount = 0.05f;
 
     Inventory inventory;
     public Image canvasPanel;
     
     [SerializeField]
     GameObject particles;
+    ParticleSystem.MinMaxGradient startgradient;
+    ParticleSystem.MinMaxGradient endgradient;
+    ParticleSystem.MinMaxGradient psColor;
 
     bool on = false;
 
+    private AlchemyTool tool;
+    public Canvas toolCanvas;
+    public Transform pentaSpot;
+
     // Use this for initialization
-    void Start () {
+    void Start()
+    {
+        psColor = ps.main.startColor;
+        startgradient.color = particleColor;
+        endgradient.color = Color.black;
+        tool = GetComponent<AlchemyTool>();
+        feedback.text = string.Empty;
+        MouseInteractionManager.OnMouseDown += OnMouseDown;
     }
-    
+
 
 
     public void SetItemsInMe()
@@ -34,7 +54,6 @@ public class AlchemyTool : MonoBehaviour {
         }
         
         itemsInMe.AddRange(inventory.items);
-        print(itemsInMe.Count);
     }
 
     public void RemoveItemsInMe()
@@ -45,19 +64,29 @@ public class AlchemyTool : MonoBehaviour {
 
     public void TurnOn()
     {
-        print("turning on");
+        RemoveItemsInMe();
         SetItemsInMe();
-        canvasPanel.color = Color.red;
-        on = true;
-        StartCoroutine("AffectItems");
+        string testString = TestAllItems();
+        if (testString == "can go")
+        {
+            canvasPanel.color = Color.red.WithAlpha(0.5f);
+            on = true;
+            ps.Play();
+            StartCoroutine("AffectItems");
+        }
+        else
+        {
+            feedback.text = testString;
+        }
     }
 
     public void TurnOff()
     {
-        RemoveItemsInMe();
-        canvasPanel.color = Color.white;
-        on = false;
         StopCoroutine("AffectItems");
+       // RemoveItemsInMe();
+        canvasPanel.color = Color.white.WithAlpha(0.5f);
+        on = false;
+        ps.Stop();
     }
 
 
@@ -65,15 +94,20 @@ public class AlchemyTool : MonoBehaviour {
     {
         while (true)
         {
-            //print("affecting");
             foreach (Item i in itemsInMe)
             {
-                
                 for (int j = 0; j < i.attributes.Count; j++)
                 {
                     if (TestItem(i.attributes[j]))
                     {
-                        i.attributes[j].Trigger(0.05f, elements);
+                        i.attributes[j].Trigger(affectAmount, elements);
+
+                        //psColor = new ParticleSystem.MinMaxGradient();
+                        ps.startColor = Color.Lerp(startgradient.color, endgradient.color, i.attributes[j].progress);
+                        if (i.attributes[j].progress >= 1)
+                        {
+                            TurnOff();
+                        }
                     }
                 }
             }
@@ -82,6 +116,24 @@ public class AlchemyTool : MonoBehaviour {
     }
 
 
+    private string TestAllItems()
+    {
+        if(itemsInMe.Count == 0)
+        {
+            return "no items";
+        }
+        foreach (Item i in itemsInMe)
+        {
+            for (int k = 0; k < neededattributeTypes.Count; k++)
+            {
+                if (!i.attributes.Any(x=>x.type == neededattributeTypes[k]))
+                {
+                    return i.name + " is not " + neededattributeTypes[k].ToString();
+                }
+            }
+        }
+        return "can go";
+    }
 
     private bool TestItem(Attribute a)
     {
@@ -97,5 +149,28 @@ public class AlchemyTool : MonoBehaviour {
         return false;
     }
 
-    
+
+
+    private void OnMouseDown()
+    {
+        // click and open tool item window.
+        toolCanvas.gameObject.SetActive(true);
+        Alchemy.Instance.DrawElementPentagon(tool.elements, pentaSpot);
+        //find correct position and move ??
+
+        //get and draw pentagon shape
+    }
+
+    public void OnMouseEnter()
+    {
+        GameObject g = Alchemy.Instance.DrawElementPentagon(tool.elements, pentaSpot);
+        //outline?
+    }
+
+    public void OnMouseExit()
+    {
+        //outline?
+    }
+
+
 }

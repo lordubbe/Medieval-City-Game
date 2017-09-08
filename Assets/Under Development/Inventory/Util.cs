@@ -60,7 +60,7 @@ public class Util{
             Vector3 pos3d;
             RectTransformUtility.ScreenPointToWorldPointInRectangle(c.transform as RectTransform, pos, c.worldCamera, out pos3d);
             //return c.transform.TransformPoint(pos3d);
-            return Camera.main.ScreenToWorldPoint(pos);
+            return Camera.main.ScreenToWorldPoint(pos3d);
         }
         else
         {
@@ -73,19 +73,34 @@ public class Util{
 
     }
 
-    public static RectTransform PosTo2DRect(RectTransform rt, Vector3 pos, Canvas c)
+    public static Vector3 PosTo2DRect(RectTransform rt, Vector3 pos, Canvas c)
     {
         Vector3 globalMousePos;
+        //Debug.Log(c.name + " " + rt.name);
         if (RectTransformUtility.ScreenPointToWorldPointInRectangle(c.transform as RectTransform, pos, c.worldCamera, out globalMousePos))
         {
           //  Debug.Log(rt);
             
-            rt.position = globalMousePos;
+           // rt.position = globalMousePos;
             rt.rotation = ((RectTransform)c.transform).rotation;
         }
-        return rt;
+        return globalMousePos;
     }
-    
+
+    public static Vector3 PosTo2DRect(Transform rt, Vector3 pos, Canvas c)
+    {
+        Vector3 globalMousePos;
+        //Debug.Log(c.name + " " + rt.name);
+        if (RectTransformUtility.ScreenPointToWorldPointInRectangle(c.transform as RectTransform, pos, c.worldCamera, out globalMousePos))
+        {
+            //  Debug.Log(rt);
+
+            // rt.position = globalMousePos;
+            rt.rotation = ((RectTransform)c.transform).rotation;
+        }
+        return globalMousePos;
+    }
+
 
 
 

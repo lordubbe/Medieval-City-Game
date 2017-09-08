@@ -19,6 +19,7 @@ public class Attribute {
     {
         Not, Lightly, Moderately, Very, Fully
     }
+    const float stateThreshold = 4f;
 
     public ProgressEvent OnComplete;
 
@@ -47,7 +48,7 @@ public class Attribute {
             return;
         }
         progress += rate;
-
+        state = (State)((int)(stateThreshold * progress));
         elementsModifier = elmod * progress;
 
 		if (progress >= 1f) {
@@ -56,6 +57,10 @@ public class Attribute {
 			}
 		}
 	}
+    
+
+    
+
 }
 
 public static class AttributeCompletionLabels{

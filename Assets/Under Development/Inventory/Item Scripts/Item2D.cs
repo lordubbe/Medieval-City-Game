@@ -15,7 +15,6 @@ public class Item2D : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler {
 
     public void OnPointerEnter(PointerEventData eventData)
     {
-        print("enter");
         IBehaviour.drawer.ShowHoverPanel(IBehaviour);
     }
 

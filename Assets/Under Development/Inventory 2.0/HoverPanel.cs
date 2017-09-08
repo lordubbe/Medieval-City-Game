@@ -11,13 +11,18 @@ public class HoverPanel : MonoBehaviour {
     public TextMeshProUGUI flavourText;
     public RectTransform pentaSpot;
     public RectTransform ownRect;
+    GameObject pentaObj;
 
     public void Start()
     {
         ownRect = GetComponent<RectTransform>();
     }
 
-
+    public void OnDisable()
+    {
+        Destroy(pentaObj);
+    }
+    
     public void DisplayHoverText(Item i)
     {
         itemName.text = i.name;
@@ -27,7 +32,7 @@ public class HoverPanel : MonoBehaviour {
         {
             listofAttributes.text += a.GetStateAsString()+"\n";
         }
-        Alchemy.Instance.DrawElementPentagon(i.GetElements(), pentaSpot);
+        pentaObj = Alchemy.Instance.DrawElementPentagon(i.GetElements(), pentaSpot);
     }
 
 

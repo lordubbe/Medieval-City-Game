@@ -44,7 +44,6 @@ public class InventoryDrawer : MonoBehaviour, IPointerEnterHandler, IPointerExit
 		}
 	}
 
-	// TODO: Make this function return a bool for whether the drop was successful
 	public bool OnItemDrop(Item item){
 		ItemBehaviour objBeh = ItemHandler.currentItem.GetComponent<ItemBehaviour> ();
 		if (sufficientSpace) {
@@ -57,11 +56,11 @@ public class InventoryDrawer : MonoBehaviour, IPointerEnterHandler, IPointerExit
 			// TODO: Move to ItemBehaviour
 			RectTransform itemRect = item.transform.Find ("Icon").GetComponent<RectTransform> ();
 			Rect r = itemRect.rect;
-			item.gameObject.transform.localPosition = new Vector3 (r.width / 4, -r.height / 4, 0); // Y is inverted in the UI system :/
+            item.gameObject.transform.localPosition = new Vector3(r.width / GlobalInventorySettings.ScaleOffset(4,transform), -r.height / GlobalInventorySettings.ScaleOffset(4, transform), 0); // Y is inverted in the UI system :/
 
             item.transform.SetParent(this.gridParentTransform, true);
 			objBeh.inInventory = true;
-			objBeh.holdingObject = false; // TODO: Make better. It maybe return a bool whether the inventory placement was successful or not?
+			objBeh.holdingObject = false; 
 			ItemHandler.Drop (item);
 
 			return true;
@@ -185,11 +184,16 @@ public class InventoryDrawer : MonoBehaviour, IPointerEnterHandler, IPointerExit
 		}
 	}
 
-    public Vector3 GetMousePosition()
+    /// <summary>
+    /// Use to get mouse position in whatever canvas you're in in CANVAS SPACE :D
+    /// </summary>
+    /// <param name="t">transform is only used for world space canvases. it should be the transform of the object we are setting the position of. (it silently sets the rotation of it too. don't worry about it).</param>
+    /// <returns></returns>
+    public Vector3 GetMousePosition(Transform t)
     {
-        if(inventoryCanvas.renderMode == RenderMode.ScreenSpaceOverlay)
+        if (inventoryCanvas.renderMode == RenderMode.ScreenSpaceOverlay)
         {
-            return Input.mousePosition;  
+            return Input.mousePosition;
         }
         else if (inventoryCanvas.renderMode == RenderMode.ScreenSpaceCamera)
         {
@@ -197,13 +201,13 @@ public class InventoryDrawer : MonoBehaviour, IPointerEnterHandler, IPointerExit
         }
         else
         {
-            //return inventory.transform.position;
-            return Util.PosTo2D(Input.mousePosition, inventoryCanvas, true);
+            return Util.PosTo2DRect(t, Input.mousePosition, inventoryCanvas);
         }
     }
 
 
-	IEnumerator OpenInventory(){
+
+    IEnumerator OpenInventory(){
 		yield return null; //Some kind of animation here?
 
 		//enable
@@ -225,16 +229,13 @@ public class InventoryDrawer : MonoBehaviour, IPointerEnterHandler, IPointerExit
     {
         if(hoverPanel == null)
         {
-            print("mkaing a new one");
             GameObject g = Instantiate(hoverPanelPrefab, inventoryCanvas.transform) as GameObject;
             hoverPanel = g.GetComponent<HoverPanel>();
         }
-        print("yes "+hoverPanel);
         hoverPanel.gameObject.SetActive(true);
         hoverPanel.Start();
-        print(hoverPanel);
         showingHoverPanel = true;
-        hoverPanel.ownRect.position = GetMousePosition();
+        hoverPanel.ownRect.position = GetMousePosition(hoverPanel.transform);
         
         hoverPanel.DisplayHoverText(i.GetItem());
     }
@@ -249,7 +250,8 @@ public class InventoryDrawer : MonoBehaviour, IPointerEnterHandler, IPointerExit
     {
         if (showingHoverPanel)
         {
-            hoverPanel.ownRect.position = GetMousePosition();
+            hoverPanel.ownRect.position = GetMousePosition(hoverPanel.transform);
+            //hoverPanel.ownRect.rotation = 
         }
     }
 

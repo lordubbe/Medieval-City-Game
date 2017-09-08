@@ -86,14 +86,14 @@ public class ItemBehaviour : MonoBehaviour {
 
 		//change from object to icon
 		if (holdingObject) {
-			SetIconSize (GlobalInventorySettings.INVENTORY_TILE_SIZE);
-			SetDisplayMode (DisplayMode.icon);
+			SetIconSize (GlobalInventorySettings.GetTileSizeForCanvas(drawer.transform.localScale.x));
+            //SetIconSize(25);
+            SetDisplayMode (DisplayMode.icon);
 
 			transform.SetParent(inv.inventoryCanvas.transform,false);
 			transform.localScale = Vector3.one;
 			transform.localRotation = Quaternion.identity;
 			transform.position = MouseInteractionManager.hoverPoint;
-            
 		}
 	}
 		
@@ -191,7 +191,7 @@ public class ItemBehaviour : MonoBehaviour {
                 transform.position = Camera.main.ScreenToWorldPoint (new Vector3 (Input.mousePosition.x, Input.mousePosition.y, clickDistance));
                 runtimeGraphics.transform.position = transform.position;
 			} else {
-                transform.position = drawer.GetMousePosition();
+                transform.position = drawer.GetMousePosition(transform);
             }
 		}
 	}
