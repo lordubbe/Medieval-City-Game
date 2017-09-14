@@ -49,7 +49,6 @@ public class MouseLook {
         {
             camera.localRotation = ClampVerticalRotation(camera);
         }
-        
     }
 
     Quaternion ClampVerticalRotation(Transform clampedTransform)
@@ -71,6 +70,7 @@ public class MouseLook {
 
     public void UnlockCursor()
     {
+        
         lockedCursor = false;
         Cursor.lockState = CursorLockMode.None;
         Cursor.visible = true;
