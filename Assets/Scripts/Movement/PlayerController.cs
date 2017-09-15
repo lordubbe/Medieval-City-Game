@@ -12,7 +12,6 @@ public class PlayerController : MonoBehaviour {
     Vector3 moveDir;
 
     [SerializeField] MouseLook mouseLook;
-    public bool inCursorMode = false;
 
 	// Use this for initialization
 	void Start () {
@@ -26,13 +25,15 @@ public class PlayerController : MonoBehaviour {
         }
 
         mouseLook.Init(transform, characterCam.transform);
+        InteractionManager.OnEnterAlchemyMode += mouseLook.UnlockCursor;
+        InteractionManager.OnExitAlchemyMode += mouseLook.LockCursor;
 
         mouseLook.LockCursor();
 	}
 	
 	// Update is called once per frame
 	void Update () {
-        if (!inCursorMode)
+        if (!InteractionManager.inAlchemyMode)
         {
             mouseLook.UpdateLook(Time.deltaTime);
         }
@@ -45,19 +46,8 @@ public class PlayerController : MonoBehaviour {
 
         character.Move(moveDir, Time.deltaTime);
 
-        if (Input.GetKeyDown(KeyCode.LeftAlt))
-        {
-            if (!inCursorMode)
-            {
-                inCursorMode = true;
-                mouseLook.UnlockCursor();
-            }
-            else
-            {
-                inCursorMode = false;
-                mouseLook.LockCursor();
-            }
-        }
+        
+        
 	}
 
     void AddCharacterCamera()
