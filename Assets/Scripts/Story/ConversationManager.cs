@@ -45,9 +45,7 @@ public class ConversationManager : MonoBehaviour {
         ng.nodes.Add(nnn.id,nnn);
         allconversations.Add(ng.id,ng);
 
-        print(n);
-
-        StartConversation(p, n);
+        //StartConversation(p, n);
         ///// OVER
         
         
@@ -90,7 +88,22 @@ public class ConversationManager : MonoBehaviour {
 
 
 
-    //SOMEWHERE that handles input or here. if we're looking at them, AND they're in that list, we got it bro. (we'll add an interaction option, and start convo if pressed).
+    public Node FindNode(string id)
+    {
+        foreach(NodeGroup ng in allconversations.Values)
+        {
+            foreach(Node n in ng.nodes.Values)
+            {
+                if(n.id == id)
+                {
+                    return n;
+                }
+            }
+        }
+        Debug.LogError("Could not find Node requested " + id);
+        return null;
+    }
+
 
 
 }

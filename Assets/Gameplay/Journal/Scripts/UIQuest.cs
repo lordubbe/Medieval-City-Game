@@ -15,7 +15,7 @@ public class UIQuest : MonoBehaviour {
     public TextMeshProUGUI textT;
     public RectTransform pentaSpot;
 
-    public void Open(AlchemyProblem a, Journal j)
+    public void Open(AlchemyStoryState a, Journal j)
     {
         journal = j;
         titleT.text = a.name;

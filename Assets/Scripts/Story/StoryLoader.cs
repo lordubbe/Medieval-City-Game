@@ -6,24 +6,24 @@ public class StoryLoader : MonoBehaviour {
 
 	public StoryManager sman;
     
-	public void LoadStories(){
-/*
-		Story newStory = new Story();
-		newStory.storyname = "The First Story";
-		newStory.flowcharts.Add(flowsForStories[0]);
+	public List<Story> LoadStories(){
 
-		StoryState s1 = new StoryState();
-		s1.statename = "the beginning";
-		StoryState s2 = new StoryState();
-		s2.statename = "the end";
+        List<Story> storiesToSend = new List<Story>();
 
-		newStory.states.Add(s1); newStory.states.Add(s2);
+        Dictionary<string, bool> flags = new Dictionary<string, bool>();
+        flags.Add("madepotion", false); flags.Add("givenpotion", false); flags.Add("talkedtogirl", false); flags.Add("potionAccurate", false);
+        Story lovepotion = new Story(sman,"Love Potion",flags);
 
-		Dictionary<string, bool> newFlags = new Dictionary<string, bool>();
+        Quality[] quas = new Quality[] { new Quality("madepotion", "", 1) };
+        LovePotionStoryStateBegin stateone = new LovePotionStoryStateBegin(lovepotion, "begin", "[Name] wants me to make a love potion. Not sure he really knows what he's asking for. Or how impossible it it. Or how wrong it is. Let's see if I can resolve this in a way that makes sense", quas);
 
-		newStory.storyflags = newFlags;
+        Option o = new Option("Hey, you know someone called [Name]?", sman.convos.FindNode("lovePotionInnkeeperIntro"));
+        stateone.optionsToAdd.Add(sman.convos.FindNode("innKeeperHello"),o);
 
-		sman.stories.Add(newStory);*/
+
+
+        return storiesToSend;
+
 	}
 		
 }

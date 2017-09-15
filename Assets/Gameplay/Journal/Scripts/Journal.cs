@@ -6,7 +6,7 @@ using TMPro;
 
 public class Journal : MonoBehaviour {
 
-    [SerializeField] List<AlchemyProblem> quests = new List<AlchemyProblem>();
+    [SerializeField] List<AlchemyStoryState> quests = new List<AlchemyStoryState>();
     List<UIQuestButton> shownButtons = new List<UIQuestButton>();
     public GameObject questButtonPrefab;
     public GameObject questWindowPrefab;
@@ -24,14 +24,14 @@ public class Journal : MonoBehaviour {
     {
         ClearButtonList();
 
-        foreach (AlchemyProblem q in quests)
+        foreach (AlchemyStoryState q in quests)
         {
             SpawnButton(q);
         }
     }
 
 
-    public void SpawnButton(AlchemyProblem q)
+    public void SpawnButton(AlchemyStoryState q)
     {
         GameObject g = Instantiate(questButtonPrefab, questGrid);
         g.GetComponent<UIQuestButton>().SetupButton(q, this);
@@ -48,7 +48,7 @@ public class Journal : MonoBehaviour {
 	
 
 
-    public void OpenQuestWindow(AlchemyProblem q)
+    public void OpenQuestWindow(AlchemyStoryState q)
     {
         GameObject g = Instantiate(questWindowPrefab, journalCanvas);
         g.GetComponent<UIQuest>().Open(q, this);

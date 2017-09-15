@@ -20,14 +20,16 @@ public class StoryManager : MonoBehaviour {
 	public List<Story> stories = new List<Story>();
 
 	public Dictionary<reputationFactions,int> reputations = new Dictionary<reputationFactions, int>();
-	public Dictionary<string,int> qualities = new Dictionary<string,int>();
-	public List<Bond> bonds = new List<Bond>();
+	public Dictionary<string,Quality> allQualities = new Dictionary<string, Quality>();
+    public Dictionary<string, Quality> playerQualities = new Dictionary<string, Quality>();
+    public List<Bond> bonds = new List<Bond>();
+    public List<Person> people = new List<Person>();
 
     public ConversationManager convos;
 
 	void Start(){
 
-		//sloader.LoadStories();
+		sloader.LoadStories();
 
 		stories = GetComponentsInChildren<Story>().ToList();
 
@@ -39,7 +41,7 @@ public class StoryManager : MonoBehaviour {
 	}
 	void Update(){
 		if(Input.GetKey(KeyCode.P)){
-			stories[0].StartStory(true);
+			stories[0].StartStory();
 		}
 	}
 
@@ -47,7 +49,7 @@ public class StoryManager : MonoBehaviour {
 	public void StartStory(Story s)
 	{
 		s.isActive = true;
-		s.ChangeState(s.states[0]); //potentially change!
+		s.ChangeState(s.startState); //potentially change!
 	}
 
 	public void UpdateStory(Story s, StoryState newState)
@@ -86,14 +88,14 @@ public class StoryManager : MonoBehaviour {
 		return reputations[r];
 	}
 
-	public int GetQuality(string q)
+	public Quality GetQuality(string q)
 	{
-		return qualities[q];
+		return playerQualities[q];
 	}
 
-	public void SetQuality(string q, int val)
+	public void SetQuality(string q, Quality val)
 	{
-		qualities[q] = val;
+		playerQualities[q] = val;
 	}
 
 	public void SetBond(Person p, int newBond)
