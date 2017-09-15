@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class ConversationManager : MonoBehaviour {
 
+    [SerializeField] List<NodeCreator> creators = new List<NodeCreator>();
     public Dictionary<string, NodeGroup> allconversations = new Dictionary<string, NodeGroup>();
     public StoryManager sm;
     public DialogueHandler dialHandler;
@@ -12,38 +13,50 @@ public class ConversationManager : MonoBehaviour {
 
     public void Start()
     {
-        //DUMMY THINGSSSSSSS //////
-        Person p = new Person();
-        p.name = "Karl";
+        foreach(NodeCreator nc in creators)
+        {
+            NodeGroup nn = new NodeGroup();
+            nn.id = nc.nodes[0].id;
+            foreach(Node n in nc.nodes)
+            {
+                nn.nodes.Add(n.id, n);
+            }
+            allconversations.Add(nn.id, nn);
+        }
+        print(allconversations.Count+" "+creators.Count);
 
-        NodeGroup ng = new NodeGroup();
-        ng.id = "firstConversation";
+        ////DUMMY THINGSSSSSSS //////
+        //Person p = new Person();
+        //p.name = "Karl";
 
-        Node n = new Node();
-        n.id = "n1";
-        n.text = "Hello, and welcome to my inn!";
-        n.characterSpeaking = p;
+        //NodeGroup ng = new NodeGroup();
+        //ng.id = "firstConversation";
 
-        Node nn = new Node();
-        nn.id = "n2";
-        nn.text = "you think this is HEARTHSTONE????";
-        nn.characterSpeaking = p;
+        //Node n = new Node();
+        //n.id = "n1";
+        //n.text = "Hello, and welcome to my inn!";
+        //n.characterSpeaking = p;
 
-        Node nnn = new Node();
-        nnn.id = "n3";
-        nnn.text = "well, alright, then";
-        nnn.characterSpeaking = p;
+        //Node nn = new Node();
+        //nn.id = "n2";
+        //nn.text = "you think this is HEARTHSTONE????";
+        //nn.characterSpeaking = p;
 
-        Option o = new Option();
-        o.text = "Pull up in a chair!";
-        o.linkToNextNode = nn;
+        //Node nnn = new Node();
+        //nnn.id = "n3";
+        //nnn.text = "well, alright, then";
+        //nnn.characterSpeaking = p;
 
-        n.options.Add(o);
+        //Option o = new Option();
+        //o.text = "Pull up in a chair!";
+        //o.linkToNextNode = nn.id;
 
-        ng.nodes.Add(n.id,n);
-        ng.nodes.Add(nn.id,nn);
-        ng.nodes.Add(nnn.id,nnn);
-        allconversations.Add(ng.id,ng);
+        //n.options.Add(o);
+
+        //ng.nodes.Add(n.id,n);
+        //ng.nodes.Add(nn.id,nn);
+        //ng.nodes.Add(nnn.id,nnn);
+        //allconversations.Add(ng.id,ng);
 
         //StartConversation(p, n);
         ///// OVER
@@ -53,19 +66,19 @@ public class ConversationManager : MonoBehaviour {
 
     public void Update()
     {
-        if (Input.GetKeyDown(KeyCode.H))
-        {
-            Option po = new Option();
-            po.text = "Well, isn't it?";
-            po.linkToNextNode = allconversations["firstConversation"].nodes["n3"];
-            po.conditions.Add(new FlagCondition(flag.liketheinnkeeper, true));
-            allconversations["firstConversation"].nodes["n2"].options.Add(po);
-        }
+        //if (Input.GetKeyDown(KeyCode.H))
+        //{
+        //    Option po = new Option();
+        //    po.text = "Well, isn't it?";
+        //    po.linkToNextNode = allconversations["firstConversation"].nodes["n3"].id;
+        //    po.conditions.Add(new FlagCondition(flag.liketheinnkeeper, true));
+        //    allconversations["firstConversation"].nodes["n2"].options.Add(po);
+        //}
 
-        if (Input.GetKeyDown(KeyCode.G))
-        {
-            sm.storyflags[flag.liketheinnkeeper] = true;
-        }
+        //if (Input.GetKeyDown(KeyCode.G))
+        //{
+        //    sm.storyflags[flag.liketheinnkeeper] = true;
+        //}
     }
 
     public void AddPersonInRange(Person p)

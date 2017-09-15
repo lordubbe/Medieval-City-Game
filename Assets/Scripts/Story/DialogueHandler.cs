@@ -45,6 +45,11 @@ public class DialogueHandler : MonoBehaviour {
         }
     }
 
+    public void DisplayNode(string id)
+    {
+        DisplayNode(sm.convos.FindNode(id));
+    }
+
     public void DisplayNode(Node n)
     {
         ClearDialogue();

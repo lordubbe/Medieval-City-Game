@@ -1,20 +1,14 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Sirenix.OdinInspector;
 
-[System.Serializable]
-public class OptionDictionary : SerializableDictionary<Node, Option>
-{
-
-}
-
-public class StoryState : MonoBehaviour {
+public class StoryState : SerializedMonoBehaviour {
 
     public Story myStory;
 	public string statename;
     public string description;
-    [SerializeField] public OptionDictionary optionsToAdd = new OptionDictionary();
-    [SerializeField] public SerializableDictionary<string, int> opp = new SerializableDictionary<string, int>();
+    [SerializeField] public Dictionary<string, Option> optionsToAdd = new Dictionary<string, Option>();
     public Quality[] qualityReqs;
 
     public StoryState() { }
@@ -29,15 +23,17 @@ public class StoryState : MonoBehaviour {
         qualityReqs = requirements;
     }
     
-    public virtual void OnEnter(){
-        foreach(Node n in optionsToAdd.Keys)
+    public virtual void OnStateEnter(){
+        
+        foreach(string n in optionsToAdd.Keys)
         {
-            n.options.Add(optionsToAdd[n]);
+            print(n);
+            myStory.sm.convos.FindNode(n).options.Add(optionsToAdd[n]);
         }
         StartCoroutine("CheckCompletion");
 	}
 
-	public virtual void OnExit(){
+	public virtual void OnStateExit(){
         StopCoroutine("CheckCompletion");
     }
 
@@ -45,11 +41,12 @@ public class StoryState : MonoBehaviour {
     {
         while (true)
         {
+            print("checking qualities");
             foreach(Quality q in qualityReqs)
             {
-                if (myStory.sm.allQualities.ContainsKey(q.id))
+                if (myStory.sm.allQualities.Exists(x=>x.id == q.id))
                 {
-                    if(myStory.sm.allQualities[q.id].GetValue() == q.GetValue())
+                    if(myStory.sm.allQualities[myStory.sm.allQualities.FindIndex(x=>x.id==q.id)].GetValue() == q.GetValue())
                     {
                         myStory.ChangeState(q); //Now changes if ONE OF THEM WAS true, which allows us to branch :D
                     }
@@ -71,24 +68,16 @@ public class LovePotionStoryStateBegin : StoryState
 
     public LovePotionStoryStateBegin(Story s, string nam, string desc, Quality[] reqss) : base(s, nam, desc, reqss) { }
     
-    public override void OnEnter()
+    public override void OnStateEnter()
     {
-        base.OnEnter();
+        base.OnStateEnter();
     }
 
-    public override void OnExit()
+    public override void OnStateExit()
     {
-        base.OnExit();
+        base.OnStateExit();
     }
-
-    public override IEnumerator CheckCompletion()
-    {
-        while (true)
-        {
-
-            yield return new WaitForSeconds(1);
-        }
-    }
+    
 
 
 }

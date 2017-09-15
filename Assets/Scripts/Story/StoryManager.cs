@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
+using Sirenix.OdinInspector;
 
 public enum flag { startedgame, foundthirdfire, dead, liketheinnkeeper }
 public enum reputationFactions { University, Commoners, Nobility } 
@@ -13,15 +14,15 @@ public struct Bond {
 	public List<string> bondTexts;
 };
 
-public class StoryManager : MonoBehaviour {
+public class StoryManager : SerializedMonoBehaviour {
 
 	public StoryLoader sloader;
 	public Dictionary<flag, bool> storyflags = new Dictionary<flag, bool>();
-	public List<Story> stories = new List<Story>();
+	[HideInInspector] public List<Story> stories = new List<Story>();
 
 	public Dictionary<reputationFactions,int> reputations = new Dictionary<reputationFactions, int>();
-	public Dictionary<string,Quality> allQualities = new Dictionary<string, Quality>();
-    public Dictionary<string, Quality> playerQualities = new Dictionary<string, Quality>();
+	public List<Quality> allQualities = new List<Quality>();
+    public List<Quality> playerQualities = new List<Quality>();
     public List<Bond> bonds = new List<Bond>();
     public List<Person> people = new List<Person>();
 
@@ -29,20 +30,28 @@ public class StoryManager : MonoBehaviour {
 
 	void Start(){
 
-		sloader.LoadStories();
+		//sloader.LoadStories();
 
 		stories = GetComponentsInChildren<Story>().ToList();
 
-        ///// DUMMY
-     //   flag f = flag.liketheinnkeeper;
-        storyflags.Add(flag.liketheinnkeeper, false);
-        //
-
+        stories[0].StartStory();
+        
 	}
 	void Update(){
 		if(Input.GetKey(KeyCode.P)){
 			stories[0].StartStory();
 		}
+
+        if (Input.GetKeyDown(KeyCode.G))
+        {
+            playerQualities.Add(allQualities.Find(x => x.id == "madepotion"));
+            playerQualities[0].SetValue(1);
+        }
+
+        if (Input.GetKeyDown(KeyCode.H))
+        {
+            convos.StartConversation(new Person(), convos.FindNode("innkeeperHello"));
+        }
 	}
 
 
@@ -90,12 +99,12 @@ public class StoryManager : MonoBehaviour {
 
 	public Quality GetQuality(string q)
 	{
-		return playerQualities[q];
+		return playerQualities.Find(x=>x.id==q);
 	}
 
 	public void SetQuality(string q, Quality val)
 	{
-		playerQualities[q] = val;
+		playerQualities[playerQualities.FindIndex(x=>x.id==q)] = val;
 	}
 
 	public void SetBond(Person p, int newBond)

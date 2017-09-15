@@ -2,17 +2,15 @@
 using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
+using Sirenix.OdinInspector;
 
-public class Story : MonoBehaviour {
+public class Story : SerializedMonoBehaviour {
 
     public StoryManager sm;
 	public string storyname;
 	public bool isActive = false;
 	public bool isCompleted = false;
-	[SerializeField] List<string> flagsEditable = new List<string>();
 	public Dictionary<string, bool> storyflags = new Dictionary<string,bool>();
-    [SerializeField] List<Quality> qualityEditable = new List<Quality>(); //dumb thing because dictionaries not serializable.
-    [SerializeField] List<StoryState> statesEditable = new List<StoryState>();
     public Dictionary<Quality, StoryState> states = new Dictionary<Quality, StoryState>();
     public StoryState startState;
 	StoryState curState;
@@ -25,41 +23,32 @@ public class Story : MonoBehaviour {
         storyname = nam;
         storyflags = flags;
     }
-
-
-	void OnEnable(){
-
-		foreach(string s in flagsEditable){
-			storyflags.Add(s,false);
-		}
-
-        for (int i = 0; i < statesEditable.Count; i++)
-        {
-            states.Add(qualityEditable[i], statesEditable[i]);
-        }
-
-	}
+    
 
 	public void ChangeState(Quality qDeterminant){
-		curState.OnExit();
+        print("Changing state by " + qDeterminant.id);
+        curState.OnStateExit();
 
 		curState = states[qDeterminant];
 
-		curState.OnEnter();
+		curState.OnStateEnter();
 	}
 
     public void ChangeState(StoryState s)
     {
-        curState.OnExit();
+        if(curState != null)
+        {
+            curState.OnStateExit();
+        }
 
         curState = s;
 
-        curState.OnEnter();
+        curState.OnStateEnter();
     }
 
 
     public void StartStory(){
-
+        ChangeState(startState);
 
         
 
