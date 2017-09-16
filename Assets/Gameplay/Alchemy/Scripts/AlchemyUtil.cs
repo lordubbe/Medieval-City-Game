@@ -13,10 +13,15 @@ public static class AlchemyUtil {
     public static float[] sizes = new float[5];
 
 
-    public static void SetPentagon()
-    {
-      //  penta.DrawElementPentagon(e, rt.transform);
-    }
+
+
+
+
+
+
+
+
+
 
 
     public static Mesh CreateMesh(Vector2 position)

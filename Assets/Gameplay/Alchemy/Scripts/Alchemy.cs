@@ -10,6 +10,46 @@ public class Alchemy : Singleton<Alchemy> {
     public Material topPentaMat;
     public Material basePentaMat;
 
+
+
+
+
+
+    public GameObject DrawElementBars(Elements el, Transform r)
+    {
+        GameObject gbase;
+        ElementBars eb = r.GetComponentInChildren<ElementBars>();
+        if (eb == null)
+        {
+            gbase = Instantiate(Resources.Load("Prefabs/PentagonObject")) as GameObject;
+            gbase.name = "Pentagon Object";
+            gbase.transform.SetParent(r, false);
+            eb = gbase.GetComponent<ElementBars>();
+        }
+        else
+        {
+            gbase = eb.gameObject;
+        }
+
+        float[] els = el.ToArray();
+
+        for (int i = 0; i < 5; i++)
+        {
+            eb.bars[i].sizeDelta = new Vector2(eb.bars[i].sizeDelta.x, els[i]);
+        }
+
+        return gbase;
+
+    }
+
+
+
+
+
+
+
+
+
     /// <summary>
     /// Creates a Gameobject with the pentagon shape as a Child of r. Returns the GameObject
     /// </summary>

@@ -27,13 +27,16 @@ public class StoryState : SerializedMonoBehaviour {
         
         foreach(string n in optionsToAdd.Keys)
         {
-            print(n);
             myStory.sm.convos.FindNode(n).options.Add(optionsToAdd[n]);
         }
         StartCoroutine("CheckCompletion");
 	}
 
 	public virtual void OnStateExit(){
+        foreach (string n in optionsToAdd.Keys)
+        {
+            myStory.sm.convos.FindNode(n).options.Remove(optionsToAdd[n]);
+        }
         StopCoroutine("CheckCompletion");
     }
 
@@ -41,7 +44,6 @@ public class StoryState : SerializedMonoBehaviour {
     {
         while (true)
         {
-            print("checking qualities");
             foreach(Quality q in qualityReqs)
             {
                 if (myStory.sm.allQualities.Exists(x=>x.id == q.id))
@@ -58,27 +60,4 @@ public class StoryState : SerializedMonoBehaviour {
 }
 
 
-
-
-public class LovePotionStoryStateBegin : StoryState
-{
-    public LovePotionStoryStateBegin() { }
-
-    public LovePotionStoryStateBegin(Story s) : base(s) { }
-
-    public LovePotionStoryStateBegin(Story s, string nam, string desc, Quality[] reqss) : base(s, nam, desc, reqss) { }
-    
-    public override void OnStateEnter()
-    {
-        base.OnStateEnter();
-    }
-
-    public override void OnStateExit()
-    {
-        base.OnStateExit();
-    }
-    
-
-
-}
 

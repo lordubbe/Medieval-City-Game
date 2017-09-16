@@ -11,7 +11,7 @@ public class ConversationManager : MonoBehaviour {
 
     public List<Person> pplInConvoRange = new List<Person>();
 
-    public void Start()
+    public void Awake()
     {
         foreach(NodeCreator nc in creators)
         {
