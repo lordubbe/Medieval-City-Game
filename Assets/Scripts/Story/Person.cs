@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class Person {
 
-    public string name;
+    public string name = "";
     public StoryManager storyMan;
     
 
