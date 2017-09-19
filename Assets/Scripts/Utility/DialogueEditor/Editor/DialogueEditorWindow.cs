@@ -46,7 +46,7 @@ public class DialogueEditorWindow : EditorWindow {
 
 			if (nodeDatabase == null) {
 				Rect objField = new Rect (Vector2.zero, new Vector2 (100f, 18f)).WithCenter(space.center);
-				nodeDatabase = (NodeDatabase)EditorGUI.ObjectField (objField, nodeDatabase, typeof(NodeDatabase), false);
+				nodeDatabase = (NodeDatabase) EditorGUI.ObjectField (objField, nodeDatabase, typeof(NodeDatabase), false);
 				Rect label = objField.WithWidth(200f).WithHorizontalCenter(objField.center.x);
 				label.y -= 18f;
 				EditorGUI.LabelField (label, "Please select a NodeDatabase object.");
@@ -182,6 +182,6 @@ public class DialogueEditorWindow : EditorWindow {
 		UINode node = new UINode (n, position);
 		node.groupID = id;
 		//Add the UINode to the databass
-		nodeDatabase.nodes.Add(node);
+		nodeDatabase.AddNode(node, nodeDatabase);
 	}
 }

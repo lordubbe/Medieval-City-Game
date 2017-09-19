@@ -11,7 +11,9 @@ public class Node {
     public string text;
     public List<Option> options = new List<Option>();
 
-    public UnityEvent OnEnter;
+	[SerializeField]
+    public UnityEvent OnEnter; 
+
     public Person characterSpeaking;
 
 }

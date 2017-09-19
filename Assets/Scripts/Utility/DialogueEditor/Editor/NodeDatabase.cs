@@ -12,9 +12,8 @@ public class NodeDatabase : ScriptableObject{ //Should be a ScriptableObject or 
 	public static NodeSelectionEvent OnNodeSelected;
 	public static NodeSelectionEvent OnNodeDeselected;
 
-	public static void CreateAsset(){
-		NodeDatabase nodeDatabase = ScriptableObject.CreateInstance<NodeDatabase> ();
-		nodeDatabase.nodes = new List<UINode> ();
-		AssetDatabase.CreateAsset (nodeDatabase, "Assets/Scripts/Utility/DialogueEditor/NodeDatabase.asset");
+	public void AddNode(UINode n, NodeDatabase d){
+		nodes.Add (n);
+		EditorUtility.SetDirty (this);
 	}
 }
