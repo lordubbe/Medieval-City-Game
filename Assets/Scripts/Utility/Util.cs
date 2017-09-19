@@ -369,6 +369,7 @@ public abstract class DraggableRect : InteractableRect, ISelectableUIElement{
 public abstract class ResizableRect : DraggableRect {
 
 	public float resizingHandleSize = 5f;
+	public float minSize = 35f;
 
 	bool resizingTop, resizingBottom, resizingLeft, resizingRight;
 
@@ -383,25 +384,25 @@ public abstract class ResizableRect : DraggableRect {
 		Rect top = rect.WithY(rect.yMin - (resizingHandleSize+1)).WithHeight (resizingHandleSize);
 		float newYMin = 0f;
 		if (Util.ResizableRegion (top, MouseCursor.ResizeVertical, out newYMin, ref resizingTop)) {
-			rect.yMin = newYMin;
+			rect.yMin = newYMin < rect.yMax - minSize ? newYMin : rect.yMax-minSize;
 		}
 
 		Rect bottom = rect.WithY (rect.yMax + 1f).WithHeight (resizingHandleSize);
 		float newYMax = 0f;
 		if (Util.ResizableRegion (bottom, MouseCursor.ResizeVertical, out newYMax, ref resizingBottom)) {
-			rect.yMax = newYMax;
+			rect.yMax = newYMax > rect.yMin + minSize ? newYMax : rect.yMin + minSize;
 		}
 
 		Rect left = rect.WithX (rect.xMin - (resizingHandleSize+1)).WithWidth (resizingHandleSize);
 		float newXMin = 0f;
 		if (Util.ResizableRegion (left, MouseCursor.ResizeHorizontal, out newXMin, ref resizingLeft)) {
-			rect.xMin = newXMin;
+			rect.xMin = newXMin < rect.xMax - minSize ? newXMin : rect.xMax - minSize;
 		}
 
 		Rect right = rect.WithX (rect.xMax + 1f).WithWidth (resizingHandleSize);
 		float newXMax = 0f;
 		if (Util.ResizableRegion (right, MouseCursor.ResizeHorizontal, out newXMax, ref resizingRight)) {
-			rect.xMax = newXMax;
+			rect.xMax = newXMax > rect.xMin + minSize ? newXMax : rect.xMin + minSize;
 		}
 	}
 }
