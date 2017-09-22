@@ -23,13 +23,14 @@ public class Quality : MonoBehaviour {
         }
     }
 
-    public float GetValue()
+    public virtual float GetValue()
     {
         return value;
     }
 
-    public void SetValue(float newVal)
+    public virtual void SetValue(float newVal)
     {
         value = newVal;
     }
 }
+

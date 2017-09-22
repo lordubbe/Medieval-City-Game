@@ -25,9 +25,6 @@ public class UIManager : MonoBehaviour {
         {
             journal.gameObject.SetActive(true);
         }
-        
     }
-	
-
 
 }

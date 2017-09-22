@@ -19,6 +19,10 @@ public class Alchemy : Singleton<Alchemy> {
     public Color beautyColor;
     public List<Color> elementColors = new List<Color>();
 
+    public void Start()
+    {
+        TestSimilarity(new Elements(0,0,0,0,0), new Elements(20,20,20,20,20));
+    }
 
     public ElementBars DrawElementBars(Elements el, Transform r)
     {
@@ -246,6 +250,29 @@ public class Alchemy : Singleton<Alchemy> {
         rr.SetMesh(m);
 
         return gbase;
+    }
+
+
+
+    /// <summary>
+    /// Returns a score with similarity between two elements. Used for comparison of quest completions, etc. Score is a number between 0 and 1.
+    /// Recommended: Treat this like a p-value. Anything below 0.05 or 0.1 is acceptable. A score of 0.05 means anything is 10 or below in difference. 0.1 is 20
+    /// </summary>
+    /// <param name="el1"></param>
+    /// <param name="el2"></param>
+    /// <returns></returns>
+    public float TestSimilarity(Elements el1, Elements el2)
+    {
+        float score = 0;
+
+        Elements ne = el1 - el2;
+        float[] nea = ne.ToArray();
+        for (int i = 0; i < 5; i++)
+        {
+            score += Mathf.Abs(nea[i]);
+        }
+        score = Util.Map(score, 0, 1000, 0, 1);
+        return score;
     }
 
 
