@@ -155,15 +155,12 @@ public class AlchemyTool : MonoBehaviour {
     {
         // click and open tool item window.
         toolCanvas.gameObject.SetActive(true);
-        Alchemy.Instance.DrawElementPentagon(tool.elements, pentaSpot);
-        //find correct position and move ??
-
-        //get and draw pentagon shape
+        Alchemy.Instance.DrawElementBars(tool.elements, pentaSpot);
     }
 
     public void OnMouseEnter()
     {
-        GameObject g = Alchemy.Instance.DrawElementPentagon(tool.elements, pentaSpot);
+        GameObject g = Alchemy.Instance.DrawElementBarsWithArrows(tool.elements, new Elements(50, 0, 0, 0, 0), pentaSpot);
         //outline?
     }
 
