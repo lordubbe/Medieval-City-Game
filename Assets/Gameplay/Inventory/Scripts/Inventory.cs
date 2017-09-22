@@ -6,7 +6,12 @@ using System.Linq;
 [System.Serializable]
 public class Inventory : MonoBehaviour {
 
-	public Item connectedItem;
+    public delegate void ItemAdded(Item i);
+    public ItemAdded itemAdded;
+    public delegate void ItemRemoved(Item i);
+    public ItemRemoved itemRemoved;
+
+    public Item connectedItem;
 
 	[Header("Inventory")]
 	public List<InventorySpace> spaces;
@@ -31,6 +36,10 @@ public class Inventory : MonoBehaviour {
 		int i = Util.coordsToIndex(this, x,y);
 		spaces [i].SetItem (item);
 		items.Add (item);
+        if(itemAdded != null)
+        {
+            itemAdded(item);
+        }
 	}
 
 	public void RemoveItem(Item item){
@@ -49,6 +58,11 @@ public class Inventory : MonoBehaviour {
 		}
 		space.RemoveItem (item);
 		items.Remove (item);
+
+        if(itemRemoved != null)
+        {
+            itemRemoved(item);
+        }
 
 	}
 }

@@ -20,7 +20,7 @@ public class Alchemy : Singleton<Alchemy> {
     public List<Color> elementColors = new List<Color>();
 
 
-    public GameObject DrawElementBars(Elements el, Transform r)
+    public ElementBars DrawElementBars(Elements el, Transform r)
     {
         GameObject gbase;
         ElementBars eb = r.GetComponentInChildren<ElementBars>();
@@ -45,13 +45,13 @@ public class Alchemy : Singleton<Alchemy> {
             eb.bars[i].GetComponent<Image>().color = elementColors[i];
         }
 
-        return gbase;
+        return eb;
 
     }
 
 
     //Draw element arrows. draw raw arrows instead. amount dependent on elements, in some sort of mapping (prolly 5 = 100, so 1 = 20)
-    public GameObject DrawElementArrows(Elements arrowEls, Transform r)
+    public ElementBars DrawElementArrows(Elements arrowEls, Transform r)
     {
         GameObject gbase;
         ElementBars eb = r.GetComponentInChildren<ElementBars>();
@@ -83,19 +83,15 @@ public class Alchemy : Singleton<Alchemy> {
 
             if (ael[i] != 0)
             {
-                print("making arrow " + arrows[i].Count + " " + i);
-
                 for (int j = 0; j < Mathf.Abs(ael[i]); j += 20)
                 {
                     RectTransform arrow;
                     if (arrows[i].Count > (j / 20))
                     {
-                        print("assigning " + i + " " + arrows.Count + " " + arrows[i].Count);
                         arrow = arrows[i][(j / 20)];
                     }
                     else
                     {
-                        print("creating");
                         GameObject t = Instantiate(Resources.Load("Prefabs/ElementArrow")) as GameObject;
                         arrow = t.GetComponent<RectTransform>();
                         arrow.transform.SetParent(r, false);
@@ -105,8 +101,6 @@ public class Alchemy : Singleton<Alchemy> {
 
                     if (ael[i] < 0)
                     {
-                        print(eb.bars[i].localScale.y + " " + (((eb.bars[i].localScale.y > 0 ? -eb.bars[i].localScale.y : eb.bars[i].localScale.y) * (300f * (j / 20))) - 50f) + " " + (j / 20));
-
                         float ypos = (35f * -((j / 20) + 1));// + (eb.bars[i].localScale.y < 0 ? eb.bars[i].localScale.y * 250 : 0));   //y (if it is in the same direction) otherwise, start at 0
                         arrow.anchoredPosition = new Vector2(Util.Map(i, 0, 4, -200, 200), ypos);
                         arrow.transform.rotation = Quaternion.AngleAxis(180, Vector3.forward);
@@ -120,7 +114,7 @@ public class Alchemy : Singleton<Alchemy> {
                 }
             }
         }
-        return gbase;
+        return eb;
 
     }
 
@@ -128,7 +122,7 @@ public class Alchemy : Singleton<Alchemy> {
 
     //draw element with arrows. Requires raw item elements AND changing elements (from tool). 
 
-    public GameObject DrawElementBarsWithArrows(Elements el, Elements arrowEls, Transform r)
+    public ElementBars DrawElementBarsWithArrows(Elements el, Elements arrowEls, Transform r)
     {
         GameObject gbase;
         ElementBars eb = r.GetComponentInChildren<ElementBars>();
@@ -173,19 +167,16 @@ public class Alchemy : Singleton<Alchemy> {
             
             if(ael[i] != 0)
             {
-                print("making arrow "+arrows[i].Count+" "+i);
 
                 for (int j = 0; j < Mathf.Abs(ael[i]); j+=20)
                 {
                     RectTransform arrow;
                     if (arrows[i].Count > (j/20))
                     {
-                        print("assigning " + i + " " + arrows.Count + " " + arrows[i].Count);
                         arrow = arrows[i][(j/20)];
                     }
                     else
                     {
-                        print("creating");
                         GameObject t = Instantiate(Resources.Load("Prefabs/ElementArrow")) as GameObject;
                         arrow = t.GetComponent<RectTransform>();
                         arrow.transform.SetParent(r, false);
@@ -195,8 +186,6 @@ public class Alchemy : Singleton<Alchemy> {
                     
                     if (ael[i] < 0)
                     {
-                        print(eb.bars[i].localScale.y + " " + (((eb.bars[i].localScale.y > 0 ? -eb.bars[i].localScale.y : eb.bars[i].localScale.y) * (300f * (j / 20))) - 50f)+" "+ (j / 20));
-
                         float ypos = (35f * -((j / 20) + 1) + (eb.bars[i].localScale.y < 0 ? eb.bars[i].localScale.y*250 : 0));   //y (if it is in the same direction) otherwise, start at 0
                         arrow.anchoredPosition = new Vector2(Util.Map(i, 0, 4, -200, 200), ypos);
                         arrow.transform.rotation = Quaternion.AngleAxis(180, Vector3.forward);
@@ -210,10 +199,7 @@ public class Alchemy : Singleton<Alchemy> {
             }
         }
 
-
-
-
-        return gbase;
+        return eb;
 
     }
 

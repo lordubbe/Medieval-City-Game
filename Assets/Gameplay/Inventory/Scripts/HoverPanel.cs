@@ -11,7 +11,7 @@ public class HoverPanel : MonoBehaviour {
     public TextMeshProUGUI flavourText;
     public RectTransform pentaSpot;
     public RectTransform ownRect;
-    GameObject pentaObj;
+    ElementBars pentaObj;
 
     public void Start()
     {
