@@ -160,7 +160,7 @@ public class AlchemyTool : MonoBehaviour {
 
     public void OnMouseEnter()
     {
-        GameObject g = Alchemy.Instance.DrawElementBarsWithArrows(tool.elements, new Elements(50, 0, 0, 0, 0), pentaSpot);
+        GameObject g = Alchemy.Instance.DrawElementArrows(tool.elements, pentaSpot);
         //outline?
     }
 
