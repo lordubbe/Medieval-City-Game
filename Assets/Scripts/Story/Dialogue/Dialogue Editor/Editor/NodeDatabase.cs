@@ -7,6 +7,7 @@ public delegate void NodeSelectionEvent(UINode node);
 [CreateAssetMenu(), System.Serializable]
 public class NodeDatabase : ScriptableObject{ //Should be a ScriptableObject or something that saves
 
+    public List<UIEntryPoint> entryPoints = new List<UIEntryPoint>();
 	public List<UINode> nodes = new List<UINode>();
 
 	public static NodeSelectionEvent OnNodeSelected;

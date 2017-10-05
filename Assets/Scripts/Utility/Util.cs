@@ -306,14 +306,28 @@ public abstract class InteractableRect{
 			OnInteract (e);
 		}
 
+		if (rect.IsRightClicked ()) {
+			OnRightClick (e);
+		}
+
 		if (e.type == EventType.mouseUp) {
+			
+			if (rect.Contains (e.mousePosition)) {
+				OnMouseUpOverRect (e);
+			}
+
 			OnStopInteract (e);
 		}
+
 	}
 
 	protected virtual void OnInteract(Event e){	}
 
+	protected virtual void OnRightClick(Event e){ }
+
 	protected virtual void OnStopInteract(Event e){	}
+
+	protected virtual void OnMouseUpOverRect(Event e){ }
 }
 
 public abstract class DraggableRect : InteractableRect, ISelectableUIElement{
