@@ -55,7 +55,7 @@ public class CharacterMovement : MonoBehaviour {
         RaycastHit groundHitInfo;
         float castDistance = playerCollider.height / 2f - playerCollider.radius + safetyWidth * 1.01f;
 
-        if (Physics.SphereCast(transform.position + playerCollider.center, playerCollider.radius, -transform.up, out groundHitInfo, castDistance))
+        if (Physics.SphereCast(transform.position + playerCollider.center, playerCollider.radius, -transform.up, out groundHitInfo, castDistance, Physics.AllLayers, QueryTriggerInteraction.Ignore))
         {
             float groundAngle = Vector3.Angle(Vector3.up, groundHitInfo.normal);
             if (groundAngle < 89f)
@@ -164,7 +164,7 @@ public class CharacterMovement : MonoBehaviour {
         RaycastHit hitInfo;
         //TODO make movement work on slopes
 
-        if (checks < 10 && Physics.CapsuleCast(capsuleTopSpherePos, capsuleBottomSpherePos, characterCollider.radius, rayVector, out hitInfo, rayVector.magnitude, Physics.AllLayers))
+        if (checks < 10 && Physics.CapsuleCast(capsuleTopSpherePos, capsuleBottomSpherePos, characterCollider.radius, rayVector, out hitInfo, rayVector.magnitude, Physics.AllLayers, QueryTriggerInteraction.Ignore))
         {
             checks++;
             Vector3 pokeThroughVector = currVel - currVel * hitInfo.distance;
