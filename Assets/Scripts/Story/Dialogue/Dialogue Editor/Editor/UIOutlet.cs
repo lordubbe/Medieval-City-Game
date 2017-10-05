@@ -15,7 +15,7 @@ public class UIOutlet : UIConnection {
 			UIInlet inlet = c as UIInlet;
 
 			//Don't connect a Node to itself
-			if (inlet.GetParent() != DialogueEditorWindow.GetStaticDatabase().nodes[parent.parentNodeIdx]) {
+			if (inlet.GetParent() != DialogueEditorWindow.GetStaticDatabase().nodes.Find(x=>x.id == parent.parentid)) {
 				base.AddConnection (c);
 				connectedNodeIdx = DialogueEditorWindow.GetStaticDatabase().nodes.IndexOf(inlet.GetParent()); 
 			}

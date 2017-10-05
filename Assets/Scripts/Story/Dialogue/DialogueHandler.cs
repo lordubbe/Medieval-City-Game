@@ -30,7 +30,13 @@ public class DialogueHandler : MonoBehaviour {
 
     public void StartDialogue(Person p, Node n)
     {
+        dialogueCanvas.enabled = true;
         DisplayNode(n);
+    }
+
+    public void EndDialogue()
+    {
+        dialogueCanvas.enabled = false;
     }
 
     public void ClearDialogue()
@@ -53,12 +59,16 @@ public class DialogueHandler : MonoBehaviour {
     public void DisplayNode(Node n)
     {
         ClearDialogue();
+        print(n.id);
 
         text.text = n.text;
         if(n.characterSpeaking != null)
         {
             charText.text = n.characterSpeaking.name;
         }
+
+        n.OnEnter.Invoke();
+
         foreach(Option o in n.options)
         {
             /// IF option flags fulfill Check
@@ -70,7 +80,7 @@ public class DialogueHandler : MonoBehaviour {
             GameObject g = Instantiate(optionPrefab, optionList.transform) as GameObject;
             displayedOptions.Add(g);
             Button b = g.GetComponent<Button>();
-            b.onClick.AddListener(() => DisplayNode(o.linkToNextNode));
+            b.onClick.AddListener(() => DisplayNode(sm.convos.FindNode(o.linkToNextNode)));
             b.GetComponentInChildren<Text>().text = o.text;
         }
 

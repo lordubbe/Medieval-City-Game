@@ -7,14 +7,14 @@ public class Option {
 
     public string text;
     public List<FlagCondition> conditions = new List<FlagCondition>();
-	public Node linkToNextNode;
+	public string linkToNextNode;
 
     public Option() { }
-    public Option(string t, Node next) { text = t; linkToNextNode = next; }
+    public Option(string t, string next) { text = t; linkToNextNode = next; }
 
 }
 
-
+[System.Serializable]
 public class FlagCondition
 {
     public flag f;

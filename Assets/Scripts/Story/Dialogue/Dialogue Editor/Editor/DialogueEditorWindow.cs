@@ -17,6 +17,8 @@ public class DialogueEditorWindow : EditorWindow {
 
 	private Vector2 scrollAmount = Vector2.zero;
 
+    public int idIterator = 0;
+
 	[MenuItem("Tools/Dialogue Editor %#d")]
 	public static void Init(){
 		DialogueEditorWindow window = (DialogueEditorWindow)EditorWindow.GetWindow (typeof(DialogueEditorWindow));
@@ -81,7 +83,7 @@ public class DialogueEditorWindow : EditorWindow {
            
             foreach(Node n in unregisteredNodes){
                 //Somehow do better auto-arranging? 
-                AddUINode(currentGroup.nodes.IndexOf(n), space.center);
+                AddUINode(n, space.center);
             }
 
 
@@ -116,12 +118,17 @@ public class DialogueEditorWindow : EditorWindow {
 	void InspectorGUI(Rect space){
 		GUI.Box (space, "Inspector");
 
-        if (currentGroup.nodes.Count > 0)
+        bool isNodeSelected = false;
+
+        List<UINode> nodesInGroup = nodeDatabase.nodes.FindAll(x => x.groupID == currentGroup.GetInstanceID());
+
+        if (nodesInGroup.Count > 0)
         {
-            for (int i = 0; i < nodeDatabase.nodes.Count; i++)
+            for (int i = 0; i < nodesInGroup.Count; i++)
             {
-                if (nodeDatabase.nodes[i].selected)
+                if (nodesInGroup[i].selected)
                 {
+                    isNodeSelected = true;
                     serializedCurrentGroup.Update();
                     SerializedProperty nodes = serializedCurrentGroup.FindProperty("nodes");
                     SerializedProperty unityEvent = nodes.GetArrayElementAtIndex(i).FindPropertyRelative("OnEnter");
@@ -131,6 +138,7 @@ public class DialogueEditorWindow : EditorWindow {
                     EditorGUILayout.BeginHorizontal();
 
                     EditorGUILayout.LabelField("Facial picture selection here?");
+                    
 
                     //UnityEvent
                     EditorGUILayout.PropertyField(unityEvent);
@@ -149,6 +157,15 @@ public class DialogueEditorWindow : EditorWindow {
                 Event.current.Use();
                 draggingEditSize = false;
             }
+        }
+        if (!isNodeSelected)
+        {
+            GUILayout.BeginArea(space.WithY(space.yMin + 15f).WithPadding(5f));
+            EditorGUILayout.BeginHorizontal();
+            EditorGUILayout.LabelField("Insert ID for NodeGroup here.");
+            currentGroup.id = EditorGUILayout.TextField(currentGroup.id == "" ? "Insert thing here" : currentGroup.id);
+            EditorGUILayout.EndHorizontal();
+            GUILayout.EndArea();
         }
 	}
 
@@ -192,9 +209,10 @@ public class DialogueEditorWindow : EditorWindow {
 		currentGroup = c;
 		int id = c.GetInstanceID ();
 		serializedCurrentGroup = new SerializedObject(currentGroup);
-	}
+        idIterator = nodeDatabase.nodes.Count(x => x.groupID == currentGroup.GetInstanceID());
+    }
 
-	void InitializeNodeDatabase(Rect space){
+    void InitializeNodeDatabase(Rect space){
 		if (nodeDatabase == null) {
 			//Auto-load database
 			string[] databases = AssetDatabase.FindAssets ("NodeDatabase");
@@ -225,8 +243,11 @@ public class DialogueEditorWindow : EditorWindow {
 
 	void AddNode(Vector2 position){
 		Node n = new Node ();
-		currentGroup.nodes.Add (n);
-		AddUINode (currentGroup.nodes.IndexOf(n), position);
+        n.id = currentGroup.id + "_" + idIterator;
+        idIterator++;
+
+        currentGroup.nodes.Add (n);
+		AddUINode (n, position);
 	}
 
 	public void RemoveNode(UINode node){
@@ -234,7 +255,7 @@ public class DialogueEditorWindow : EditorWindow {
 		nodeDatabase.nodes.Remove (node);
 	}
 
-	void AddUINode(int n, Vector2 position){
+	void AddUINode(Node n, Vector2 position){
 		int id = currentGroup.GetInstanceID();
 		UINode node = new UINode (n, position);
 		node.groupID = id;
@@ -245,4 +266,15 @@ public class DialogueEditorWindow : EditorWindow {
 	public static NodeDatabase GetStaticDatabase(){
 		return nodeDatabase;
 	}
+    
+    public static UINode GetUINode(Node n)
+    {
+        return nodeDatabase.nodes.Find(x => x.id == n.id);
+    }
+
+    public static Node GetNode(UINode n)
+    {
+        return currentGroup.nodes.Find(x => x.id == n.id);
+    }
+
 }

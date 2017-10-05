@@ -4,19 +4,17 @@ using UnityEditor;
 [System.Serializable]
 public class UIConnection : InteractableRect {
 	
-	public bool occupied = false;
 	private bool addingConnection;
 
 	protected override void OnMouseUpOverRect (Event e)
 	{
+        Debug.Log("up mouse over react!");
 		base.OnMouseUpOverRect (e);
-		if (!occupied) {
-			if (NodeEditorEvents.activeConnection != null) {
-				AddConnection (NodeEditorEvents.activeConnection);
+		if (NodeEditorEvents.activeConnection != null) {
+			AddConnection (NodeEditorEvents.activeConnection);
 //				NodeEditorEvents.activeConnection.connection = this;
 //				connection = NodeEditorEvents.activeConnection;
 //				occupied = true; 
-			}
 		}
 	}
 
@@ -46,11 +44,9 @@ public class UIConnection : InteractableRect {
 	protected override void OnInteract (Event e)
 	{
 		base.OnInteract (e);
-
-		if (!occupied) {
-			NodeEditorEvents.activeConnection = this;
-			addingConnection = true;
-		}
+        
+		NodeEditorEvents.activeConnection = this;
+		addingConnection = true;
 	}
 
 	protected override void OnStopInteract (Event e)
@@ -63,26 +59,22 @@ public class UIConnection : InteractableRect {
 	protected override void OnRightClick (Event e)
 	{
 		base.OnRightClick (e);
-
-		if(!occupied){
-			GenericMenu gm = new GenericMenu ();
-			gm.AddItem (new GUIContent ("Remove Connection"), false, 
-				() => {
-					RemoveConnection(); 
-				}
-			);
-			gm.ShowAsContext ();
-			e.Use ();
-		}
+        
+		GenericMenu gm = new GenericMenu ();
+		gm.AddItem (new GUIContent ("Remove Connection"), false, 
+			() => {
+				RemoveConnection(); 
+			}
+		);
+		gm.ShowAsContext ();
+		e.Use ();
 	}
 
 	public virtual void RemoveConnection(){
 //		connection = null;
-		occupied = false;
 	}
 
 	public virtual void AddConnection(UIConnection c){
 //		connection = c;
-		occupied = true;
 	}
 }

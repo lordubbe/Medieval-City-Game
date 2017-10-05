@@ -34,7 +34,7 @@ public class StoryManager : SerializedMonoBehaviour {
 
     void Start()
     {
-        stories[0].StartStory();
+  //      stories[0].StartStory();
     }
 
 	void Update(){
@@ -48,16 +48,18 @@ public class StoryManager : SerializedMonoBehaviour {
             playerQualities[0].SetValue(1);
         }
 
-        if (Input.GetKeyDown(KeyCode.H))
-        {
-            convos.StartConversation(new Person(), convos.FindNode("hellotest"));
-        }
+
 	}
 
+    public void TESTTHIS()
+    {
+        print("hELLOOOO");
+    }
 
 	public void StartStory(Story s)
 	{
 		s.isActive = true;
+        Debug.Log("Story " + s.name + " started");
 		s.ChangeState(s.startState); //potentially change!
 	}
 

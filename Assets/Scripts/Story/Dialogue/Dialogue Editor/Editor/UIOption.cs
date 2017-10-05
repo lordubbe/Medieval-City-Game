@@ -8,7 +8,7 @@ public class UIOption {
 
 	private static float optionPadding = 5f;
 
-	public int parentNodeIdx = -1;
+	public string parentid;
 	public Option option;
 
 	public UIOutlet outlet;
@@ -28,20 +28,20 @@ public class UIOption {
 
 		NodeDatabase nodeDatabase = DialogueEditorWindow.GetStaticDatabase ();
 
-		int idx = nodeDatabase.nodes[parentNodeIdx].options.IndexOf (this);
-		int parentOptionCount = nodeDatabase.nodes[parentNodeIdx].options.Count;
+		int idx = nodeDatabase.nodes.Find(x=>x.id==parentid).options.IndexOf (this); 
+		int parentOptionCount = nodeDatabase.nodes.Find(x => x.id == parentid).options.Count; 
 
 		if(space.IsRightClicked()){
 			GenericMenu menu = new GenericMenu();
 
 			if (idx > 0) {
-				menu.AddItem (new GUIContent ("Move up"), false, ()=> nodeDatabase.nodes[parentNodeIdx].MoveOptionUp(idx));
+				menu.AddItem (new GUIContent ("Move up"), false, ()=> nodeDatabase.nodes.Find(x => x.id == parentid).MoveOptionUp(idx));
 			}
 			if (idx < parentOptionCount - 1) {
-				menu.AddItem (new GUIContent ("Move down"), false, ()=> nodeDatabase.nodes[parentNodeIdx].MoveOptionDown(idx));
+				menu.AddItem (new GUIContent ("Move down"), false, ()=> nodeDatabase.nodes.Find(x => x.id == parentid).MoveOptionDown(idx));
 			}
 			menu.AddSeparator ("");
-			menu.AddItem(new GUIContent("Remove Option"), false, ()=> nodeDatabase.nodes[parentNodeIdx].RemoveOption(this));
+			menu.AddItem(new GUIContent("Remove Option"), false, ()=> nodeDatabase.nodes.Find(x => x.id == parentid).RemoveOption(this));
 			menu.ShowAsContext ();
 			e.Use ();
 		}
@@ -50,8 +50,8 @@ public class UIOption {
 	public UIOption(Option o, UINode parent){
 		NodeDatabase nodeDatabase = DialogueEditorWindow.GetStaticDatabase ();
 
-		this.parentNodeIdx = nodeDatabase.nodes.IndexOf(parent);
-		this.option = o;
+		this.parentid = parent.id;
+        this.option = o;
 		outlet = new UIOutlet (this);
 	}
 }

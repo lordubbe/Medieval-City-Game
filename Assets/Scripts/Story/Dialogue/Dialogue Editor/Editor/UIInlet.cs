@@ -10,12 +10,14 @@ public class UIInlet : UIConnection {
 
 	public override void AddConnection (UIConnection c)
 	{
-		if (c is UIOutlet) {
+        if (c is UIOutlet) {
             UIOutlet outlet = c as UIOutlet;
 
 			NodeDatabase db = DialogueEditorWindow.GetStaticDatabase ();
-			if (parent != db.nodes [outlet.GetParent ().parentNodeIdx]) {
-                outlet.GetParent().option.linkToNextNode = parent.GetNode();
+            Debug.Log(parent.id);
+            Debug.Log(outlet.GetParent().parentid);
+			if (parent.id != outlet.GetParent ().parentid) {
+                outlet.GetParent().option.linkToNextNode = parent.GetNode().id;
 				base.AddConnection (c);
 				outlet.AddConnection (this);
 			}

@@ -6,6 +6,14 @@ using UnityEditor;
 #endif
 
 public static class Util{
+
+    private static readonly System.DateTime EpochStart = new System.DateTime(1970, 1, 1, 0, 0, 0, System.DateTimeKind.Utc);
+
+    public static int GetTimeInUnix()
+    {
+        return (int)(System.DateTime.UtcNow - EpochStart).TotalSeconds;
+    }
+
 #if UNITY_EDITOR
     public static void HeaderLabel(Rect space, string label, GUIStyle style, Color color){
 		style.normal.textColor = color;

@@ -11,23 +11,23 @@ public class UINode : ResizableRect {
 	public static Vector2 defaultNodeDimensions = new Vector2(100f, 80f);
 
 	private Node node;
-	public int nodeIdx;
+	public string id;
 
 	public UIInlet inlet;
 	public List<UIOption> options = new List<UIOption>();
 
 	private static float optionPadding = 5f;
 
-	public UINode(int nodeIdx, Vector2 position){
-		this.nodeIdx = nodeIdx;
+	public UINode(Node n, Vector2 position){
+        id = n.id;
 		rect = new Rect (Vector2.zero, defaultNodeDimensions).WithCenter(position);
-		inlet = new UIInlet (this);
+		inlet = new UIInlet (this); 
 	}
 
 	public void OnNodeUI(DialogueEditorWindow root){
 		base.OnGUI ();
 
-		node = DialogueEditorWindow.currentGroup.nodes [nodeIdx];
+        node = DialogueEditorWindow.currentGroup.nodes.Find(x => x.id == id);
 			
 		Event e = Event.current;
 
@@ -91,8 +91,8 @@ public class UINode : ResizableRect {
 		node.options[idx] = temp;
 
 		//swap connectedNodeIdx on UIOptions
-		options[idx].parentNodeIdx -= 1;
-		options [idx - 1].parentNodeIdx += 1;
+	//	options[idx].parentNodeIdx -= 1;
+	//	options [idx - 1].parentNodeIdx += 1;
 
 		//swap them
 		UIOption temp2 = options [idx - 1];
@@ -106,8 +106,8 @@ public class UINode : ResizableRect {
 		node.options[idx] = temp;
 
 		//swap connectedNodeIdx on UIOptions
-		options [idx].parentNodeIdx += 1;
-		options [idx + 1].parentNodeIdx -= 1;
+	//	options [idx].parentNodeIdx += 1;
+	//	options [idx + 1].parentNodeIdx -= 1;
 
 		//swap them
 		UIOption temp2 = options [idx + 1];
@@ -116,9 +116,11 @@ public class UINode : ResizableRect {
 	}
 
 	public void RemoveOption(UIOption o){
-		//TODO: How to handle the options connected node? Remove node or let it stay?
+        //TODO: How to handle the options connected node? Remove node or let it stay?
+        Debug.Log(node.options.Count);
 		node.options.Remove (o.option);
-		options.Remove (o);
+        Debug.Log(node.options.Count);
+        options.Remove (o);
 	}
 
 	void AddOption(){
@@ -128,6 +130,7 @@ public class UINode : ResizableRect {
 	}
 
 	public Node GetNode(){
-		return DialogueEditorWindow.currentGroup.nodes [nodeIdx];
+		return DialogueEditorWindow.currentGroup.nodes.Find(x=>x.id == id);
 	}
+    
 }

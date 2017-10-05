@@ -1,24 +1,32 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System.Linq;
 
 public class ConversationManager : MonoBehaviour {
 
-    [SerializeField] List<NodeCreator> creators = new List<NodeCreator>();
+    List<NodeCreator> creators = new List<NodeCreator>();
     public Dictionary<string, NodeGroup> allconversations = new Dictionary<string, NodeGroup>();
     public StoryManager sm;
     public DialogueHandler dialHandler;
 
     public List<Person> pplInConvoRange = new List<Person>();
 
+    public string DEBUGSTORY = "firstconvo_0";
+
     public void Awake()
     {
-        foreach(NodeCreator nc in creators)
+        creators = GetComponentsInChildren<NodeCreator>().ToList();
+
+
+
+        foreach (NodeCreator nc in creators)
         {
             NodeGroup nn = new NodeGroup();
-            nn.id = nc.nodes[0].id;
+            nn.id = nc.id;
             foreach(Node n in nc.nodes)
             {
+                print(n.id);
                 nn.nodes.Add(n.id, n);
             }
             allconversations.Add(nn.id, nn);
@@ -79,6 +87,14 @@ public class ConversationManager : MonoBehaviour {
         //{
         //    sm.storyflags[flag.liketheinnkeeper] = true;
         //}
+
+
+        if (Input.GetKeyDown(KeyCode.H))
+        {
+            print(FindNode(DEBUGSTORY).id);
+            StartConversation(new Person(), FindNode(DEBUGSTORY));
+        }
+
     }
 
     public void AddPersonInRange(Person p)
@@ -94,6 +110,11 @@ public class ConversationManager : MonoBehaviour {
     public void StartConversation(Person p, Node n)
     {
         dialHandler.StartDialogue(p, n);
+    }
+
+    public void EndConversation()
+    {
+        dialHandler.EndDialogue();
     }
 
 
