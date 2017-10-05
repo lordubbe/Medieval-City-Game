@@ -14,6 +14,7 @@ public class AlchemyTool : MonoBehaviour {
     public ParticleSystem ps;
     public Color particleColor;
     public TextMeshProUGUI feedback;
+    public ElementBars bars;
     
 	public float affectRate = 0.1f;
     public float affectAmount = 0.05f;
@@ -41,31 +42,61 @@ public class AlchemyTool : MonoBehaviour {
         endgradient.color = Color.black;
         tool = GetComponent<AlchemyTool>();
         feedback.text = string.Empty;
-        InteractionManager.OnMouseDown += OnMouseDown;
-    }
-
-
-
-    public void SetItemsInMe()
-    {
-        if(inventory == null)
+        InteractionManager.OnMouseDown += OnClick;
+        if (inventory == null)
         {
             inventory = GetComponentInChildren<Inventory>();
         }
-        
-        itemsInMe.AddRange(inventory.items);
+        inventory.itemAdded += AddItem;
+        inventory.itemRemoved += RemoveItem;
+        if (bars != null)
+        {
+            ClearBars();
+        }
+        bars = Alchemy.Instance.DrawElementArrows(tool.elements, pentaSpot);
     }
 
-    public void RemoveItemsInMe()
+
+    public void AddItem(Item i)
     {
-        itemsInMe.Clear();
+        itemsInMe.Add(i);
+        if (bars != null)
+        {
+            ClearBars();
+        }
+        bars = Alchemy.Instance.DrawElementBarsWithArrows(i.GetElements(), tool.elements, pentaSpot);
     }
+
+    public void RemoveItem(Item i)
+    {
+        itemsInMe.Remove(i);
+        if (bars != null)
+        {
+            ClearBars();
+        }
+        bars = Alchemy.Instance.DrawElementArrows(tool.elements, pentaSpot);
+    }
+
+    //public void SetItemsInMe()
+    //{
+    //    if(inventory == null)
+    //    {
+    //        inventory = GetComponentInChildren<Inventory>();
+    //    }
+        
+    //    itemsInMe.AddRange(inventory.items);
+    //}
+
+    //public void RemoveItemsInMe()
+    //{
+    //    itemsInMe.Clear();
+    //}
 
 
     public void TurnOn()
     {
-        RemoveItemsInMe();
-        SetItemsInMe();
+        //RemoveItemsInMe();
+        //SetItemsInMe();
         string testString = TestAllItems();
         if (testString == "can go")
         {
@@ -104,8 +135,10 @@ public class AlchemyTool : MonoBehaviour {
 
                         //psColor = new ParticleSystem.MinMaxGradient();
                         ps.startColor = Color.Lerp(startgradient.color, endgradient.color, i.attributes[j].progress);
+                        bars = Alchemy.Instance.DrawElementBarsWithArrows(i.GetElements(),tool.elements, pentaSpot);
                         if (i.attributes[j].progress >= 1)
                         {
+                            print("turn off");
                             TurnOff();
                         }
                     }
@@ -131,6 +164,13 @@ public class AlchemyTool : MonoBehaviour {
                     return i.name + " is not " + neededattributeTypes[k].ToString();
                 }
             }
+            for (int j = 0; j < i.attributes.Count ; j++)
+            {
+                if (i.attributes[j].progress >= 1 && neededattributeTypes.Contains(i.attributes[j].type)) 
+                {
+                    return i.name + " is " + i.attributes[j].GetStateAsString();
+                }
+            }
         }
         return "can go";
     }
@@ -151,19 +191,15 @@ public class AlchemyTool : MonoBehaviour {
 
 
 
-    private void OnMouseDown()
+    private void OnClick()
     {
         // click and open tool item window.
         toolCanvas.gameObject.SetActive(true);
-        Alchemy.Instance.DrawElementPentagon(tool.elements, pentaSpot);
-        //find correct position and move ??
-
-        //get and draw pentagon shape
     }
 
     public void OnMouseEnter()
     {
-        GameObject g = Alchemy.Instance.DrawElementPentagon(tool.elements, pentaSpot);
+
         //outline?
     }
 
@@ -172,5 +208,24 @@ public class AlchemyTool : MonoBehaviour {
         //outline?
     }
 
+
+
+    public void ClearBars()
+    {
+        for (int i = 0; i < bars.bars.Count; i++)
+        {
+            bars.bars[i].localScale = new Vector3(1, 0, 1);
+        }
+        for (int i = 0; i < bars.arrows.Count; i++)
+        {
+            for (int j = 0; j < bars.arrows[i].Count; j++)
+            {
+                Destroy(bars.arrows[i][j].gameObject);
+            }
+            bars.arrows[i].Clear();
+        }
+        bars.arrows.Clear();
+        bars = null;
+    }
 
 }

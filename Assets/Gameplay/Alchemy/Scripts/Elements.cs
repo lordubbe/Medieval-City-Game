@@ -13,7 +13,7 @@ public class Elements {
 
     public static Elements zero = new Elements(0, 0, 0, 0, 0);
     public static Elements full = new Elements(100, 100, 100, 100, 100);
-
+    public static Elements empty = new Elements(-100, -100, -100, -100, -100);
 
     public Elements(float s, float c, float f, float se, float b)
     {

@@ -7,11 +7,11 @@ using TMPro;
 public class UIQuestButton : MonoBehaviour {
 
     [SerializeField] Button b;
-    AlchemyStoryState questLink;
+    Story questLink;
     Journal journal;
     [SerializeField] TextMeshProUGUI buttontext;
 
-    public void SetupButton(AlchemyStoryState q, Journal j)
+    public void SetupButton(Story q, Journal j)
     {
         journal = j;
         questLink = q;

@@ -28,15 +28,15 @@ public class StoryManager : SerializedMonoBehaviour {
 
     public ConversationManager convos;
 
-	void Start(){
-
-		//sloader.LoadStories();
-
+	void Awake(){
 		stories = GetComponentsInChildren<Story>().ToList();
-
-        stories[0].StartStory();
-        
 	}
+
+    void Start()
+    {
+        stories[0].StartStory();
+    }
+
 	void Update(){
 		if(Input.GetKey(KeyCode.P)){
 			stories[0].StartStory();

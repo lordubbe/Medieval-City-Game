@@ -8,12 +8,13 @@ public class Story : SerializedMonoBehaviour {
 
     public StoryManager sm;
 	public string storyname;
+    public string description;
 	public bool isActive = false;
 	public bool isCompleted = false;
 	public Dictionary<string, bool> storyflags = new Dictionary<string,bool>();
     public Dictionary<Quality, StoryState> states = new Dictionary<Quality, StoryState>();
     public StoryState startState;
-	StoryState curState;
+	public StoryState curState;
 
     public Story(StoryManager s) { sm = s; }
 
@@ -25,7 +26,8 @@ public class Story : SerializedMonoBehaviour {
     }
     
 
-	public void ChangeState(Quality qDeterminant){
+	public void ChangeState(Quality qDeterminant)
+    {
         print("Changing state by " + qDeterminant.id);
         curState.OnStateExit();
 
@@ -49,11 +51,13 @@ public class Story : SerializedMonoBehaviour {
 
     public void StartStory(){
         ChangeState(startState);
-
-        
-
 	}
     
+    public string BuildDescription()
+    {
+        return description + "\n" + curState.description;
+    }
+
 
 }
 

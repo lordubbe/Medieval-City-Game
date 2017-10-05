@@ -23,7 +23,6 @@ public class ConversationManager : MonoBehaviour {
             }
             allconversations.Add(nn.id, nn);
         }
-        print(allconversations.Count+" "+creators.Count);
 
         ////DUMMY THINGSSSSSSS //////
         //Person p = new Person();
@@ -103,6 +102,7 @@ public class ConversationManager : MonoBehaviour {
 
     public Node FindNode(string id)
     {
+
         foreach(NodeGroup ng in allconversations.Values)
         {
             foreach(Node n in ng.nodes.Values)
