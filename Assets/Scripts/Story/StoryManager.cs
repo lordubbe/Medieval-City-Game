@@ -50,7 +50,7 @@ public class StoryManager : SerializedMonoBehaviour {
 
         if (Input.GetKeyDown(KeyCode.H))
         {
-            convos.StartConversation(new Person(), convos.FindNode("innkeeperHello"));
+            convos.StartConversation(new Person(), convos.FindNode("hellotest"));
         }
 	}
 
