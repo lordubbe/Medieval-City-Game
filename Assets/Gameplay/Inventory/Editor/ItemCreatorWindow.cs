@@ -318,15 +318,15 @@ public class ItemCreatorWindow : EditorWindow, IHasCustomMenu {
 						if (currentItem.attributes != null) {
 							for (int b = 0; b < att.Count; b++) {
 								AttributeType attributeType = (AttributeType)System.Enum.Parse (typeof(AttributeType), att [b]);
-								List<Attribute> attributes = currentItem.attributes.Where (a => a.type == attributeType).ToList ();
+								List<ItemAttribute> attributes = currentItem.attributes.Where (a => a.type == attributeType).ToList ();
 								bool hasAttribute = attributes.Count > 0;
 								if (GUI.Toggle (attributeButton, hasAttribute, att [b], EditorStyles.toolbarButton)) {
 									if (!hasAttribute) {
-										currentItem.attributes.Add (new Attribute (attributeType));
+										currentItem.attributes.Add (new ItemAttribute (attributeType));
 									}
 								} else {
 									if (hasAttribute) {
-										currentItem.attributes.Remove (currentItem.attributes.First<Attribute> (a => a.type == attributeType));
+										currentItem.attributes.Remove (currentItem.attributes.First<ItemAttribute> (a => a.type == attributeType));
 									}
 								}
 								attributeButton.x += attributeButton.width;

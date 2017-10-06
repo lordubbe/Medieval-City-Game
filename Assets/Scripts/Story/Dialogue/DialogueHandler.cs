@@ -12,7 +12,7 @@ public class DialogueHandler : MonoBehaviour {
     public GameObject optionPrefab;
     public List<GameObject> displayedOptions = new List<GameObject>();
 
-    public Canvas dialogueCanvas;
+    public UIManager uiMan;
 
     public Node node;
 
@@ -30,13 +30,13 @@ public class DialogueHandler : MonoBehaviour {
 
     public void StartDialogue(Person p, Node n)
     {
-        dialogueCanvas.enabled = true;
+        uiMan.OpenDialogueUI();
         DisplayNode(n);
     }
 
     public void EndDialogue()
     {
-        dialogueCanvas.enabled = false;
+        uiMan.CloseDialogueUI();
     }
 
     public void ClearDialogue()

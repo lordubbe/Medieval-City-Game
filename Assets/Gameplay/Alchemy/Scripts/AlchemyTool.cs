@@ -175,7 +175,7 @@ public class AlchemyTool : MonoBehaviour {
         return "can go";
     }
 
-    private bool TestItem(Attribute a)
+    private bool TestItem(ItemAttribute a)
     {
         if(neededattributeTypes.Count == 0)
         {

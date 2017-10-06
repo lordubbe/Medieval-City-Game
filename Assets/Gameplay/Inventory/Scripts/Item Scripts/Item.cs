@@ -22,7 +22,7 @@ public class Item : MonoBehaviour{
 	public IconSettings iconSettings;
 
     private Elements elements = new Elements();
-    public List<Attribute> attributes;
+    public List<ItemAttribute> attributes;
     public List<ItemTag> tags = new List<ItemTag>();
 
 	/// <summary>
@@ -56,7 +56,7 @@ public class Item : MonoBehaviour{
     public virtual Elements GetElements()
     {
         Elements elToSend = elements;
-        foreach(Attribute a in attributes)
+        foreach(ItemAttribute a in attributes)
         {
             elToSend += a.elementsModifier;
         }

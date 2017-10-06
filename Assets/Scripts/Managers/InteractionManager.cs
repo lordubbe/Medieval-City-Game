@@ -13,6 +13,7 @@ public class InteractionManager : MonoBehaviour {
     public static InteractionEvent OnExitAlchemyMode;
     public static InteractionEvent OnEnterFirstPersonMode;
     public static InteractionEvent OnExitFirstPersonMode;
+    public static InteractionEvent OnUseDown;
 
     public static bool inAlchemyMode = false;
 
@@ -140,6 +141,11 @@ public class InteractionManager : MonoBehaviour {
                     OnEnterFirstPersonMode();
                 }
             }
+        }
+
+        if (Input.GetKeyDown(KeyCode.E))
+        {
+            OnUseDown();
         }
     }
 

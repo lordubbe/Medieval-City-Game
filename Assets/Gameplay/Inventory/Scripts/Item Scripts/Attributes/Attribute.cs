@@ -8,9 +8,9 @@ public enum AttributeType
 }
 
 [System.Serializable]
-public class Attribute {
+public class ItemAttribute {
 
-	public Attribute(AttributeType attributeType){
+	public ItemAttribute(AttributeType attributeType){
 		type = attributeType;
 		progress = 0f;
 	}

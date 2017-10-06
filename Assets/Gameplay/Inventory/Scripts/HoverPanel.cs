@@ -28,7 +28,7 @@ public class HoverPanel : MonoBehaviour {
         itemName.text = i.name;
         flavourText.text = i.flavorText;
         listofAttributes.text = "";
-        foreach(Attribute a in i.attributes)
+        foreach(ItemAttribute a in i.attributes)
         {
             listofAttributes.text += a.GetStateAsString()+"\n";
         }

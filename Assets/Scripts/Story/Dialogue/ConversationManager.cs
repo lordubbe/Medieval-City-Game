@@ -12,6 +12,9 @@ public class ConversationManager : MonoBehaviour {
 
     public List<Person> pplInConvoRange = new List<Person>();
 
+    public bool inConversation;
+    public Person personSpeakingWith;
+
     public string DEBUGSTORY = "firstconvo_0";
 
     public void Awake()
@@ -99,24 +102,48 @@ public class ConversationManager : MonoBehaviour {
 
     public void AddPersonInRange(Person p)
     {
+        print("add person");
         pplInConvoRange.Add(p);
+        dialHandler.uiMan.ShowDialoguePrompt();
+        InteractionManager.OnUseDown += OnUse;
     }
 
     public void RemovePersonFromRange(Person p)
     {
+        print("remove person");
         pplInConvoRange.Remove(p);
+        dialHandler.uiMan.HideDialoguePrompt();
+        InteractionManager.OnUseDown -= OnUse;
     }
 
     public void StartConversation(Person p, Node n)
     {
+        print("start convo");
         dialHandler.StartDialogue(p, n);
+        inConversation = true;
+        personSpeakingWith = p;
     }
 
     public void EndConversation()
     {
+        print("end convo");
         dialHandler.EndDialogue();
+        inConversation = false;
+        personSpeakingWith = null;
     }
 
+    public void OnUse()
+    {
+        print("on use!");
+        if(pplInConvoRange.Count > 0 && !inConversation)
+        {
+            StartConversation(pplInConvoRange[0], FindNode(pplInConvoRange[0].defaultDialogueID));
+        }
+        else if (inConversation)
+        {
+            EndConversation();
+        }
+    }
 
 
 

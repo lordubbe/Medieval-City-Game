@@ -30,6 +30,11 @@ public class StoryManager : SerializedMonoBehaviour {
 
 	void Awake(){
 		stories = GetComponentsInChildren<Story>().ToList();
+
+        foreach(Person p in people)
+        {
+            p.InitPerson(this);
+        }
 	}
 
     void Start()
