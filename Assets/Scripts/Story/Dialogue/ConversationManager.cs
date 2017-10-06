@@ -29,13 +29,10 @@ public class ConversationManager : MonoBehaviour {
             nn.id = nc.id;
             foreach(Node n in nc.nodes)
             {
-                print(n.id);
                 nn.nodes.Add(n.id, n);
             }
             allconversations.Add(nn.id, nn);
         }
-        print(allconversations.Count+" "+creators.Count);
-
         ////DUMMY THINGSSSSSSS //////
         //Person p = new Person();
         //p.name = "Karl";
