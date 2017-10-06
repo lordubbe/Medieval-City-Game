@@ -13,6 +13,7 @@ public class Journal : MonoBehaviour {
     public GameObject questWindowPrefab;
     public Transform questGrid;
     public Transform journalCanvas;
+	public bool isOpen = false;
 
     void Start()
     {

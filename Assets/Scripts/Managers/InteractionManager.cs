@@ -145,7 +145,9 @@ public class InteractionManager : MonoBehaviour {
 
         if (Input.GetKeyDown(KeyCode.E))
         {
-            OnUseDown();
+			if (OnUseDown != null) {
+				OnUseDown();			
+			}
         }
     }
 
