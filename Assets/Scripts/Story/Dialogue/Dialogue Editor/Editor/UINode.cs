@@ -28,7 +28,7 @@ public class UINode : ResizableRect {
 		base.OnGUI ();
 
         node = DialogueEditorWindow.currentGroup.nodes.Find(x => x.id == id);
-			
+
 		Event e = Event.current;
 
 		//Selection

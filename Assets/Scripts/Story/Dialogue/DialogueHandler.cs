@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
 
 /// <summary>
 /// This script handles taking a dialogue node group etc. from the conversation manager and throws it on screen.
@@ -17,8 +18,8 @@ public class DialogueHandler : MonoBehaviour {
     public Node node;
 
     public GridLayoutGroup optionList;
-    public Text text;
-    public Text charText;
+	public TextMeshProUGUI text;
+	public TextMeshProUGUI charText;
 
 
 	// Use this for initialization
@@ -59,9 +60,8 @@ public class DialogueHandler : MonoBehaviour {
     public void DisplayNode(Node n)
     {
         ClearDialogue();
-        print(n.id);
 
-        text.text = n.text;
+		StartCoroutine (uiMan.RollText (n.text, text));
         if(n.characterSpeaking != null)
         {
             charText.text = n.characterSpeaking.name;

@@ -9,7 +9,6 @@ public class PersonTrigger : MonoBehaviour {
 
     void OnTriggerEnter(Collider c)
     {
-        print("trigger! " + c.gameObject.name);
         if (c.CompareTag("Player"))
         {
             p.InConvoRange();

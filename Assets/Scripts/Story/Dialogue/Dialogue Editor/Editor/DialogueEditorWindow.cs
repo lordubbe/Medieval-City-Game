@@ -243,9 +243,11 @@ public class DialogueEditorWindow : EditorWindow {
 
 	void AddNode(Vector2 position){
 		Node n = new Node ();
+		n.characterSpeaking = new Person ();
         n.id = currentGroup.id + "_" + idIterator;
         idIterator++;
 
+		Debug.Log ("adding node");
         currentGroup.nodes.Add (n);
 		AddUINode (n, position);
 	}
