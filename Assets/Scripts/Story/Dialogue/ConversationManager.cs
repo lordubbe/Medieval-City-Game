@@ -208,7 +208,7 @@ public class ConversationManager : MonoBehaviour {
 		n.characterSpeaking = sm.people [0];
 		n.id = "LovePotion_Intro_2";
 		n.text = "Right. Can you… make me a love potion?\n\nI can pay. *He holds up a bag of coins. Looks like there’s a lot in there.*";
-			n.options.Add (new Option ("*sigh* ...Love potions aren't real.", "LovePotion_Intro_3"));
+		n.options.Add (new Option ("*sigh* ...Love potions aren't real.", "LovePotion_Intro_3"));
 		n.options.Add (new Option ("Sorry. I don't do that kind of thing.", "LovePotion_Intro_Negative_0"));
 		n.options.Add (new Option ("Uhh, I need a little more information than that. Who's it for?", "LovePotion_Intro_5"));
 		n.options.Add (new Option ("Sure. What do you need?", "LovePotion_Intro_6"));
@@ -250,7 +250,7 @@ public class ConversationManager : MonoBehaviour {
 		n.id = "LovePotion_Intro_Negative_0";
 		n.text = "No? Hmm... Do you... know of any other alchemists I can ask?";
 		n.options.Add (new Option ("No, sorry.", "LovePotion_Intro_Negative_1"));
-			n.options.Add (new Option ("*sigh* ...Love potions aren't real.", "LovePotion_Intro_3"));
+		n.options.Add (new Option ("*sigh* ...Love potions aren't real.", "LovePotion_Intro_3"));
 		nc.nodes.Add (n);
 
 		n = new Node ();
@@ -284,7 +284,7 @@ public class ConversationManager : MonoBehaviour {
 		n.characterSpeaking = sm.people [0];
 		n.id = "LovePotion_Intro_7";
 		n.text = "Before I tell you, you have to agree to do it.";
-			n.options.Add (new Option ("Fine... I'll do it. Who is she?", "LovePotion_Intro_11"));
+		n.options.Add (new Option ("Fine... I'll do it. Who is she?", "LovePotion_Intro_11"));
 		n.options.Add (new Option ("No, sorry. Can't do it. I'll let you know if I hear of anyone.", "LovePotion_Exit"));
 		n.options.Add (new Option ("*sigh* ...Love potions aren't real.", "LovePotion_Intro_3"));
 		nc.nodes.Add (n);
@@ -295,8 +295,9 @@ public class ConversationManager : MonoBehaviour {
 		n.characterSpeaking = sm.people [0];
 		n.id = "LovePotion_Intro_11";
 		n.text = "She's... the innkeeper in The Cat's Eye.";
+		n.OnEnter.AddListener (() => sm.StartStory (sm.stories.Find (x => x.storyname == "Love Potion")));
 		n.options.Add (new Option ("Ok. Have you tried asking her?", "LovePotion_Intro_Talk_0"));
-		n.options.Add (new Option ("Ok. I can make a love potion, then.", "LovePotion_Exit"));
+		n.options.Add (new Option ("Ok. I can make a love potion, then.", "LovePotion_Intro_CanMake_0"));
 		nc.nodes.Add (n);
 
 
@@ -308,7 +309,7 @@ public class ConversationManager : MonoBehaviour {
 		n.characterSpeaking = sm.people [0];
 		n.id = "LovePotion_Intro_CanMake_0";
 		n.text = "Really? You'll do it?";
-			n.options.Add (new Option ("*Lie* It's not easy though. Love potions are dangerous work.", "LovePotion_Intro_CanMake_1"));
+		n.options.Add (new Option ("*Lie* It's not easy though. Love potions are dangerous work.", "LovePotion_Intro_CanMake_1"));
 		nc.nodes.Add (n);
 
 		n = new Node ();
@@ -371,6 +372,7 @@ public class ConversationManager : MonoBehaviour {
 		n = new Node ();
 		n.characterSpeaking = sm.people [0];
 		n.id = "LovePotion_Intro_CanMake_9";
+		n.OnEnter.AddListener (() => sm.SetQuality ("acceptedlovepotionquest", 1));
 		n.text = "[END]";
 		n.OnEnter.AddListener (() => EndConversation ());
 		nc.nodes.Add (n);

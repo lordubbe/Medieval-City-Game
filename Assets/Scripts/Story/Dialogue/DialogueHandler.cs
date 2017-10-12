@@ -61,6 +61,7 @@ public class DialogueHandler : MonoBehaviour {
     {
         ClearDialogue();
 
+		StopAllCoroutines ();
 		StartCoroutine (uiMan.RollText (n.text, text));
         if(n.characterSpeaking != null)
         {
@@ -81,7 +82,7 @@ public class DialogueHandler : MonoBehaviour {
             displayedOptions.Add(g);
             Button b = g.GetComponent<Button>();
             b.onClick.AddListener(() => DisplayNode(sm.convos.FindNode(o.linkToNextNode)));
-            b.GetComponentInChildren<Text>().text = o.text;
+            b.GetComponentInChildren<TextMeshProUGUI>().text = o.text;
         }
 
     }

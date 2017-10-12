@@ -12,7 +12,7 @@ public class StoryStateAlchemy : StoryState {
 
     public StoryStateAlchemy(Story s) : base(s) { }
 
-    public StoryStateAlchemy(Story s, string nam, string desc, Quality[] reqss) : base(s, nam, desc, reqss) { }
+	public StoryStateAlchemy(Story s, string nam, string desc, Dictionary<Quality,int> reqss) : base(s, nam, desc, reqss) { }
 
     public override void OnStateEnter()
     {
@@ -30,12 +30,15 @@ public class StoryStateAlchemy : StoryState {
         {
             if(itemToTest != null)
             {
-                foreach(QualityAlchemy qa in qualityReqs)
+				foreach(Quality qa in qualityReqs.Keys)
                 {
-                    if (Alchemy.Instance.TestSimilarity(itemToTest.GetElements(), qa.GetElements()) < threshold)
-                    {
-                        myStory.ChangeState(qa);
-                    }
+					if (qa is QualityAlchemy) 
+					{
+						if (Alchemy.Instance.TestSimilarity(itemToTest.GetElements(), (qa as QualityAlchemy).GetElements()) < threshold)
+						{
+							myStory.ChangeState(qa);
+						}
+					}
                 }
             }
             yield return new WaitForSeconds(1);

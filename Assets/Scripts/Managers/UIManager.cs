@@ -79,15 +79,17 @@ public class UIManager : MonoBehaviour {
 
     public void OpenDialogueUI()
     {
+		im.ChangeAlchemyMode ();
         HideDialoguePrompt();
         dialogueObject.gameObject.SetActive(true);
-		StopAllCoroutines ();
+		//StopAllCoroutines ();
 		StartCoroutine (Util.MoveToPos (-outofScreenX, Vector2.zero, dialogueText, quickOverShoot, 2));
 		StartCoroutine (Util.MoveToPos (outofScreenX, Vector2.zero, dialogueOptions, quickOverShoot, 2));
     }
 
     public void CloseDialogueUI()
     {
+		im.ChangeAlchemyMode ();
 		StopAllCoroutines ();
 		StartCoroutine (Util.MoveToPos (Vector2.zero, -outofScreenX, dialogueText, smooth, 2));
 		StartCoroutine (Util.MoveToPos (Vector2.zero, outofScreenX, dialogueOptions, smooth, 2));

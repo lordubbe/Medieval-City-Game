@@ -55,7 +55,7 @@ public class Story : SerializedMonoBehaviour {
     
     public string BuildDescription()
     {
-        return description + "\n" + curState.description;
+        return description + "\n\n" + curState.description;
     }
 
 

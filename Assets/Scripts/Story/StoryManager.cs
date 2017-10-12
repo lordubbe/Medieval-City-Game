@@ -4,7 +4,7 @@ using UnityEngine;
 using System.Linq;
 using Sirenix.OdinInspector;
 
-public enum flag { startedgame, foundthirdfire, dead, liketheinnkeeper }
+public enum flag { startedgame, foundthirdfire, dead }
 public enum reputationFactions { University, Commoners, Nobility } 
 
 
@@ -30,6 +30,8 @@ public class StoryManager : SerializedMonoBehaviour {
 
 	void Awake(){
 		stories = GetComponentsInChildren<Story>().ToList();
+		allQualities = GetComponentsInChildren<Quality> ().ToList ();
+		playerQualities.AddRange(allQualities); //well. that's also dumb.
 
         foreach(Person p in people)
         {
@@ -63,9 +65,10 @@ public class StoryManager : SerializedMonoBehaviour {
 
 	public void StartStory(Story s)
 	{
-		s.isActive = true;
-        Debug.Log("Story " + s.name + " started");
-		s.ChangeState(s.startState); //potentially change!
+        Story sref = stories.Find(x => x == s);
+        sref.isActive = true;
+        Debug.Log("Story " + sref.storyname + " started");
+        sref.ChangeState(sref.startState); //potentially change!
 	}
 
 	public void UpdateStory(Story s, StoryState newState)
@@ -112,6 +115,11 @@ public class StoryManager : SerializedMonoBehaviour {
 	public void SetQuality(string q, Quality val)
 	{
 		playerQualities[playerQualities.FindIndex(x=>x.id==q)] = val;
+	}
+
+	public void SetQuality(string q, int val)
+	{
+		playerQualities[playerQualities.FindIndex(x=>x.id==q)].SetValue(val);
 	}
 
 	public void SetBond(Person p, int newBond)

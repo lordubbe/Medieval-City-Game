@@ -9,13 +9,13 @@ public class StoryState : SerializedMonoBehaviour {
 	public string statename;
     public string description;
     [SerializeField] public Dictionary<string, Option> optionsToAdd = new Dictionary<string, Option>();
-    public Quality[] qualityReqs;
+	public Dictionary<Quality, int> qualityReqs = new Dictionary<Quality, int>();
 
     public StoryState() { }
     
     public StoryState(Story s) { myStory = s; }
 
-    public StoryState(Story s, string nam, string desc, Quality[] requirements)
+	public StoryState(Story s, string nam, string desc, Dictionary<Quality,int> requirements)
     {
         myStory = s;
         statename = nam;
@@ -44,11 +44,11 @@ public class StoryState : SerializedMonoBehaviour {
     {
         while (true)
         {
-            foreach(Quality q in qualityReqs)
+			foreach(Quality q in qualityReqs.Keys)
             {
                 if (myStory.sm.allQualities.Exists(x=>x.id == q.id))
                 {
-                    if(myStory.sm.allQualities[myStory.sm.allQualities.FindIndex(x=>x.id==q.id)].GetValue() == q.GetValue())
+					if(myStory.sm.allQualities[myStory.sm.allQualities.FindIndex(x=>x.id==q.id)].GetValue() == qualityReqs[q])
                     {
                         myStory.ChangeState(q); //Now changes if ONE OF THEM WAS true, which allows us to branch :D
                     }

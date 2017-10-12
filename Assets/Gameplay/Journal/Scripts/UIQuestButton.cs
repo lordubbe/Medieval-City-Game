@@ -16,6 +16,6 @@ public class UIQuestButton : MonoBehaviour {
         journal = j;
         questLink = q;
         b.onClick.AddListener(() => journal.OpenQuestWindow(questLink));
-        buttontext.text = q.name;
+        buttontext.text = q.storyname;
     }
 }
