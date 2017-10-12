@@ -4,6 +4,9 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 
+
+public enum UpdateType { StoryStart, StoryUpdate, ItemGiven }
+
 public class UIManager : MonoBehaviour {
 
 	public AnimationCurve lerp;
@@ -39,6 +42,10 @@ public class UIManager : MonoBehaviour {
     public Image waterIMG;
     public Image sleepIMG;
 
+    //UPDATER
+    public RectTransform updater;
+    public TextMeshProUGUI updaterTitle;
+    public TextMeshProUGUI updaterText;
 
 
     private void Start()
@@ -98,12 +105,43 @@ public class UIManager : MonoBehaviour {
     public void CloseDialogueUI()
     {
 		im.ChangeAlchemyMode ();
-		StopAllCoroutines ();
+		//StopAllCoroutines ();
 		StartCoroutine (Util.MoveToPos (Vector2.zero, -outofScreenX, dialogueText, smooth, 2));
 		StartCoroutine (Util.MoveToPos (Vector2.zero, outofScreenX, dialogueOptions, smooth, 2));
 		StartCoroutine (Util.WaitToDisable (dialogueObject.gameObject,1f));
     }
 
+
+
+    public void DisplayUpdate(UpdateType ut, string details)
+    {
+        switch (ut)
+        {
+            case UpdateType.StoryStart:
+                updaterTitle.text = "New Journal Entry";
+                break;
+            case UpdateType.StoryUpdate:
+                updaterTitle.text = "Journal Entry Updated";
+                break;
+            case UpdateType.ItemGiven:
+                updaterTitle.text = "Item gained";
+                break;
+            default:
+                updaterTitle.text = "Journal Update";
+                break;
+        }
+
+        updaterText.text = details;
+
+        StartCoroutine(Util.MoveToPos(outofScreenX, Vector2.zero, updater, smooth, 2));
+        StartCoroutine(WaitToMoveUpdaterBack());
+    }
+
+    IEnumerator WaitToMoveUpdaterBack()
+    {
+        yield return new WaitForSeconds(2);
+        StartCoroutine(Util.MoveToPos(Vector2.zero, outofScreenX, updater, smooth, 2));
+    }
 
 
 

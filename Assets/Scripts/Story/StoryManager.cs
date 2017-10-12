@@ -27,6 +27,7 @@ public class StoryManager : SerializedMonoBehaviour {
     public List<Person> people = new List<Person>();
 
     public ConversationManager convos;
+    public UIManager uiman;
 
 	void Awake(){
 		stories = GetComponentsInChildren<Story>().ToList();
@@ -69,12 +70,17 @@ public class StoryManager : SerializedMonoBehaviour {
         sref.isActive = true;
         Debug.Log("Story " + sref.storyname + " started");
         sref.ChangeState(sref.startState); //potentially change!
+        if(uiman != null)
+        {
+            uiman.DisplayUpdate(UpdateType.StoryStart, sref.storyname);
+        }
 	}
 
 	public void UpdateStory(Story s, StoryState newState)
 	{
 		s.ChangeState(newState);
-	}
+
+    }
 
 	public void SetFlag(flag f, bool b)
 	{

@@ -34,7 +34,12 @@ public class Story : SerializedMonoBehaviour {
 		curState = states[qDeterminant];
 
 		curState.OnStateEnter();
-	}
+
+        if (sm.uiman != null)
+        {
+            sm.uiman.DisplayUpdate(UpdateType.StoryUpdate, storyname);
+        }
+    }
 
     public void ChangeState(StoryState s)
     {
@@ -46,6 +51,13 @@ public class Story : SerializedMonoBehaviour {
         curState = s;
 
         curState.OnStateEnter();
+
+
+        if (sm.uiman != null)
+        {
+            sm.uiman.DisplayUpdate(UpdateType.StoryUpdate, storyname);
+        }
+
     }
 
 

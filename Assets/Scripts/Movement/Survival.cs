@@ -31,7 +31,10 @@ public class Survival : MonoBehaviour {
             sleep -= Time.deltaTime * sleeprate;
         }
 
-        uiman.UpdateSurvivalUI(food, water, sleep);
+        if(uiman != null)
+        {
+            uiman.UpdateSurvivalUI(food, water, sleep);
+        }
 
     }
 
