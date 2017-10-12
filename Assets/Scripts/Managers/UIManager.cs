@@ -33,6 +33,14 @@ public class UIManager : MonoBehaviour {
 	public RectTransform dialogueText;
 	public RectTransform dialogueOptions;
 
+
+    //SURVIVAL
+    public Image foodIMG;
+    public Image waterIMG;
+    public Image sleepIMG;
+
+
+
     private void Start()
     {
         InteractionManager.OnJDown += OpenCloseJournal;
@@ -99,11 +107,17 @@ public class UIManager : MonoBehaviour {
 
 
 
+    public void UpdateSurvivalUI(float f, float w, float s)
+    {
+        foodIMG.color = Color.Lerp(Color.green, Color.red, (Util.Map(f, 100, 0, 0, 1)));
+        waterIMG.color = Color.Lerp(Color.green, Color.red, (Util.Map(w, 100, 0, 0, 1)));
+        sleepIMG.color = Color.Lerp(Color.green, Color.red, (Util.Map(s, 100, 0, 0, 1)));
+    }
 
 
 
 
-	public IEnumerator RollText(string s, TextMeshProUGUI text){
+    public IEnumerator RollText(string s, TextMeshProUGUI text){
 
 		char[] sarray = s.ToCharArray ();
 		text.text = "";
