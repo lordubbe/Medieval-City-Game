@@ -23,6 +23,8 @@ public class Journal : MonoBehaviour {
     public void LoadQuests()
     {
         ClearButtonList();
+
+
         foreach (Story q in sm.stories)
         {
             print("testing " + q.storyname);
@@ -36,6 +38,12 @@ public class Journal : MonoBehaviour {
 
     public void SpawnButton(Story q)
     {
+        if (quests.Contains(q))
+        {
+            return;
+        }
+
+        quests.Add(q);
         GameObject g = Instantiate(questButtonPrefab, questGrid);
         g.GetComponent<UIQuestButton>().SetupButton(q, this);
     }
