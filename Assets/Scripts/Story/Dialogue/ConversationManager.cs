@@ -29,7 +29,6 @@ public class ConversationManager : MonoBehaviour {
 
         foreach (NodeCreator nc in creators)
         {
-			print (nc);
             NodeGroup nn = new NodeGroup();
             nn.id = nc.id;
             foreach(Node n in nc.nodes)

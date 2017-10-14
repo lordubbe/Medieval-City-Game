@@ -66,6 +66,7 @@ public class UIManager : MonoBehaviour {
 		if (journal.isOpen)
         {
 			journal.StopAllCoroutines ();
+            
 			journal.StartCoroutine(Util.WaitToDisable(journal.gameObject,1));
 			journal.StartCoroutine(Util.MoveToPos (journalDefPos, journalDefPos-outofScreenY, journal.GetComponent<RectTransform> (), underShoot, 2));
 			journal.isOpen = false;
@@ -73,6 +74,7 @@ public class UIManager : MonoBehaviour {
         else
         {
 			journal.StopAllCoroutines ();
+            journal.LoadQuests();
             journal.gameObject.SetActive(true);
 			journal.StartCoroutine(Util.MoveToPos (journalDefPos-outofScreenY, journalDefPos, journal.GetComponent<RectTransform> (), overShoot, 1));
 			journal.isOpen = true;

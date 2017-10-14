@@ -34,7 +34,7 @@ public class StoryStateAlchemy : StoryState {
                 {
 					if (qa is QualityAlchemy) 
 					{
-						if (Alchemy.Instance.TestSimilarity(itemToTest.GetElements(), (qa as QualityAlchemy).GetElements()) < threshold)
+						if (Alchemy.Instance.TestSimilarity(itemToTest.GetElements(), (qa as QualityAlchemy).GetElements()) <= threshold)
 						{
 							myStory.ChangeState(qa);
 						}
