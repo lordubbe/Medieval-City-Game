@@ -46,8 +46,8 @@ public class StoryManager : SerializedMonoBehaviour {
     }
 
 	void Update(){
-		if(Input.GetKey(KeyCode.P)){
-			stories[0].StartStory();
+		if(Input.GetKeyDown(KeyCode.P)){
+            StartStory(stories[0]);
 		}
 
         if (Input.GetKeyDown(KeyCode.G))

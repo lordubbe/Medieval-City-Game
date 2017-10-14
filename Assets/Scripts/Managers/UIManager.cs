@@ -15,6 +15,7 @@ public class UIManager : MonoBehaviour {
 	public AnimationCurve underShoot;
 	public AnimationCurve quickOverShoot;
 	public AnimationCurve quickUnderShoot;
+    public AnimationCurve ultrasmooth;
 	public float textSpeed = 0.1f;
 
 	public InteractionManager im;
@@ -66,15 +67,17 @@ public class UIManager : MonoBehaviour {
 		if (journal.isOpen)
         {
 			journal.StopAllCoroutines ();
+            
 			journal.StartCoroutine(Util.WaitToDisable(journal.gameObject,1));
-			journal.StartCoroutine(Util.MoveToPos (journalDefPos, journalDefPos-outofScreenY, journal.GetComponent<RectTransform> (), underShoot, 2));
+			journal.StartCoroutine(Util.MoveToPos (journalDefPos, journalDefPos-outofScreenY, journal.GetComponent<RectTransform> (), ultrasmooth, 2));
 			journal.isOpen = false;
         }
         else
         {
 			journal.StopAllCoroutines ();
+            journal.LoadQuests();
             journal.gameObject.SetActive(true);
-			journal.StartCoroutine(Util.MoveToPos (journalDefPos-outofScreenY, journalDefPos, journal.GetComponent<RectTransform> (), overShoot, 1));
+			journal.StartCoroutine(Util.MoveToPos (journalDefPos-outofScreenY, journalDefPos, journal.GetComponent<RectTransform> (), ultrasmooth, 2.5f));
 			journal.isOpen = true;
         }
 		im.ChangeAlchemyMode ();
@@ -98,19 +101,33 @@ public class UIManager : MonoBehaviour {
         HideDialoguePrompt();
         dialogueObject.gameObject.SetActive(true);
 		//StopAllCoroutines ();
-		StartCoroutine (Util.MoveToPos (-outofScreenX, Vector2.zero, dialogueText, quickOverShoot, 2));
-		StartCoroutine (Util.MoveToPos (outofScreenX, Vector2.zero, dialogueOptions, quickOverShoot, 2));
+		StartCoroutine (Util.MoveToPos (-outofScreenX, Vector2.zero, dialogueText, ultrasmooth, 2));
+		StartCoroutine (Util.MoveToPos (outofScreenX, Vector2.zero, dialogueOptions, ultrasmooth, 2));
     }
 
     public void CloseDialogueUI()
     {
 		im.ChangeAlchemyMode ();
 		//StopAllCoroutines ();
-		StartCoroutine (Util.MoveToPos (Vector2.zero, -outofScreenX, dialogueText, smooth, 2));
-		StartCoroutine (Util.MoveToPos (Vector2.zero, outofScreenX, dialogueOptions, smooth, 2));
+		StartCoroutine (Util.MoveToPos (Vector2.zero, -outofScreenX, dialogueText, ultrasmooth, 2));
+		StartCoroutine (Util.MoveToPos (Vector2.zero, outofScreenX, dialogueOptions, ultrasmooth, 2));
 		StartCoroutine (Util.WaitToDisable (dialogueObject.gameObject,1f));
     }
 
+    public void OpenQuest(UIQuest q)
+    {
+        Vector2 pos = q.rect.anchoredPosition;
+        Vector2 posout = new Vector2(pos.x, -outofScreenY.y);
+        StartCoroutine(Util.MoveToPos(posout, pos, q.rect, ultrasmooth, 2));
+
+    }
+
+    public void CloseQuest(UIQuest q)
+    {
+        Vector2 posout = new Vector2(q.rect.anchoredPosition.x, -outofScreenY.y);
+        StartCoroutine(Util.MoveToPos(q.rect.anchoredPosition, posout, q.rect, smooth, 2));
+        StartCoroutine(Util.WaitToDisable(q.gameObject,1));
+    }
 
 
     public void DisplayUpdate(UpdateType ut, string details)
@@ -133,14 +150,14 @@ public class UIManager : MonoBehaviour {
 
         updaterText.text = details;
 
-        StartCoroutine(Util.MoveToPos(outofScreenX, Vector2.zero, updater, smooth, 2));
+        StartCoroutine(Util.MoveToPos(new Vector2(600,0), Vector2.zero, updater, ultrasmooth, 2));
         StartCoroutine(WaitToMoveUpdaterBack());
     }
 
     IEnumerator WaitToMoveUpdaterBack()
     {
         yield return new WaitForSeconds(2);
-        StartCoroutine(Util.MoveToPos(Vector2.zero, outofScreenX, updater, smooth, 2));
+        StartCoroutine(Util.MoveToPos(Vector2.zero, new Vector2(600, 0), updater, ultrasmooth, 2));
     }
 
 

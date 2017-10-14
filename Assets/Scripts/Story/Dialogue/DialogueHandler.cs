@@ -74,7 +74,7 @@ public class DialogueHandler : MonoBehaviour {
 
         if (DEBUGDIALOGUE)
         {
-            SpawnOptions(n);
+        SpawnOptions(n);
         }
 
 
