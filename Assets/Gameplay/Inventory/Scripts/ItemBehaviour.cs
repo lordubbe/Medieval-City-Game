@@ -129,6 +129,7 @@ public class ItemBehaviour : MonoBehaviour {
 	void PickUp(){
 		// Subscribe to OnMouseUp event
 		InteractionManager.OnMouseUp += OnMouseUp;
+
 		// Pick up / drag
 		ItemHandler.PickUp(item);
 		holdingObject = true;
@@ -172,15 +173,14 @@ public class ItemBehaviour : MonoBehaviour {
 	}
 
 	public void OnMouseUp(){
-        Debug.Log("OnMouseUp on "+item.name + " ("+item.GetInstanceID()+")");
-		if (holdingObject && !overInventory) {
-			Drop ();
-            InteractionManager.OnMouseDown -= OnMouseUp;
-		} else if(holdingObject && overInventory){
-			if (drawer.OnItemDrop (item)) {
-				runtimeIcon.GetComponent<Image> ().raycastTarget = true;
-				Debug.Log ("Item drop successful");
-				InteractionManager.OnMouseDown -= OnMouseUp;
+        if (holdingObject && !overInventory) {
+            Drop ();
+			InteractionManager.OnMouseUp -= OnMouseUp;
+        } else if(holdingObject && overInventory){
+            if (drawer.OnItemDrop (item)) {
+                runtimeIcon.GetComponent<Image> ().raycastTarget = true;
+                Debug.Log ("Item drop successful");
+                InteractionManager.OnMouseUp -= OnMouseUp;
             } else {
                 Debug.Log ("Couldn't drop item");
             }
