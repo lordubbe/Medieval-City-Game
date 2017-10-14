@@ -75,8 +75,11 @@ public class InteractionManager : Singleton<InteractionManager> {
 		Vector3 camToUIHit = cam.transform.position + camToMouse.direction;
 
 		if (results.Count > 0) { // Over UI object
-			visualiser.SetActive (true);
-			hoverPoint = camToUIHit.normalized * results [0].distance;
+            if (showVisualisation)
+            {
+                visualiser.SetActive(true);
+            }
+            hoverPoint = camToUIHit.normalized * results [0].distance;
 			currentHoverObject = results [0].gameObject;
 		} else { // Over physical object
 			// Physical objects
