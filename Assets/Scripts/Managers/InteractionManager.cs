@@ -171,7 +171,7 @@ public class InteractionManager : Singleton<InteractionManager> {
 		visualiser.name = "Interaction Point Visualisation";
 		visualiser.transform.localScale = new Vector3 (0.1f, 0.1f, 0.1f);
 		Destroy (visualiser.GetComponent<Collider> ()); // Remove the collider, since it's only a visualisation and not an interactable object
-		visualiser.GetComponent<MeshRenderer>().material.color = Color.yellow;
+        visualiser.GetComponent<MeshRenderer>().enabled = false;// = Color.yellow;
 	}
 
 }
