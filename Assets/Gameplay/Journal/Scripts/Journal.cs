@@ -27,7 +27,6 @@ public class Journal : MonoBehaviour {
 
         foreach (Story q in sm.stories)
         {
-            print("testing " + q.storyname);
             if (q.isActive)
             {
                 SpawnButton(q);
