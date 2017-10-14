@@ -20,7 +20,7 @@ public class HoverPanel : MonoBehaviour {
 
     public void OnDisable()
     {
-        Destroy(pentaObj);
+        Destroy(pentaObj.gameObject);
     }
     
     public void DisplayHoverText(Item i)
@@ -32,6 +32,7 @@ public class HoverPanel : MonoBehaviour {
         {
             listofAttributes.text += a.GetStateAsString()+"\n";
         }
+        //Destroy(pentaSpot.GetChild(0));
         pentaObj = Alchemy.Instance.DrawElementBars(i.GetElements(), pentaSpot);
     }
 

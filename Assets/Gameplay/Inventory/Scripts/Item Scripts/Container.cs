@@ -56,6 +56,10 @@ public class Container : Item {
     public override Elements GetElements()
     {
         Elements combinedElements = new Elements();
+        foreach (ItemAttribute a in attributes)
+        {
+            combinedElements += a.elementsModifier;
+        }
         foreach (Item i in containedItems)
         {
             combinedElements += i.GetElements();
