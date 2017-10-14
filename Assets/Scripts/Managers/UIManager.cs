@@ -155,7 +155,7 @@ public class UIManager : MonoBehaviour {
 
 
 
-    public IEnumerator RollText(string s, TextMeshProUGUI text){
+    public IEnumerator RollText(string s, TextMeshProUGUI text, Node n, System.Action<Node> callback){
 
 		char[] sarray = s.ToCharArray ();
 		text.text = "";
@@ -177,6 +177,7 @@ public class UIManager : MonoBehaviour {
 			}
 
 		}
+        callback(n);
 	
 	}
 

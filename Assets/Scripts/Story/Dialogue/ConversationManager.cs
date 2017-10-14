@@ -17,6 +17,10 @@ public class ConversationManager : MonoBehaviour {
 
     public string DEBUGSTORY = "firstconvo_0";
 
+
+
+
+
     public void Awake()
     {
         creators = GetComponentsInChildren<NodeCreator>().ToList();
@@ -174,6 +178,12 @@ public class ConversationManager : MonoBehaviour {
 
 
 
+    public Item SpawnItem(GameObject prefab, Vector3 pos)
+    {
+        GameObject g = Instantiate(prefab, pos, Quaternion.identity);
+        Item i = g.GetComponent<Item>();
+        return i;
+    }
 
 
 
@@ -300,10 +310,7 @@ public class ConversationManager : MonoBehaviour {
 		n.options.Add (new Option ("Ok. I can make a love potion, then.", "LovePotion_Intro_CanMake_0"));
 		nc.nodes.Add (n);
 
-
-
-
-
+        
 
 		n = new Node ();
 		n.characterSpeaking = sm.people [0];
@@ -316,7 +323,8 @@ public class ConversationManager : MonoBehaviour {
 		n.characterSpeaking = sm.people [0];
 		n.id = "LovePotion_Intro_CanMake_1";
 		n.text = "What? Everyone knows what goes into it! You just mix some gold dust and some hair. Look, I already have the hair here. Just take it! *gives you a tuft of his dirty blonde hair.*";
-		n.options.Add (new Option ("It's... a little more complicated than that.", "LovePotion_Intro_CanMake_2"));
+        n.OnEnter.AddListener(() => SpawnItem(Alchemy.Instance.hairGuy, Alchemy.Instance.player.transform.position));
+        n.options.Add (new Option ("It's... a little more complicated than that.", "LovePotion_Intro_CanMake_2"));
 		nc.nodes.Add (n);
 
 		n = new Node ();
@@ -515,8 +523,70 @@ public class ConversationManager : MonoBehaviour {
 		nc.nodes.Add (n);
 
 
-		nodesToSend.Add (nc);
-		return nodesToSend;
+        nodesToSend.Add(nc);
+
+
+
+        nc = new NodeCreator();
+        nc.id = "blacksmith_gold";
+
+        n = new Node();
+        n.characterSpeaking = sm.people[1];
+        n.id = "blacksmith_gold_0";
+        n.text = "Heya. How are you? You here about the ship?";
+        n.options.Add(new Option("No, sorry. Something came up. Do you happen to have some gold dust?", "blacksmith_gold_1"));
+        nc.nodes.Add(n);
+
+        n = new Node();
+        n.characterSpeaking = sm.people[1];
+        n.id = "blacksmith_gold_1";
+        n.text = "Gold dust? Yeah, sure. Some of the nobles wants their stuff gilded. Don't really see how it matters on a horseshoe, but them about that.";
+        n.options.Add(new Option("Can I have some?", "blacksmith_gold_2"));
+        nc.nodes.Add(n);
+
+        n = new Node();
+        n.characterSpeaking = sm.people[1];
+        n.id = "blacksmith_gold_2";
+        n.text = "Gold is quite expensive...";
+        n.options.Add(new Option("I can pay.", "blacksmith_gold_3"));
+        nc.nodes.Add(n);
+
+        n = new Node();
+        n.characterSpeaking = sm.people[1];
+        n.id = "blacksmith_gold_3";
+        n.text = "All right then. Your loss.";
+        n.options.Add(new Option("Thank you.", "blacksmith_gold_4"));
+        nc.nodes.Add(n);
+
+        n = new Node();
+        n.characterSpeaking = sm.people[1];
+        n.id = "blacksmith_gold_4";
+        n.text = "Care to enlighten me why you need some gold dust this badly?";
+        n.OnEnter.AddListener(() => SpawnItem(Alchemy.Instance.goldDust, Alchemy.Instance.player.transform.position));
+        n.options.Add(new Option("No, sorry. I'll... explain later.", "blacksmith_gold_5"));
+        n.options.Add(new Option("It's... for a love potion. Not a working one. Just need to make it seem real.", "blacksmith_gold_5"));
+        nc.nodes.Add(n);
+
+        n = new Node();
+        n.characterSpeaking = sm.people[1];
+        n.id = "blacksmith_gold_5";
+        n.text = "All right... See you then.";
+        n.options.Add(new Option("Raeth la'en [May you be good].", "blacksmith_gold_6"));
+        nc.nodes.Add(n);
+
+        n = new Node();
+        n.characterSpeaking = sm.people[1];
+        n.id = "blacksmith_gold_6";
+        n.text = "[END]";
+        n.OnEnter.AddListener(() => EndConversation());
+
+        nc.nodes.Add(n);
+
+
+
+        nodesToSend.Add(nc);
+
+        return nodesToSend;
 
 	}
 

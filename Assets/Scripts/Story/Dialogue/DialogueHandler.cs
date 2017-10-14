@@ -21,6 +21,8 @@ public class DialogueHandler : MonoBehaviour {
 	public TextMeshProUGUI text;
 	public TextMeshProUGUI charText;
 
+    public bool DEBUGDIALOGUE = false;
+
 
 	// Use this for initialization
 	void Start () {
@@ -62,7 +64,7 @@ public class DialogueHandler : MonoBehaviour {
         ClearDialogue();
 
 		StopAllCoroutines ();
-		StartCoroutine (uiMan.RollText (n.text, text));
+		StartCoroutine (uiMan.RollText (n.text, text, n, SpawnOptions));
         if(n.characterSpeaking != null)
         {
             charText.text = n.characterSpeaking.name;
@@ -70,7 +72,17 @@ public class DialogueHandler : MonoBehaviour {
 
         n.OnEnter.Invoke();
 
-        foreach(Option o in n.options)
+        if (DEBUGDIALOGUE)
+        {
+            SpawnOptions(n);
+        }
+
+
+    }
+
+    void SpawnOptions(Node n)
+    {
+        foreach (Option o in n.options)
         {
             /// IF option flags fulfill Check
             if (!CheckAllConditions(o))
@@ -84,7 +96,6 @@ public class DialogueHandler : MonoBehaviour {
             b.onClick.AddListener(() => DisplayNode(sm.convos.FindNode(o.linkToNextNode)));
             b.GetComponentInChildren<TextMeshProUGUI>().text = o.text;
         }
-
     }
 
     bool CheckAllConditions(Option o)
