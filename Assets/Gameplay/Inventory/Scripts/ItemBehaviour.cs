@@ -206,4 +206,12 @@ public class ItemBehaviour : MonoBehaviour {
         return item;
     }
 
+    public void Dispose(){
+        // D:
+        Drop();
+        this.runtimeIcon.SetActive(false);
+        this.runtimeGraphics.SetActive(false);
+        this.runtimeGraphicsRb.isKinematic = true;
+    }
+
 }
