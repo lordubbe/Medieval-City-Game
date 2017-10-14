@@ -45,12 +45,30 @@ public class InventoryDrawer : MonoBehaviour, IPointerEnterHandler, IPointerExit
 	}
 
 	public bool OnItemDrop(Item item){
-		ItemBehaviour objBeh = ItemHandler.currentItem.GetComponent<ItemBehaviour> ();
+        ItemBehaviour objBeh = item.GetComponent<ItemBehaviour> ();
+
+        //Add to container instead of inventory
+        Item2D i2d = InteractionManager.currentHoverObject.GetComponent<Item2D>();
+        if (i2d != null)
+        {
+            Item i = i2d.itemBehaviour.GetItem();
+            if (i != null && i is Container){
+                Debug.Log("wow totally gonna add " + item.name + " (id: "+item.GetInstanceID()+")" + " to " + i.name + " (id: "+i.GetInstanceID()+")");
+                Container c = i as Container;
+                c.AddItemNoConcernForSpace(item);
+            //    ItemHandler.Drop(item);
+            //    return true;
+            }
+            //else
+            //{
+            //    Debug.Log(item.name + "could not be added to " + InteractionManager.currentHoverObject.name + ", since it's not a container?");
+            //}
+        }
+
 		if (sufficientSpace) {
 			inventory.AddItem (item, currentX, currentY);
 
 			// Parent the item object to the tile
-			Debug.Log (tiles [Util.coordsToIndex (inventory, currentX, currentY)].name);
 			item.transform.parent = tiles [Util.coordsToIndex (inventory, currentX, currentY)].transform;
 
 			// TODO: Move to ItemBehaviour

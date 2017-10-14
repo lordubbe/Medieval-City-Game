@@ -4,11 +4,11 @@ using UnityEngine;
 
 public class Item3D : MonoBehaviour {
 
-    public ItemBehaviour IBehaviour;
+    public ItemBehaviour itemBehaviour;
 
     public void Start()
     {
-        IBehaviour = GetComponentInParent<ItemBehaviour>();
+        itemBehaviour = GetComponentInParent<ItemBehaviour>();
     }
 
     public void OnMouseEnter()
@@ -19,5 +19,9 @@ public class Item3D : MonoBehaviour {
     {
     }
 
+    public void OnInteract(){
+        Debug.Log("INTERACTING HEHEHEHEHEHHEHE");
+        itemBehaviour.OnInteract();
+    }
 
 }

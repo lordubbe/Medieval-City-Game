@@ -6,20 +6,24 @@ using UnityEngine.EventSystems;
 
 public class Item2D : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler {
 
-    public ItemBehaviour IBehaviour;
+    public ItemBehaviour itemBehaviour;
 
     public void Start()
     {
-        IBehaviour = GetComponentInParent<ItemBehaviour>();
+        itemBehaviour = GetComponentInParent<ItemBehaviour>();
     }
 
     public void OnPointerEnter(PointerEventData eventData)
     {
-        IBehaviour.drawer.ShowHoverPanel(IBehaviour);
+        itemBehaviour.drawer.ShowHoverPanel(itemBehaviour);
     }
 
     public void OnPointerExit(PointerEventData eventData)
     {
-        IBehaviour.drawer.HideHoverPanel();
+        itemBehaviour.drawer.HideHoverPanel();
+    }
+
+    public void OnInteract(){
+        itemBehaviour.OnInteract();
     }
 }

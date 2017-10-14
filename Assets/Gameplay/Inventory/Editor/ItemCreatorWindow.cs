@@ -6,7 +6,7 @@ using System.Linq;
 
 public class ItemCreatorWindow : EditorWindow, IHasCustomMenu {
 
-	[MenuItem ("Tools/Item Editor %i")]
+	[MenuItem ("Tools/Item Editor %#i")]
 	public static void ShowWindow(){
 		EditorWindow.GetWindow (typeof(ItemCreatorWindow));
 	}
@@ -20,6 +20,7 @@ public class ItemCreatorWindow : EditorWindow, IHasCustomMenu {
 	private bool showIconSettings = false;
 	private bool showItemSettings = true;
 	private bool showInventorySettings = false;
+    private bool showContainerSettings = false;
 
 	public GameObject iconCamEnvironment;
 	private GameObject iconCamEnvInstance;
@@ -342,7 +343,7 @@ public class ItemCreatorWindow : EditorWindow, IHasCustomMenu {
 
 				Rect inventorySettingsSpace = itemSettingsSpace;
 				inventorySettingsSpace.y = itemSettingsSpace.yMax + 5f;
-				inventorySettingsSpace.height = showInventorySettings ? 150f : 15f;
+				inventorySettingsSpace.height = showInventorySettings ? 200f : 15f;
 
 				if (currentItemInv == null) {
 					inventorySettingsSpace.height = 15f;
@@ -351,7 +352,13 @@ public class ItemCreatorWindow : EditorWindow, IHasCustomMenu {
 					}
 				} else {
 					EditorGUI.DrawRect (inventorySettingsSpace.WithHorizontalPadding (-2), Color.white.WithAlpha (0.5f));
-					showInventorySettings = EditorGUI.Foldout (inventorySettingsSpace.WithHeight (15f), showInventorySettings, "InventorySettings");
+					showInventorySettings = EditorGUI.Foldout (inventorySettingsSpace.WithHeight (15f).WithWidth(inventorySettingsSpace.width - 20f), showInventorySettings, "Inventory Settings");
+
+                    Rect removeInventoryRect = inventorySettingsSpace.WithPadding(1f).WithX(inventorySettingsSpace.xMax - 20f).WithHeight(13f);
+                    if(GUI.Button(removeInventoryRect, "x", EditorStyles.miniButton)){
+                        //Remove Inventory
+                        RemoveInventory(currentItem);
+                    }
 
 					if (showInventorySettings) {
 
@@ -383,7 +390,9 @@ public class ItemCreatorWindow : EditorWindow, IHasCustomMenu {
 						//Show preview
 						Rect invPrev = bgImg;
 						invPrev.y = bgImg.yMax + 5;
-						invPrev.height = invPrev.width;
+                        invPrev.yMax = inventorySettingsSpace.yMax - 2f;
+                        invPrev.width = invPrev.height;
+						//invPrev.height = invPrev.width;
 
 						if (currentItemInv.inventoryBackground != null) {
 							//draw texture preview
@@ -426,13 +435,44 @@ public class ItemCreatorWindow : EditorWindow, IHasCustomMenu {
 									}
 								}
 							}
-
-
 						} else {
 							EditorGUI.HelpBox (invPrev, "Please select a background image for the inventory.", MessageType.Error);
 						}
 					}
 				}
+
+                Rect containerSettingsSpace = inventorySettingsSpace;
+                containerSettingsSpace.y = inventorySettingsSpace.yMax + 5f;
+                containerSettingsSpace.height = showContainerSettings ? 150f : 15f;
+
+                if(currentItem is Container){
+					Container currentItemContainer = currentItem as Container;
+
+                    EditorGUI.DrawRect(containerSettingsSpace.WithHorizontalPadding(-2), Color.white.WithAlpha(0.5f));
+                    showContainerSettings = EditorGUI.Foldout(containerSettingsSpace.WithHeight(15f).WithWidth(containerSettingsSpace.width - 20f), showContainerSettings, "Container Settings");
+
+                    Rect removeContainerRect = containerSettingsSpace.WithPadding(1f).WithX(containerSettingsSpace.xMax - 20f).WithHeight(13f);
+					if (GUI.Button(removeContainerRect, "x", EditorStyles.miniButton))
+					{
+                        //Remove Container
+                        ContainerToItem(currentItemContainer);
+					}
+
+                    if(showContainerSettings){
+
+                        Rect testLabel = containerSettingsSpace;
+                        testLabel.y = containerSettingsSpace.WithHeight(15f).yMax + 5;
+                        EditorGUI.LabelField(testLabel, "Well, it's a container now...");
+
+                    }
+
+                }else{
+                    containerSettingsSpace.height = 15f;
+                    if(GUI.Button(containerSettingsSpace, "Make Container", EditorStyles.miniButton)){
+                        ItemToContainer(currentItem);
+                    }
+                }
+
 			} else {
 				Rect boxSpace = editSpace;
 
@@ -620,6 +660,51 @@ public class ItemCreatorWindow : EditorWindow, IHasCustomMenu {
 		inventory.availableSpace = inventory.inventoryWidth * inventory.inventoryHeight;
 
 	}
+
+    void ItemToContainer(Item item){
+        Container c = item.gameObject.AddComponent<Container>();
+
+        c.availableSpace =          0;
+        c.width =                   item.width;
+        c.height =                  item.height;
+        c.iconSettings =            item.iconSettings;
+        c.iconTexture =             item.iconTexture;
+        c.iconBorder =              item.iconBorder;
+		c.icon =                    item.icon;
+        c.flavorText =              item.flavorText;
+        c.name =                    item.name;
+        c.runtimeRepresentation =   item.runtimeRepresentation;
+        c.attributes =              item.attributes;
+        c.tags =                    item.tags;
+
+        currentItem = c;
+		DestroyImmediate(item, true);
+         
+    }
+
+    void ContainerToItem(Container container){
+        Item i = container.gameObject.AddComponent<Item>();
+		
+        i.width =                   container.width;
+        i.height =                  container.height;
+		i.iconSettings =            container.iconSettings;
+		i.iconTexture =             container.iconTexture;
+        i.iconBorder =              container.iconBorder;
+		i.icon =                    container.icon;
+		i.flavorText =              container.flavorText;
+        i.name =                    container.name;
+        i.runtimeRepresentation =   container.runtimeRepresentation;
+        i.attributes =              container.attributes;
+		i.tags =                    container.tags;
+
+        currentItem = i;
+		DestroyImmediate(container, true);
+    }
+
+    void RemoveInventory(Item item){
+        Inventory i = item.GetComponent<Inventory>();
+        DestroyImmediate(i, true);
+    }
 //
 //	void InventoryToItem(Inventory item){
 //		Item newItem = Item.CreateInstance<Item> ();

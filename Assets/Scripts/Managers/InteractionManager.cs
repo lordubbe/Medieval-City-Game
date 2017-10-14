@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 
 public delegate void InteractionEvent();
-public class InteractionManager : MonoBehaviour {
+public class InteractionManager : Singleton<InteractionManager> {
 
 	public static InteractionEvent OnMouseDown;
 	public static InteractionEvent OnMouseUp;
@@ -54,6 +54,7 @@ public class InteractionManager : MonoBehaviour {
 
         HandleKeyPresses();
 
+        //Debug.Log(currentHoverObject);
 
         if (showVisualisation) {
 			visualiser.transform.position = hoverPoint;
@@ -95,6 +96,11 @@ public class InteractionManager : MonoBehaviour {
 
 	void HandleMouseInputs(){
 		if (Input.GetMouseButtonDown (0)) { // Left click
+
+            if (currentHoverObject != null){
+                currentHoverObject.SendMessage("OnInteract", SendMessageOptions.DontRequireReceiver);
+            }
+
 			if (OnMouseDown != null) {
 				OnMouseDown ();
 			}
