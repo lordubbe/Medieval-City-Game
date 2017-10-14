@@ -15,7 +15,7 @@ public static class ItemHandler {
 		currentItem = item;
 		currentItemBehaviour = item.GetComponent<ItemBehaviour> ();
 
-		// Trigger event
+        // Trigger event
 		if (OnItemPickUp != null) {
 			OnItemPickUp (item);
 		}
@@ -23,13 +23,14 @@ public static class ItemHandler {
 
 	public static void Drop(Item item){
 		if (currentItem == item) {
-			currentItem = null;
-			currentItemBehaviour = null;
-
 			// Trigger event
-			if (OnItemDrop != null) {
-				OnItemDrop (item);
+			if (OnItemDrop != null)
+			{
+				OnItemDrop(item);
 			}
+
+            currentItem = null;
+			currentItemBehaviour = null;
 		}
 	}
 

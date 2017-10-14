@@ -36,10 +36,10 @@ public class ItemBehaviour : MonoBehaviour {
 
 	void Awake(){
 		//Prepare the runtime objects for spawning/despawning
-		Init (); 
-
+		Init ();
+        
 		//Subscribe to interaction events
-		InteractionManager.OnMouseDown += OnMouseDown;
+		//InteractionManager.OnMouseDown += OnMouseDown;
 
 		//Subscribe to Item events
 		ItemHandler.OnItemPickUp += OnItemPickup;
@@ -72,7 +72,9 @@ public class ItemBehaviour : MonoBehaviour {
 	}
 
 	void OnItemPickup(Item item){
-		runtimeIconImage.raycastTarget = false;
+        if (item == this.item){
+            runtimeIconImage.raycastTarget = false;
+        }
 		ItemHandler.OnItemDrop += OnItemDrop;
 	}
 
@@ -137,6 +139,7 @@ public class ItemBehaviour : MonoBehaviour {
 	}
 
 	void Drop(){
+
 		ItemHandler.Drop (item);
 		holdingObject = false;
 
@@ -150,13 +153,13 @@ public class ItemBehaviour : MonoBehaviour {
 		iconBorderRect.sizeDelta = size;
 	}
 
-	public void OnMouseDown(){
+	public void OnInteract(){
 		if (InteractionManager.currentHoverObject == runtimeGraphics) { //TODO: Unlink from runtimeGraphics somehow, so it'll work with the icon as well?
 			clickDistance = (InteractionManager.hoverPoint - Camera.main.transform.position).magnitude;
 
 			//If item is physical
 			if (!inInventory) {
-				PickUp ();
+                PickUp ();
 			}
 
 		} else if (InteractionManager.currentHoverObject == runtimeIcon) { //TODO: Unlink from runtimeIcon somehow
@@ -170,16 +173,18 @@ public class ItemBehaviour : MonoBehaviour {
 	}
 
 	public void OnMouseUp(){
-		if (holdingObject && !overInventory) {
-			Drop ();
-		} else if(holdingObject && overInventory){
-			if (drawer.OnItemDrop (item)) {
-				runtimeIcon.GetComponent<Image> ().raycastTarget = true;
-				Debug.Log ("Item drop successful");
-			} else {
-				Debug.Log ("Couldn't drop item");
-			}
-		}
+        if (holdingObject && !overInventory) {
+            Drop ();
+			InteractionManager.OnMouseUp -= OnMouseUp;
+        } else if(holdingObject && overInventory){
+            if (drawer.OnItemDrop (item)) {
+                runtimeIcon.GetComponent<Image> ().raycastTarget = true;
+                Debug.Log ("Item drop successful");
+                InteractionManager.OnMouseUp -= OnMouseUp;
+            } else {
+                Debug.Log ("Couldn't drop item");
+            }
+        }
 	}
 
 

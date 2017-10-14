@@ -23,8 +23,14 @@ public class Container : Item {
             //item doesn't fulfill requirements!
             return;
         }
+
         containedItems.Add(i);
         availableSpace--;
+    }
+
+    public void AddItemNoConcernForSpace(Item i){
+        Debug.Log("Adding "+i.name + " to "+name);
+        containedItems.Add(i);
     }
 
     public bool TestItem(Item i)
