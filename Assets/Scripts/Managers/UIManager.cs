@@ -114,6 +114,20 @@ public class UIManager : MonoBehaviour {
 		StartCoroutine (Util.WaitToDisable (dialogueObject.gameObject,1f));
     }
 
+    public void OpenQuest(UIQuest q)
+    {
+        Vector2 pos = q.rect.anchoredPosition;
+        Vector2 posout = new Vector2(pos.x, -outofScreenY.y);
+        StartCoroutine(Util.MoveToPos(posout, pos, q.rect, ultrasmooth, 2));
+
+    }
+
+    public void CloseQuest(UIQuest q)
+    {
+        Vector2 posout = new Vector2(q.rect.anchoredPosition.x, -outofScreenY.y);
+        StartCoroutine(Util.MoveToPos(q.rect.anchoredPosition, posout, q.rect, smooth, 2));
+        StartCoroutine(Util.WaitToDisable(q.gameObject,1));
+    }
 
 
     public void DisplayUpdate(UpdateType ut, string details)
@@ -136,14 +150,14 @@ public class UIManager : MonoBehaviour {
 
         updaterText.text = details;
 
-        StartCoroutine(Util.MoveToPos(new Vector2(600,0), Vector2.zero, updater, smooth, 2));
+        StartCoroutine(Util.MoveToPos(new Vector2(600,0), Vector2.zero, updater, ultrasmooth, 2));
         StartCoroutine(WaitToMoveUpdaterBack());
     }
 
     IEnumerator WaitToMoveUpdaterBack()
     {
         yield return new WaitForSeconds(2);
-        StartCoroutine(Util.MoveToPos(Vector2.zero, new Vector2(600, 0), updater, smooth, 2));
+        StartCoroutine(Util.MoveToPos(Vector2.zero, new Vector2(600, 0), updater, ultrasmooth, 2));
     }
 
 

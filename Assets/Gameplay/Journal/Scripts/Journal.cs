@@ -7,6 +7,7 @@ using TMPro;
 public class Journal : MonoBehaviour {
 
     public StoryManager sm;
+    public UIManager uiman;
     [SerializeField] List<Story> quests = new List<Story>();
     List<UIQuestButton> shownButtons = new List<UIQuestButton>();
     public GameObject questButtonPrefab;
@@ -61,8 +62,9 @@ public class Journal : MonoBehaviour {
     public void OpenQuestWindow(Story q)
     {
         GameObject g = Instantiate(questWindowPrefab, journalCanvas);
-        g.GetComponent<UIQuest>().Open(q, this);
-        
+        UIQuest uq = g.GetComponent<UIQuest>();
+        uq.Open(q, this);
+        uiman.OpenQuest(uq);
     }
 
 }

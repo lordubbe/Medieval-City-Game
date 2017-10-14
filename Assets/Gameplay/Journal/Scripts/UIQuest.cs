@@ -10,6 +10,7 @@ public class UIQuest : MonoBehaviour {
     Journal journal;
     public Elements problem;
     ElementBars penta;
+    public RectTransform rect;
 
     public TextMeshProUGUI titleT;
     public TextMeshProUGUI textT;
@@ -45,6 +46,12 @@ public class UIQuest : MonoBehaviour {
         }
 		reqText.text = s;
     }
+
+    public void CloseWindow()
+    {
+        journal.uiman.CloseQuest(this);
+    }
+
 
     void OnDisable()
     {

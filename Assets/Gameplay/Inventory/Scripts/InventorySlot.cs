@@ -26,5 +26,4 @@ public class InventorySlot : MonoBehaviour {
 			this.enabled = false;
 		}
 	}
-
 }
