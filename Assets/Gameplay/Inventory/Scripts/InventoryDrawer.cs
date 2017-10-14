@@ -56,6 +56,7 @@ public class InventoryDrawer : MonoBehaviour, IPointerEnterHandler, IPointerExit
                 Debug.Log("wow totally gonna add " + item.name + " (id: "+item.GetInstanceID()+")" + " to " + i.name + " (id: "+i.GetInstanceID()+")");
                 Container c = i as Container;
                 c.AddItemNoConcernForSpace(item);
+                objBeh.Dispose();
             //    ItemHandler.Drop(item);
             //    return true;
             }
