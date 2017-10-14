@@ -69,15 +69,19 @@ public class InventoryDrawer : MonoBehaviour, IPointerEnterHandler, IPointerExit
 			inventory.AddItem (item, currentX, currentY);
 
 			// Parent the item object to the tile
-			item.transform.parent = tiles [Util.coordsToIndex (inventory, currentX, currentY)].transform;
+			item.transform.SetParent(tiles [Util.coordsToIndex (inventory, currentX, currentY)].transform,true);
 
 			// TODO: Move to ItemBehaviour
 			RectTransform itemRect = item.transform.Find ("Icon").GetComponent<RectTransform> ();
 			Rect r = itemRect.rect;
-            item.gameObject.transform.localPosition = new Vector3(r.width / GlobalInventorySettings.ScaleOffset(4,transform), -r.height / GlobalInventorySettings.ScaleOffset(4, transform), 0); // Y is inverted in the UI system :/
+            itemRect.anchorMax = new Vector2(0, 1);
+            itemRect.anchorMin = new Vector2(0, 1);
+            itemRect.pivot = new Vector2(0, 1);
+            print(r.width + " " + r.height + " " + GlobalInventorySettings.ScaleOffset(4, transform));
+            item.gameObject.transform.localPosition = new Vector3(-GlobalInventorySettings.INVENTORY_TILE_SIZE /2, GlobalInventorySettings.INVENTORY_TILE_SIZE / 2, 0); // Y is inverted in the UI system :/
 
             item.transform.SetParent(this.gridParentTransform, true);
-			objBeh.inInventory = true;
+            objBeh.inInventory = true;
 			objBeh.holdingObject = false; 
 			ItemHandler.Drop (item);
 
