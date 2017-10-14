@@ -13,6 +13,7 @@ public class Journal : MonoBehaviour {
     public GameObject questWindowPrefab;
     public Transform questGrid;
     public Transform journalCanvas;
+	public bool isOpen = false;
 
     void Start()
     {
@@ -22,12 +23,13 @@ public class Journal : MonoBehaviour {
     public void LoadQuests()
     {
         ClearButtonList();
-        quests.Clear();
-        quests.AddRange(sm.stories); //uhm, this currently adds all quests no matter what. should not!
-
-        foreach (Story q in quests)
+        foreach (Story q in sm.stories)
         {
-            SpawnButton(q);
+            print("testing " + q.storyname);
+            if (q.isActive)
+            {
+                SpawnButton(q);
+            }
         }
     }
 

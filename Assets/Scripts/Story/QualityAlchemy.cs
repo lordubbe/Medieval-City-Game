@@ -2,9 +2,10 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+[System.Serializable]
 public class QualityAlchemy : Quality
 {
-    Elements elements;
+	[SerializeField] Elements elements;
 
     public Elements GetElements()
     {

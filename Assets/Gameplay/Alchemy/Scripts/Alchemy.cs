@@ -19,6 +19,13 @@ public class Alchemy : Singleton<Alchemy> {
     public Color beautyColor;
     public List<Color> elementColors = new List<Color>();
 
+    public GameObject goldDust;
+    public GameObject hairGuy;
+    public GameObject hairGirl;
+    public GameObject alchohol;
+
+    public Survival player;
+
     public void Start()
     {
         TestSimilarity(new Elements(0,0,0,0,0), new Elements(20,20,20,20,20));

@@ -13,6 +13,7 @@ public class InteractionManager : MonoBehaviour {
     public static InteractionEvent OnExitAlchemyMode;
     public static InteractionEvent OnEnterFirstPersonMode;
     public static InteractionEvent OnExitFirstPersonMode;
+    public static InteractionEvent OnUseDown;
 
     public static bool inAlchemyMode = false;
 
@@ -116,32 +117,45 @@ public class InteractionManager : MonoBehaviour {
 
         if (Input.GetKeyDown(KeyCode.LeftAlt))
         {
-            if (!inAlchemyMode)
-            {
-                inAlchemyMode = true;
-                if(OnEnterAlchemyMode != null)
-                {
-                    OnEnterAlchemyMode();
-                }
-                if (OnExitFirstPersonMode != null)
-                {
-                    OnExitFirstPersonMode();
-                }
-            }
-            else
-            {
-                inAlchemyMode = false;
-                if (OnExitAlchemyMode != null)
-                {
-                    OnExitAlchemyMode();
-                }
-                if (OnEnterFirstPersonMode != null)
-                {
-                    OnEnterFirstPersonMode();
-                }
-            }
+			ChangeAlchemyMode ();
+        }
+
+        if (Input.GetKeyDown(KeyCode.E))
+        {
+			if (OnUseDown != null) {
+				OnUseDown();			
+			}
         }
     }
+
+	public void ChangeAlchemyMode(){
+	
+		if (!inAlchemyMode)
+		{
+			inAlchemyMode = true;
+			if(OnEnterAlchemyMode != null)
+			{
+				OnEnterAlchemyMode();
+			}
+			if (OnExitFirstPersonMode != null)
+			{
+				OnExitFirstPersonMode();
+			}
+		}
+		else
+		{
+			inAlchemyMode = false;
+			if (OnExitAlchemyMode != null)
+			{
+				OnExitAlchemyMode();
+			}
+			if (OnEnterFirstPersonMode != null)
+			{
+				OnEnterFirstPersonMode();
+			}
+		}
+	
+	}
 
 	private void InitializePreviewObject(){
 		visualiser = GameObject.CreatePrimitive (PrimitiveType.Sphere);

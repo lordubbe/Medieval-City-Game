@@ -4,7 +4,7 @@ using UnityEngine;
 using System.Linq;
 using Sirenix.OdinInspector;
 
-public enum flag { startedgame, foundthirdfire, dead, liketheinnkeeper }
+public enum flag { startedgame, foundthirdfire, dead }
 public enum reputationFactions { University, Commoners, Nobility } 
 
 
@@ -27,14 +27,22 @@ public class StoryManager : SerializedMonoBehaviour {
     public List<Person> people = new List<Person>();
 
     public ConversationManager convos;
+    public UIManager uiman;
 
 	void Awake(){
 		stories = GetComponentsInChildren<Story>().ToList();
+		allQualities = GetComponentsInChildren<Quality> ().ToList ();
+		playerQualities.AddRange(allQualities); //well. that's also dumb.
+
+        foreach(Person p in people)
+        {
+            p.InitPerson(this);
+        }
 	}
 
     void Start()
     {
-        stories[0].StartStory();
+  //      stories[0].StartStory();
     }
 
 	void Update(){
@@ -48,23 +56,31 @@ public class StoryManager : SerializedMonoBehaviour {
             playerQualities[0].SetValue(1);
         }
 
-        if (Input.GetKeyDown(KeyCode.H))
-        {
-            convos.StartConversation(new Person(), convos.FindNode("innkeeperHello"));
-        }
+
 	}
 
+    public void TESTTHIS()
+    {
+        print("hELLOOOO");
+    }
 
 	public void StartStory(Story s)
 	{
-		s.isActive = true;
-		s.ChangeState(s.startState); //potentially change!
+        Story sref = stories.Find(x => x == s);
+        sref.isActive = true;
+        Debug.Log("Story " + sref.storyname + " started");
+        sref.ChangeState(sref.startState); //potentially change!
+        if(uiman != null)
+        {
+            uiman.DisplayUpdate(UpdateType.StoryStart, sref.storyname);
+        }
 	}
 
 	public void UpdateStory(Story s, StoryState newState)
 	{
 		s.ChangeState(newState);
-	}
+
+    }
 
 	public void SetFlag(flag f, bool b)
 	{
@@ -105,6 +121,11 @@ public class StoryManager : SerializedMonoBehaviour {
 	public void SetQuality(string q, Quality val)
 	{
 		playerQualities[playerQualities.FindIndex(x=>x.id==q)] = val;
+	}
+
+	public void SetQuality(string q, int val)
+	{
+		playerQualities[playerQualities.FindIndex(x=>x.id==q)].SetValue(val);
 	}
 
 	public void SetBond(Person p, int newBond)

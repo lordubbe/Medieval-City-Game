@@ -68,7 +68,7 @@ public class ItemCreatorWindow : EditorWindow, IHasCustomMenu {
 		Rect editorSpace = space;
 		editorSpace.y = headerSpace.yMax;
 		editorSpace.yMax = space.yMax;
-		ItemEditorUI (editorSpace.WithInsidePadding(10f));
+		ItemEditorUI (editorSpace.WithPadding(10f));
 
 		Repaint ();
 	}
@@ -126,7 +126,7 @@ public class ItemCreatorWindow : EditorWindow, IHasCustomMenu {
 		//EDITOR
 		Rect editSpace = space;
 		editSpace.yMin = toolbarSpace.yMax;
-		editSpace = editSpace.WithInsidePadding (2f);
+		editSpace = editSpace.WithPadding (2f);
 		GUI.Box (editSpace, "");
 
 		if (currentItem != null) {
@@ -191,7 +191,7 @@ public class ItemCreatorWindow : EditorWindow, IHasCustomMenu {
 				for (int x = 0; x < currentItem.width; x++) {
 					for (int y = 0; y < currentItem.height; y++) {
 						Rect square = new Rect (itemPreviewSpace.x + x * gridSquareSize, itemPreviewSpace.y + y * gridSquareSize, gridSquareSize, gridSquareSize);
-						Util.DrawOutlineRect(square.WithInsidePadding(2f), Color.black.WithAlpha(0f), Color.white.WithAlpha(0.45f), 1f);
+						Util.DrawOutlineRect(square.WithPadding(2f), Color.black.WithAlpha(0f), Color.white.WithAlpha(0.45f), 1f);
 					}
 				}
 
@@ -209,7 +209,7 @@ public class ItemCreatorWindow : EditorWindow, IHasCustomMenu {
 					HandleIconEnvironment ();
 
 					//Scale slider
-					Rect cameraModeMenu = iconSettingsSpace.WithInsidePadding (2f);
+					Rect cameraModeMenu = iconSettingsSpace.WithPadding (2f);
 					cameraModeMenu.y += 15f;
 					cameraModeMenu.height = 15f;
 
@@ -318,15 +318,15 @@ public class ItemCreatorWindow : EditorWindow, IHasCustomMenu {
 						if (currentItem.attributes != null) {
 							for (int b = 0; b < att.Count; b++) {
 								AttributeType attributeType = (AttributeType)System.Enum.Parse (typeof(AttributeType), att [b]);
-								List<Attribute> attributes = currentItem.attributes.Where (a => a.type == attributeType).ToList ();
+								List<ItemAttribute> attributes = currentItem.attributes.Where (a => a.type == attributeType).ToList ();
 								bool hasAttribute = attributes.Count > 0;
 								if (GUI.Toggle (attributeButton, hasAttribute, att [b], EditorStyles.toolbarButton)) {
 									if (!hasAttribute) {
-										currentItem.attributes.Add (new Attribute (attributeType));
+										currentItem.attributes.Add (new ItemAttribute (attributeType));
 									}
 								} else {
 									if (hasAttribute) {
-										currentItem.attributes.Remove (currentItem.attributes.First<Attribute> (a => a.type == attributeType));
+										currentItem.attributes.Remove (currentItem.attributes.First<ItemAttribute> (a => a.type == attributeType));
 									}
 								}
 								attributeButton.x += attributeButton.width;
@@ -415,10 +415,10 @@ public class ItemCreatorWindow : EditorWindow, IHasCustomMenu {
 									}
 									if (curSpace != null) {
 										if (curSpace.isActive) {
-											Util.DrawOutlineRect (square.WithInsidePadding (2f), Color.black.WithAlpha (0f), Color.white.WithAlpha (0.45f), 1f);
+											Util.DrawOutlineRect (square.WithPadding (2f), Color.black.WithAlpha (0f), Color.white.WithAlpha (0.45f), 1f);
 										} else {
-											Util.DrawOutlineRect (square.WithInsidePadding (2f), Color.black.WithAlpha (0f), Color.white.WithAlpha (0.2f), 1f);
-											EditorGUI.DrawRect (square.WithInsidePadding (2f), Color.black.WithAlpha (0.5f));
+											Util.DrawOutlineRect (square.WithPadding (2f), Color.black.WithAlpha (0f), Color.white.WithAlpha (0.2f), 1f);
+											EditorGUI.DrawRect (square.WithPadding (2f), Color.black.WithAlpha (0.5f));
 										}
 									} else {
 
@@ -466,7 +466,7 @@ public class ItemCreatorWindow : EditorWindow, IHasCustomMenu {
 			}
 
 		} else {
-			EditorGUI.HelpBox (editSpace.WithInsidePadding(5f), "No Item selected! Create a new one, or open an existing one before continuing.", MessageType.Error);
+			EditorGUI.HelpBox (editSpace.WithPadding(5f), "No Item selected! Create a new one, or open an existing one before continuing.", MessageType.Error);
 		}
 
 	}

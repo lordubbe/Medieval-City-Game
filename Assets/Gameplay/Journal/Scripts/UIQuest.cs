@@ -21,22 +21,29 @@ public class UIQuest : MonoBehaviour {
         journal = j;
         titleT.text = a.name;
         textT.text = a.BuildDescription();
-        if(a.curState.GetType() == typeof(QualityAlchemy))
+
+		string s = "";
+		if(a.curState.GetType() == typeof(StoryStateAlchemy))
         {
-            QualityAlchemy qa = a.curState.qualityReqs[0] as QualityAlchemy; //currently just dumbly gets the first element.
-            problem = qa.GetElements();
-            penta = Alchemy.Instance.DrawElementBars(problem, pentaSpot as Transform);
+			foreach (Quality q in a.curState.qualityReqs.Keys) {
+				print ("test " + q.name);
+
+				if (q is QualityAlchemy) {
+					QualityAlchemy qa = q as QualityAlchemy;
+					problem = qa.GetElements ();
+					penta = Alchemy.Instance.DrawElementBars (problem, pentaSpot as Transform);
+				} 
+				s += q.description + " " + journal.sm.allQualities.Find(x=>x.id==q.id).GetValue() + "/" + a.curState.qualityReqs[q] + "\n";
+			}
         }
         else
         {
-            string s = "";
-            foreach(Quality q in a.curState.qualityReqs)
+			foreach(Quality q in a.curState.qualityReqs.Keys)
             {
-                s += q.description + " " + journal.sm.allQualities.Find(x=>x.id==q.id).GetValue() + "/" + q.GetValue() + "\n";
+				s += q.description + " " + journal.sm.allQualities.Find(x=>x.id==q.id).GetValue() + "/" + a.curState.qualityReqs[q] + "\n";
             }
-            reqText.text = s;
         }
-        // 
+		reqText.text = s;
     }
 
     void OnDisable()

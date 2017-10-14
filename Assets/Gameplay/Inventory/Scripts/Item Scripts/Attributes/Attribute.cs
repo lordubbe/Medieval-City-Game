@@ -8,9 +8,9 @@ public enum AttributeType
 }
 
 [System.Serializable]
-public class Attribute {
+public class ItemAttribute {
 
-	public Attribute(AttributeType attributeType){
+	public ItemAttribute(AttributeType attributeType){
 		type = attributeType;
 		progress = 0f;
 	}
@@ -70,43 +70,30 @@ public static class AttributeCompletionLabels{
 		switch (type) {
 		case AttributeType.Distillable:
 			return "distilled";
-			break;
 		case AttributeType.Boilable:
 			return "boiled";
-			break;
 		case AttributeType.Burnable:
 			return "burnt";
-			break;
 		case AttributeType.Pulverizable:
 			return "pulverized";
-			break;
 		case AttributeType.Rottable:
 			return "rotten";
-			break;
 		case AttributeType.Dryable:
 			return "dried";
-			break;
 		case AttributeType.Edible:
 			return "eaten";
-			break;
 		case AttributeType.Soluble:
 			return "dissolved";
-			break;
 		case AttributeType.Vaporable:
 			return "evaporated";
-			break;
 		case AttributeType.Subliminable:
 			return "gaseous";
-			break;
 		case AttributeType.Crystallizable:
 			return "crystallized";
-			break;
 		case AttributeType.Filterable:
 			return "filtered";
-			break;
 		case AttributeType.Calcinable:
 			return "calcinated";
-			break;
 		}
 		return null;
 	}
