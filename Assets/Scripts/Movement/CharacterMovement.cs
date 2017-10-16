@@ -35,11 +35,13 @@ public class CharacterMovement : MonoBehaviour {
     public float slopeAngleLimit = 45f;
     public float stepHeight = 0.5f;
 
+    bool isSprinting;
+
+    public bool IsSprinting { set { isSprinting = value; } }
+
     // Use this for initialization
     void Awake () {
         playerCollider = GetComponent<CapsuleCollider>();
-
-
 	}
 
     //TODO make a summary
@@ -65,10 +67,13 @@ public class CharacterMovement : MonoBehaviour {
                 flatVelVsNormal = Mathf.Clamp(flatVelVsNormal * 2f - 1f, 0f, 1f);
                 slopeScale = Mathf.Max(1f - (groundAngle / slopeAngleLimit) * flatVelVsNormal, 0f);
             }
-            velocity = Vector3.ProjectOnPlane(velocity, groundHitInfo.normal); //Also helps prevent falling through the ground.
+            //Project the velocity onto the ground plane. Also helps prevent falling through the ground.
+            velocity = Vector3.ProjectOnPlane(velocity, groundHitInfo.normal);
+
+            //Safety check in case we fall through the ground anyway
             if(groundHitInfo.distance < castDistance - safetyWidth * 1.01f)
             {
-                transform.position += Vector3.up * ((castDistance - safetyWidth * 1.01f) - groundHitInfo.distance); //Prevent falling through ground on rare occasions.
+                transform.position += Vector3.up * ((castDistance - safetyWidth * 1.01f) - groundHitInfo.distance);
             }
             isGrounded = true;
         }
@@ -106,25 +111,37 @@ public class CharacterMovement : MonoBehaviour {
         transform.position += velocity * deltaTime;
     }
 
+    /// <summary>
+    /// Calculates and applies acceleration to the current velocity.
+    /// </summary>
+    /// <param name="currVel">The current velocity.</param>
+    /// <param name="flatDir">The direction the character is trying to go in, with y set to 0.</param>
+    /// <param name="scale"></param>
+    /// <param name="deltaTime"></param>
+    /// <returns></returns>
     Vector3 Accelerate(Vector3 currVel, Vector3 flatDir, float scale, float deltaTime)
     {
         Vector3 flatVel = new Vector3(currVel.x, 0f, currVel.z).normalized;
         float oppositeAngleScale = Mathf.Max(1f - Vector3.Angle(-flatDir, flatVel) / 140f, 0f);
         float oppositeScaling = 1f + Mathf.Abs(Vector3.Dot((flatDir - flatVel), flatVel)) * oppositeAccelerationScale * oppositeAngleScale;
         float projVel = Vector3.Dot(currVel, flatDir);
-
+        
+        //These vars ensure that velocity is limited greater when turning, so it doesn't feel like you're scating on ice.
         bool goingForwards;
         float directionAccelScale;
         float directionVelScale = CheckDirection(flatDir, out goingForwards, out directionAccelScale);
 
         float accel = acceleration;
         float maxVel = maxVelocity;
-        if(goingForwards && currVel.magnitude > maxVelocity)
+
+        //Apply extra velocity if the user is sprinting.
+        if(goingForwards && currVel.magnitude >= maxVelocity && isSprinting)
         {
             accel = extraForwardsAcceleration;
             maxVel = extraForwardsMaxVelocity;
         }
 
+        //Calculate final acceleration before limiting it.
         float accelVel = isGrounded ? accel * directionAccelScale * oppositeScaling * scale * deltaTime : airAcceleration * deltaTime;
 
         //Limiting velocity
@@ -133,6 +150,7 @@ public class CharacterMovement : MonoBehaviour {
             accelVel = maxVel * directionVelScale * scale - projVel;
         }
 
+        //Return the new velocity
         return currVel + flatDir * accelVel;
     }
 
@@ -143,7 +161,7 @@ public class CharacterMovement : MonoBehaviour {
         if(angle < 90f)
         {
             goingForwards = true;
-            scale = angle / 90f;
+            scale = angle / 90f; //From 0 (going forwards) to 1 (going diagonally)
             directionAccelerationScale = 1f - (1f - sidewaysAccelerationScale) * scale;
             return 1f - (1f - sidewaysVeclocityScale) * scale;
         }
