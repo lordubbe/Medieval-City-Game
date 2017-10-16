@@ -31,7 +31,6 @@ public class PlayerController : MonoBehaviour {
         mouseLook.LockCursor();
 	}
 	
-	// Update is called once per frame
 	void Update () {
         if (!InteractionManager.inAlchemyMode)
         {
@@ -44,10 +43,9 @@ public class PlayerController : MonoBehaviour {
         moveDir = transform.forward * moveInput.y + transform.right * moveInput.x;
         moveDir.y = Input.GetButton("Jump") ? 1f : 0f;
 
-        character.Move(moveDir, Time.deltaTime);
+        character.IsSprinting = Input.GetButton("Fire3");
 
-        
-        
+        character.Move(moveDir, Time.deltaTime);
 	}
 
     void AddCharacterCamera()
