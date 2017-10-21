@@ -345,7 +345,8 @@ public class ConversationManager : MonoBehaviour {
 		n.id = "LovePotion_Intro_CanMake_4";
 		n.text = "*He hesitates. Looks at you a second time.* I'll pay half up front. Half when its done.";
 		n.options.Add (new Option ("...Deal. She was in the Cat's Eye, yeah?", "LovePotion_Intro_CanMake_5"));
-		nc.nodes.Add (n);
+        n.options.Add(new Option("No deal then. Full price or nothing.", "LovePotion_Intro_CanMake_5"));
+        nc.nodes.Add (n);
 
 		n = new Node ();
 		n.characterSpeaking = sm.people [0];
@@ -359,7 +360,8 @@ public class ConversationManager : MonoBehaviour {
 		n.id = "LovePotion_Intro_CanMake_6";
 		n.text = "Why?";
 		n.options.Add (new Option ("...I need the hair from her too. It’s not going to work unless it has both of your hairs.", "LovePotion_Intro_CanMake_7"));
-		nc.nodes.Add (n);
+        n.options.Add(new Option("No reason.", "LovePotion_Intro_CanMake_7"));
+        nc.nodes.Add (n);
 
 		n = new Node ();
 		n.characterSpeaking = sm.people [0];
