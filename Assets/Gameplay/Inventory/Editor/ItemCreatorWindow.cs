@@ -95,7 +95,7 @@ public class ItemCreatorWindow : EditorWindow, IHasCustomMenu {
 	}
 
 	void HeaderAreaUI(Rect space){
-		Util.HeaderLabel (space, "Item Editor Window", GUIStyles.WindowHeaderStyle, Color.black);
+		EditorUtil.HeaderLabel (space, "Item Editor Window", GUIStyles.WindowHeaderStyle, Color.black);
 	}
 
 	void ItemEditorUI(Rect space){
@@ -157,7 +157,7 @@ public class ItemCreatorWindow : EditorWindow, IHasCustomMenu {
 				//Name header
 				Rect itemNameSpace = editSpace;
 				itemNameSpace.y += 5;
-				Util.HeaderLabel (itemNameSpace, "Now editing '"+currentItem.name+"'", GUIStyles.ItemNameStyle, Color.grey);
+                EditorUtil.HeaderLabel (itemNameSpace, "Now editing '"+currentItem.name+"'", GUIStyles.ItemNameStyle, Color.grey);
 
 				//TODO: Automatically render and draw item icon, even if it doesn't exist
 				//If a texture doesn't already exist, fetch the standard AssetPreview texture
@@ -192,7 +192,7 @@ public class ItemCreatorWindow : EditorWindow, IHasCustomMenu {
 				for (int x = 0; x < currentItem.width; x++) {
 					for (int y = 0; y < currentItem.height; y++) {
 						Rect square = new Rect (itemPreviewSpace.x + x * gridSquareSize, itemPreviewSpace.y + y * gridSquareSize, gridSquareSize, gridSquareSize);
-						Util.DrawOutlineRect(square.WithPadding(2f), Color.black.WithAlpha(0f), Color.white.WithAlpha(0.45f), 1f);
+                        EditorUtil.DrawOutlineRect(square.WithPadding(2f), Color.black.WithAlpha(0f), Color.white.WithAlpha(0.45f), 1f);
 					}
 				}
 
@@ -424,9 +424,9 @@ public class ItemCreatorWindow : EditorWindow, IHasCustomMenu {
 									}
 									if (curSpace != null) {
 										if (curSpace.isActive) {
-											Util.DrawOutlineRect (square.WithPadding (2f), Color.black.WithAlpha (0f), Color.white.WithAlpha (0.45f), 1f);
+                                            EditorUtil.DrawOutlineRect (square.WithPadding (2f), Color.black.WithAlpha (0f), Color.white.WithAlpha (0.45f), 1f);
 										} else {
-											Util.DrawOutlineRect (square.WithPadding (2f), Color.black.WithAlpha (0f), Color.white.WithAlpha (0.2f), 1f);
+                                            EditorUtil.DrawOutlineRect (square.WithPadding (2f), Color.black.WithAlpha (0f), Color.white.WithAlpha (0.2f), 1f);
 											EditorGUI.DrawRect (square.WithPadding (2f), Color.black.WithAlpha (0.5f));
 										}
 									} else {

@@ -44,6 +44,8 @@ public class InteractionManager : Singleton<InteractionManager> {
 		if (showVisualisation) {
 			InitializePreviewObject ();
 		}
+
+        Screen.SetResolution(1920, 1080, false);
 	}
 
 	void Update(){

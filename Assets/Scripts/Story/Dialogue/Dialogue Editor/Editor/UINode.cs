@@ -39,7 +39,7 @@ public class UINode : ResizableRect {
 		}
 
 		if (selected) {
-			Util.DrawOutlineRect (rect, Color.white.WithAlpha (0f), GUI.skin.settings.selectionColor, 2f);
+            EditorUtil.DrawOutlineRect (rect, Color.white.WithAlpha (0f), GUI.skin.settings.selectionColor, 2f);
 		}
 
 		if (rect.IsRightClicked ()) {
@@ -75,7 +75,7 @@ public class UINode : ResizableRect {
 			optionRect.y = optionRect.yMax + optionPadding;
 		}
 
-		if (Util.FlatButton (
+		if (EditorUtil.FlatButton (
 			optionRect.WithX (optionRect.x + (optionRect.width - optionRect.height)),
 			   "+",
 			   NodeEditorStyles.nodeNormal,

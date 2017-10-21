@@ -23,7 +23,7 @@ public class UIConnection : InteractableRect {
 		base.OnGUI ();
 
 		Event e = Event.current;
-		Util.FlatButton (rect, ">", NodeEditorStyles.nodeNormal, EditorStyles.whiteBoldLabel.WithCenteredAlignment ());
+        EditorUtil.FlatButton (rect, ">", NodeEditorStyles.nodeNormal, EditorStyles.whiteBoldLabel.WithCenteredAlignment ());
 
 		if (addingConnection) {
 			Handles.DrawLine ( 
